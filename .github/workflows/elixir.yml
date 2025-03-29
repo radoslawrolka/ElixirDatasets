@@ -18,7 +18,7 @@ jobs:
   build:
 
     name: Build and test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
 
     steps:
     - uses: actions/checkout@v4
