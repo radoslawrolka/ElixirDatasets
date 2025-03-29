@@ -15,4 +15,11 @@ defmodule ElixirDatasets do
   def hello do
     :world
   end
+
+  def unformmated(data) do
+    data
+      |> Enum.map(fn {k,   v}  -> {k, v}
+    end)
+    |> Enum.map(fn {k, v} -> {k, v} end)
+  end
 end
