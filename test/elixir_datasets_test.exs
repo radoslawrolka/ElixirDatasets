@@ -5,4 +5,8 @@ defmodule ElixirDatasetsTest do
   test "greets the world" do
     assert ElixirDatasets.hello() == :world
   end
+
+  test "basic addition test" do
+    assert 2 + 2 == 4
+  end
 end
