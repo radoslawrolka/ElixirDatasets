@@ -1,0 +1,36 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Example_1
+
+```elixir
+##### Target version
+# Install dependencies
+# Mix.install([
+#   {:elixir_datasets, git: "https://github.com/radoslawrolka/ElixirDatasets"}
+# ])
+##### Local dev-testing version
+Mix.install([
+  {:elixir_datasets, path: "Desktop/elixir_datasets"}
+])
+```
+
+## Check import
+
+```elixir
+import ElixirDatasets
+
+result = ElixirDatasets.hello()
+IO.inspect(result)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:world
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:world
+```
