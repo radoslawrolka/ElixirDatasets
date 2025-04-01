@@ -128,34 +128,111 @@ backend=biber]{biblatex}
 \chapter{\ChapterTitleProjectVision}
 \label{sec:cel-wizja}
 
-% poniższą zawartość rodziału należy usunąć z finalnej wersji pracy.
-\emph{Charakterystyka problemu, motywacja projektu (w tym przegląd istniejących rozwiązań prowadząca do uzasadnienia celu prac), wizja produktu i analiza zagrożeń.}
+Celem pracy jest stworzenie biblioteki w języku Elixir, która umożliwi łatwe pobieranie, przetwarzanie i zarządzanie zbiorami danych, które są powszechnie wykorzystane w uczeniu maszynowym. Biblioteka powinna oferować szeroki wybór gotowych zbiorów danych, a także możliwość dodawania własnych.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Cytowania literatury}
-\label{sec:cytowania}
+\section{Opis dziedziny problemu}
+\label{sec:opis-dziedziny-problemu}
 
-Przykład cytowania literatury~\cite{wilson2009prediction-interday}. Kolejny przykład
-cytowania kilku pozycji bibliograficznych~\cite{allen1999using-genetic, zitzler1999evolutionary-algorithms, pictet1995genetic-algorithms, wilhelmstotter2021jenetics, chmaj2015DistributedProcessingApplications}.
+Praca z modelami uczenia maszynowego jest ściśle związana z wykorzystaniem danych, które stanowią fundament dla procesów trenowania i walidacji algorytmów. Dostęp do dobrze przygotowanych i różnorodnych zbiorów danych jest kluczowy dla efektywnego rozwoju i nauki modeli. Zbiory danych muszą być nie tylko obszerne i reprezentatywne, ale również odpowiednio przetworzone i znormalizowane, co często stanowi wyzwanie ze względu na duży nakład czasu i zasobów wymaganych w procesie przygotowania.
+Nieodłącznym elementem pracy z danymi jest ich czyszczenie, skalowanie, oraz odpowiednie formatowanie, które umożliwia integrację danych wejściowych z modelami. Ponadto, same dane często pochodzą z różnorodnych źródeł i są zapisane w różnych formatach, co dodatkowo komplikuje ich użyteczność bezpośrednio po pozyskaniu.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Listy}
-\label{sec:listy}
+\section{Motywacja}
+\label{sec:motywacja}
 
-Lista z elementami:
-\begin{itemize}
-\item pierwszym,
-\item drugim,
-\item trzecim.
-\end{itemize}
+Podczas studiów zainteresowaliśmy się językami programowania funkcyjnego, szczególnie Elixirem. Choć na początku jego podejście może wydawać się nietypowe, szybko dostrzegliśmy, jak prosty i elegancki jest ten język. Podczas pracy z Elixirem zauważyliśmy, że brakuje w nim biblioteki do zarządzania zbiorami danych, która w innych językach jest szeroko stosowana, szczególnie w sztucznej inteligencji.
 
-Lista numerowana z dłuższymi opisami:
+Postanowiliśmy, że to będzie temat naszej pracy inżynierskiej. Chcemy stworzyć bibliotekę w Elixirze, inspirowaną Hugging Face Datasets~\cite{huggingfaceDatasets}, która pozwoli programistom łatwiej pracować ze zbiorami danych i ułatwi dostęp do nich.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Rola produktu}
+\label{sec:rola-produktu}
+
+Głównym celem biblioteki jest uproszczenie i automatyzacja zarządzania, przetwarzania oraz optymalizacja zbiorów danych. Umożliwienie łatwego dostępu do różnorodnych zbiorów danych pozwoli na szybsze rozpoczęcie pracy nad projektami, eliminując konieczność manualnego zbierania i konfigurowania danych. Integracja funkcji automatycznego czyszczenia, normalizacji, skalowania i augmentacji danych znacząco zredukuje czasochłonne procesy przygotowywania danych, co jest zazwyczaj barierą w szybkim prototypowaniu i testowaniu modeli uczenia maszynowego. Użytkownikami końcowymi projektowanej biblioteki są przede wszystkim analitycy, specjaliści od uczenia maszynowego oraz studenci zajmujący się analizą danych i sztuczną inteligencją, którym to narzędzie ma za zadanie zwiększyć produktywność poprzez automatyzację rutynowych zadań.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Obszary funkcjonalne}
+\label{sec:obszary-funkcjonalne}
+
 \begin{enumerate}
-\item Pierwszy element listy.
-\item Drugi element listy.
-\item Trzeci element listy.
+    \item \textbf{Pobieranie i zarządzanie zbiorami danych}
+    \begin{itemize}
+        \item Pobieranie gotowych zbiorów danych z różnych źródeł: Implementacja mechanizmów umożliwiających pobieranie danych z platform takich jak Hugging Face Hub~\cite{huggingfaceHub}, Kaggle~\cite{kaggle} czy innych repozytoriów.
+        \item Dodawanie własnych zbiorów danych: Możliwość integracji i zarządzania własnymi zestawami danych w systemie.
+    \end{itemize}
+    \item \textbf{Przeglądanie zbiorów danych}
+    \begin{itemize}
+        \item Łatwe przeglądanie dostępnych zbiorów danych: Interfejsy umożliwiające szybki podgląd i analizę dostępnych danych.
+        \item Filtrowanie zbiorów danych: Narzędzia do selekcji danych na podstawie określonych kryteriów.
+    \end{itemize}
+    \item \textbf{Przetwarzanie i transformacja danych}
+    \begin{itemize}
+        \item Czyszczenie danych: Funkcje do usuwania błędów i niekompletnych rekordów.
+        \item Normalizacja danych: Metody standaryzacji wartości w zbiorach danych.
+        \item Tokenizacja: Proces dzielenia tekstu na mniejsze jednostki, takie jak słowa czy zdania.
+        \item Tworzenie podzbiorów danych: Możliwość dzielenia większych zbiorów na mniejsze, bardziej zarządzalne części.
+    \end{itemize}
+    \item \textbf{Przykłady rozwiązań}
+    \begin{itemize}
+        \item Przykłady użycia: Praktyczne scenariusze i case studies demonstrujące zastosowanie poszczególnych funkcji.
+    \end{itemize}
 \end{enumerate}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Wymagania niefunkcjonalne}
+\label{sec:wymagania-niefunkcjonalne}
+
+Wymagania niefunkcjonalne odgrywają kluczową rolę w zapewnieniu, że stworzona biblioteka nie tylko spełni swoje zadania funkcjonalne, ale również będzie przyjazna dla użytkownika. Poniżej przedstawiono główne wymagania niefunkcjonalne dla projektu:
+\begin{itemize}
+    \item Wydajność - Biblioteka powinna efektywnie zarządzać i przetwarzać duże zbiory danych z minimalnym opóźnieniem.
+    \item Kompatybilność - Interfejs powinien być kompatybilny z różnymi systemami operacyjnymi i integrować się z istniejącymi popularnymi narzędziami i bibliotekami w ekosystemie Elixira.
+    \item Dokumentacja - Kompletna i zrozumiała dokumentacja techniczna jest niezbędna, by użytkownicy mogli efektywnie wykorzystywać wszystkie funkcje biblioteki.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Przegląd dostępnych rozwiązań}
+\label{sec:przeglad-dostepnych-rozwiazan}
+
+Jednym z głównych narzędzi w tej dziedzinie rozwiązań jest biblioteka datasets od Hugging Face~\cite{huggingfaceDatasets}, która jest szeroko stosowana w społeczności uczenia maszynowego. Biblioteka datasets oferuje łatwy dostęp do szerokiej gamy zbiorów danych w różnych językach programowania. Oferuje ona również różnorodne narzędzia do przetwarzania i transformacji danych.
+\par
+W kontekście Elixira, który nadal jest dynamicznie rozwijającym się językiem, nie istnieje jeszcze takie narzędzie, które w pełni odpowiadałoby potrzebom użytkowników w zakresie zarządzania i przetwarzania danych dla uczenia maszynowego, co tworzy przestrzeń na rynku dla nowego rozwiązania, które może lepiej odpowiadać na unikalne potrzeby społeczności Elixira, zwiększając efektywność ich pracy dzięki specjalizowanym narzędziom dostosowanym do ich środowiska i metod pracy.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Analiza technologiczna}
+\label{sec:analiza-technologiczna}
+
+Stos technologiczny został zaprojektowany z myślą o maksymalnym wykorzystaniu możliwości języka Elixir oraz jego ekosystemu. Do obliczeń numerycznych oraz operacji na tensorach wykorzystamy bibliotekę NX~\cite{nx}. Biblioteka zapewnia wydajność w przeprowadzaniu operacji matematycznych, szczególnie w kontekście obliczeń związanych z dużymi zbiorami danych i sztuczną inteligencją. NX oferuje wsparcie dla operacji na tensorach, które są kluczowe w procesach uczenia maszynowego oraz analizy danych.
+
+Zintegrowany z NX jest także Explorer~\cite{explorer}, który będziemy wykorzystywać w naszej pracy do efektywnego zarządzania i analizy danych. Explorer to biblioteka, która umożliwia pracę z dwoma głównymi typami struktur danych: seriami, oraz dataframe’ami. Te struktury pozwalają na wygodne i szybkie eksplorowanie danych, co jest szczególnie istotne podczas analizy informacji. Explorer, jako backend, korzysta z Polars, biblioteki napisanej w języku Rust co przekłada się na znaczną poprawę wydajności w obliczeniach z dużymi zbiorami.
+
+Do współpracy z modelami głębokiego uczenia maszynowego w naszym projekcie zastosujemy bibliotekę Bumblebee~\cite{bumblebee}, która pozwala na łatwą integrację z pretrenowanymi modelami sieci neuronowych. Bumblebee umożliwia dostęp do popularnych modeli, które zostały udostępnione przez platformy sztucznej inteligencji, takie jak Hugging Face Transformers~\cite{huggingfaceTransformers}. Ta biblioteka umożliwi łatwą implementację i wykorzystanie zaawansowanych modeli AI w naszej pracy, co pozwoli na efektywne wdrożenie algorytmów uczenia maszynowego i głębokiego uczenia w środowisku Elixira.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Analiza ryzyka}
+\label{sec:analiza-ryzyka}
+
+W procesie projektowania i rozwijania nowej biblioteki istnieje wiele potencjalnych ryzyk, których zidentyfikowanie pozwala na lepsze przygotowanie, co z kolei zwiększa szanse na pomyślne zakończenie projektu. Są to między innymi:
+\begin{itemize}
+    \item Adaptacja przez społeczność - Jako że Elixir jest stosunkowo mniej popularny niż inne języki wykorzystywane w dziedzinie uczenia maszynowego, takie jak Python, istnieje ryzyko, że biblioteka nie zyska szerokiego grona użytkowników. Promocja biblioteki i demonstrowanie jej wartości w rzeczywistych projektach będzie kluczowe.
+    \item Integracja z istniejącymi narzędziami - Problemy z integracją nowej biblioteki z już istniejącymi ekosystemami i narzędziami, których niekompatybilność może powstrzymać potencjalnych użytkowników przed korzystaniem z biblioteki.
+    \item Obsługą dużych zbiorów danych - Możliwe, że biblioteka nie będzie w stanie efektywnie procesować dużych zbiorów danych lub że wystąpią problemy z wydajnością.
+    \item Niedostateczne testowanie - Niewystarczające testowanie w różnych środowiskach i scenariuszach użytkowania może prowadzić do niezauważonych błędów, które ujawnią się dopiero po wdrożeniu biblioteki.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Podsumowanie}
+\label{sec:podsumowanie}
+
+
+Projekt ma na celu stworzenie biblioteki w języku Elixir, która będzie odpowiadała funkcjonalności biblioteki Hugging Face Datasets~\cite{huggingfaceDatasets}, umożliwiając łatwe pobieranie, przetwarzanie i zarządzanie zbiorami danych używanymi w uczeniu maszynowym. Biblioteka ta oferować będzie funkcje takie jak pobieranie gotowych zbiorów danych z różnych źródeł, możliwość dodawania własnych zbiorów danych, filtrowanie i przeglądanie dostępnych zbiorów, a także przetwarzanie danych (czyszczenie, normalizacja, tokenizacja). Użytkownicy będą mogli tworzyć podzbiory danych oraz integrować bibliotekę z innymi narzędziami w Elixirze, takimi jak Nx~\cite{nx}, Explorer~\cite{explorer} i Bumblebee~\cite{bumblebee}. Projekt zakłada również dostarczenie pełnej dokumentacji oraz przykładów użycia. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{\ChapterTitleScope}
 \label{sec:zakres-funkcjonalnosci}
