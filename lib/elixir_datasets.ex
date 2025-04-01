@@ -6,7 +6,7 @@ defmodule ElixirDatasets do
   @doc """
   Hello world.
 
-  ## Examples
+  ## Examplesddd
 
       iex> ElixirDatasets.hello()
       :world
