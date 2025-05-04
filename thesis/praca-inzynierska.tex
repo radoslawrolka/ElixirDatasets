@@ -237,70 +237,137 @@ Projekt ma na celu stworzenie biblioteki w języku Elixir, która będzie odpowi
 \chapter{\ChapterTitleScope}
 \label{sec:zakres-funkcjonalnosci}
 
-% poniższą zawartość rodziału należy usunąć z finalnej wersji pracy.
-\emph{Kontekst użytkowania produktu (aktorzy, współpracujące systemy) oraz specyfikacja wymagań funkcjonalnych i niefunkcjonalnych.}
+Celem niniejszego rozdziału jest przedstawienie specyfikacji funkcjonalnej projektowanej biblioteki. Specyfikacja została opracowana na podstawie analizy potrzeb użytkowników i rozmów konsultacyjnych z zainteresowanymi stronami.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Rysunki, tabele}
-\label{sec:rysunki-tabele}
+\section{Charakterystyka użytkownika}
 
-W tekście powinny się znaleźć odnośniki do wszystkich rysunków i tabel
-występujących w pracy.
+System zakłada istnienie jednego głównego rodzaju użytkownika – \textbf{programisty pracującego z językiem Elixir}, który zajmuje się tworzeniem, trenowaniem lub walidacją modeli uczenia maszynowego. Użytkownicy ci mogą być częścią większych zespołów badawczo-rozwojowych lub niezależnymi deweloperami.
+
+Zakłada się, że użytkownik:
+\begin{itemize}
+    \item posiada podstawową lub zaawansowaną znajomość języka Elixir,
+    \item zna podstawy uczenia maszynowego oraz pracy z danymi,
+    \item wymaga efektywnego i prostego dostępu do przygotowanych zbiorów danych,
+    \item oczekuje narzędzi ułatwiających wstępne przetwarzanie danych, takich jak czyszczenie, normalizacja, tokenizacja.
+\end{itemize}
+\label{sec:charakterystyka-uzytkownika}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Rysunki}
-\label{sec:rysunki}
+\section{Charakterystyka systemów współpracujących}
+\label{sec:charakterystyka-systemow-wspolpracujacych}
 
-Przykładowy odnośnik do rysunku~\ref{fig:ex1}.
+Tworzona biblioteka do zarządzania zbiorami danych w języku Elixir zakłada ścisłą współpracę z wybranym zestawem zewnętrznych narzędzi i bibliotek, które pełnią kluczową rolę w zapewnieniu pełnej funkcjonalności systemu. Integracja tych komponentów pozwala na maksymalne wykorzystanie potencjału języka Elixir w kontekście przetwarzania danych na potrzeby uczenia maszynowego. Poniżej przedstawiono charakterystykę najważniejszych współpracujących systemów:
 
-\begin{figure}[!htbp]
-  \centering
-\includegraphics[width=.7\textwidth]{example.pdf}
-\caption[Przykładowy rysunek]{Przykładowy rysunek (źródło:
-  \cite{author2021title})}
-\label{fig:ex1}
-\end{figure}
- 
-W przypadku rysunków można odwoływać się zarówno do poszczególnych części
-składowych --- rysunek~\ref{fig:sub1} i rysunek~\ref{fig:sub2}) --- jak i do
-całego rysunku~\ref{fig:ex2}.
+\begin{itemize}
+    \item \textbf{Źródła zbiorów danych} – Biblioteka umożliwia pobieranie popularnych zbiorów danych wykorzystywanych w uczeniu maszynowym z różnych publicznych repozytoriów, takich jak Hugging Face Datasets~\cite{huggingfaceDatasets}. W związku z tym wymagana jest integracja z usługami HTTP i obsługą różnorodnych formatów danych.
 
-\begin{figure}[!htbp]
-\begin{center}
-\subfigure[Tytuł 1]{%
-\label{fig:sub1}
-\includegraphics[width=0.48\textwidth]{example.pdf}}%
-\subfigure[Tytuł 2]{%
-\label{fig:sub2}
-\includegraphics[width=0.48\textwidth]{example.pdf}}
-\end{center}
-\caption[Kolejne przykładowe rysunki]{Kolejne przykładowe rysunki (źródło:
-  \cite{author2021title})}
-\label{fig:ex2}
-\end{figure}
+    \item \textbf{Nx}~\cite{nx} – Biblioteka opiera się na integracji z narzędziem Nx, które zapewnia funkcje numeryczne i przetwarzanie tensorów. Współpraca z Nx pozwala na bezproblemowe przygotowanie danych do trenowania modeli uczenia maszynowego w Elixirze.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\subsection{Tabele}
-\label{sec:tabele}
+    \item \textbf{Explorer}~\cite{explorer} – Do eksploracji, filtrowania i transformacji danych tabularycznych wykorzystywana jest biblioteka Explorer , która umożliwia przetwarzanie danych w sposób zbliżony do narzędzi takich jak Pandas~\cite{reback2020pandas} w Pythonie. Dzięki temu użytkownik może łatwo analizować i przygotowywać dane w ramach jednego ekosystemu.
 
-Przykładowa tabela~\ref{tab:ex1}.
+    \item \textbf{Bumblebee}~\cite{bumblebee} – W celu dalszego wykorzystania przetworzonych danych, możliwa jest integracja z biblioteką Bumblebee, która dostarcza gotowe modele i narzędzia do pracy z NLP i uczeniem głębokim.
 
-\begin{table}[!htbp]
-\centering
-\caption[Przykładowa tabela]{Przykładowa tabela}
-\begin{tabularx}{\columnwidth}{@{}YYYYYYY@{}} \toprule
-  & \multicolumn{2}{c}{\small\textbf{Best}} & \multicolumn{2}{c}{\small\textbf{Average}} & \multicolumn{2}{c}{\small\textbf{Worst}} \\ \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
-  \textbf{No.} & \textbf{AB} & \textbf{CD} & \textbf{FE} & \textbf{GH} & \textbf{IJ} & \textbf{KL} \\ \midrule
-  \textit{1.} & 10 & 89 & 58 & 244 & 6 & 70 \\  
-  \textit{2.} & 15 & 87 & 57 & 147 & 4 & 82 \\
-  \textit{3.} & 23 & 45 & 55 & 151 & 2 & 38 \\
-  \textit{4.} & 34 & 90 & 55 & 246 & 1 & 82 \\
-  \textit{5.} & 56 & 75 & 54 & 255 & 0 & 73 \\ \bottomrule
-\end{tabularx}
-\label{tab:ex1}
-\end{table}
+    \item \textbf{Lokalna pamięć masowa} – System wspiera lokalne przechowywanie danych oraz cache’owanie zbiorów, aby zminimalizować potrzebę wielokrotnego pobierania tych samych danych i zwiększyć wydajność pracy z dużymi zestawami.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Wymagania funkcjonalne}
+\label{sec:wymagania-funkcjonalne}
+
+W poniższym rozdziale szczegółowo opisano wymagania funkcjonalne dla projektowanej biblioteki w języku Elixir, klasyfikując je zgodnie z metodologią MoSCoW~\cite{MoSCow} ukierunkowaną na najbardziej krytyczne aspekty funkcjonalności systemu.
+\newline\newline
+{\noindent\large{\textbf{Must Have}}}
+
+\begin{itemize}
+    \item Możliwość pobierania datasetów z zewnętrznych źródeł – biblioteka musi umożliwić użytkownikowi łatwy dostęp do zasobów danych oferowanych przez różne repozytoria.
+    \item Integracja z narzędziami Elixir takimi jak Nx i Explorer – niezbędne jest zapewnienie kompatybilności i efektywnej współpracy narzędziowej.
+    \item Pełna dokumentacja funkcji biblioteki – użytkownicy muszą mieć dostęp do jasnych i zrozumiałych instrukcji korzystania z biblioteki.
+\end{itemize}
+
+{\noindent\large{\textbf{Should Have}}}
+\begin{itemize}
+    \item Możliwość dodawania własnych datasetów do biblioteki – funkcja ta pozwala użytkownikom na personalizację i rozszerzenie bazy danych.
+    \item Narzędzia do czyszczenia i normalizacji danych – choć nie krytyczne, znacząco podnoszą wartość użytkową biblioteki.
+\end{itemize}
+
+{\noindent\large{\textbf{Could Have}}}
+\begin{itemize}
+    \item Rozbudowane funkcje tokenizacji danych – ułatwiłyby przetwarzanie tekstu, zwiększając potencjalne obszary zastosowań biblioteki.
+    \item Wtyczki wspierające nowsze frameworki i biblioteki w ekosystemie Elixir – mogą zwiększyć atrakcyjność biblioteki dla szerokiej grupy użytkowników.
+\end{itemize}
+
+{\noindent\large{\textbf{Won't Have}}}
+\begin{itemize}
+    \item Automatyczne tłumaczenia dokumentacji na różne języki – choć przydatne w przyszłości, nie będą dostępne w pierwszej wersji produktu.
+    \item Zaawansowane algorytmy sztucznej inteligencji do analizy danych – nie są planowane w aktualnym zakresie projektu.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Wymagania jakościowe}
+\label{sec:wymagania-jakosciowe}
+
+Poniżej przedstawione zostały wymagania niefunkcjonalne, które mają na celu zapewnienie wysokiej jakości tworzonej biblioteki oraz komfortu jej użytkowania. Odpowiednie spełnienie tych wymagań wpłynie pozytywnie na łatwość integracji, rozwój i utrzymanie projektu w dłuższym okresie.
+
+\begin{itemize}
+    \item \textbf{Czytelny i spójny interfejs API} – Interfejs biblioteki powinien być intuicyjny i dobrze zaprojektowany, umożliwiając użytkownikowi szybkie rozpoczęcie pracy bez konieczności zapoznawania się z nadmiernie rozbudowaną dokumentacją. Nazewnictwo funkcji, struktur i modułów powinno być spójne i zgodne z konwencjami języka Elixir.
+
+    \item \textbf{Wydajność} – Biblioteka powinna umożliwiać efektywne operacje na dużych zbiorach danych, takich jak filtrowanie, czyszczenie czy transformacja. Szczególny nacisk powinien zostać położony na optymalizację operacji na dużych zbiorach dancyh oraz minimalizację zużycia pamięci i czasu przetwarzania.
+
+    \item \textbf{Skalowalność} – Projekt powinien być skalowalny zarówno pod względem wielkości obsługiwanych danych. Powinien umożliwiać bezproblemowe dodawanie nowych źródeł danych, funkcjonalności i formatów danych bez konieczności istotnej przebudowy istniejącej architektury.
+
+    \item \textbf{Bezpieczeństwo danych} – W przypadku integracji z zewnętrznymi źródłami danych, komunikacja powinna być realizowana z użyciem bezpiecznych protokołów (np. HTTPS). System powinien być odporny na wstrzykiwanie niepoprawnych danych oraz błędne formaty plików.
+
+    \item \textbf{Odporność na błędy} – Biblioteka powinna zawierać mechanizmy wykrywania i obsługi błędów, umożliwiające użytkownikowi uzyskanie jasnych komunikatów w przypadku problemów z danymi, połączeniem lub działaniem funkcji.
+
+    \item \textbf{Kompatybilność z ekosystemem Elixira} – Projekt musi zapewniać pełną kompatybilność z innymi bibliotekami wykorzystywanymi w uczeniu maszynowym w języku Elixir, w szczególności Nx~\cite{nx}, Explorer~\cite{explorer} i Bumblebee~\cite{bumblebee}. Powinien też działać na różnych platformach systemowych wspierających środowisko Elixira.
+
+    \item \textbf{Dokumentacja} – Biblioteka powinna być opatrzona pełną dokumentacją techniczną, zawierającą opisy funkcji, struktur danych, przykłady użycia oraz wskazówki dotyczące integracji z innymi narzędziami. Dokumentacja powinna być dostępna zarówno w kodzie (np. jako modułowe \texttt{@doc}), jak i w formie zewnętrznej (np. README, przewodniki).
+
+    \item \textbf{Łatwość w utrzymaniu i rozwoju} – Kod źródłowy powinien być przejrzysty, modularny, zgodny z dobrymi praktykami programistycznymi i łatwy do testowania oraz rozszerzania. Projekt powinien uwzględniać przyszłą rozbudowę, np. o nowe formaty danych, dodatkowe transformacje lub integracje.
+
+    \item \textbf{Testowalność} – System powinien być w pełni testowalny. Moduły powinny być projektowane w sposób umożliwiający tworzenie testów jednostkowych oraz testów integracyjnych, co ułatwi utrzymanie wysokiej jakości kodu i szybką detekcję błędów w przyszłości.
+\end{itemize}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Scenariusze użytkowania}
+\label{sec:scenariusze-uzytkowania}
+
+Poniżej przedstawiono przykładowe scenariusze użytkowania systemu, które ilustrują typowe sytuacje, w jakich programista może korzystać z biblioteki. Scenariusze te odzwierciedlają główne funkcjonalności systemu i obrazują sposób interakcji użytkownika z interfejsem programistycznym (API) biblioteki.
+
+\begin{itemize}
+    \item \textbf{Pobranie gotowego zbioru danych}
+
+    Użytkownik chce szybko pobrać popularny zbiór danych w celu przetestowania modelu klasyfikacji tekstu. W tym celu korzysta z funkcji udostępnianych przez bibliotekę, które automatycznie pobierają dane z repozytorium, zapisują je lokalnie i przygotowują do dalszego przetwarzania.
+
+    \item \textbf{Dodanie własnego zbioru danych}
+
+    Użytkownik posiada własny zbiór danych zapisany w formacie CSV. Chce go załadować, wstępnie przefiltrować oraz znormalizować. Korzystając z biblioteki, użytkownik definiuje strukturę zbioru danych, wskazuje lokalizację pliku, a następnie stosuje dostępne funkcje do oczyszczenia danych i konwersji ich do odpowiedniego formatu.
+
+    \item \textbf{Filtrowanie danych na podstawie kryteriów}
+
+    Użytkownik analizuje zbiór danych zawierający opinie klientów i chce utworzyć podzbiór, który zawiera wyłącznie opinie pozytywne. Biblioteka umożliwia zastosowanie funkcji filtrowania na podstawie warunków logicznych, co pozwala szybko uzyskać interesujący użytkownika fragment danych.
+
+    \item \textbf{Integracja danych z modelem uczenia maszynowego}
+    
+    Po przygotowaniu danych, użytkownik chce przesłać je jako tensory do modelu zaimplementowanego w bibliotece Bumblebee~\cite{bumblebee}. Biblioteka wspiera konwersję danych do struktury kompatybilnej z Nx\cite{nx} oraz umożliwia bezpośrednie przekazanie ich do dalszego przetwarzania przez model.
+
+    \item \textbf{Przegląd dostępnych zbiorów danych}
+    
+    Użytkownik nie jest jeszcze zdecydowany, z jakim zbiorem chce pracować. Korzysta z funkcji przeglądania dostępnych zbiorów, które zawierają metadane, takie jak: źródło, liczba rekordów, typ danych (tekst, obraz, liczby), wymagania wstępne itp. Po zapoznaniu się z informacjami, wybiera odpowiedni zbiór i rozpoczyna pracę.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Podsumowanie}
+\label{sec:podsumowanie}
+
+ Ten rozdział dostarcza wszechstronnej analizy projektowanego systemu, obejmującej szczegółowy opis funkcji z uwzględnieniem priorytetów, opis procesów biznesowych oraz scenariuszy użytkowania, co pozwala lepiej zrozumieć i wizualizować funkcjonalności projektu. Ta całościowa prezentacja ułatwia zarządzanie oczekiwaniami i planowanie dalszych etapów rozwoju systemu, uwzględniając ustalony zakres prac i zasoby, co jest kluczowe dla skutecznego planowania przyszłych etapów wdrożenia.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{\ChapterTitleRealizationAspects}
 \label{sec:wybrane-aspekty-realizacji}
