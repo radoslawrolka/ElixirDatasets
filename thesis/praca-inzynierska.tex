@@ -372,97 +372,45 @@ Poniżej przedstawiono przykładowe scenariusze użytkowania systemu, które ilu
 \chapter{\ChapterTitleRealizationAspects}
 \label{sec:wybrane-aspekty-realizacji}
 
-% poniższą zawartość rodziału należy usunąć z finalnej wersji pracy.
-\emph{Przyjęte założenia, struktura i zasada działania systemu, wykorzystane rozwiązania technologiczne wraz z uzasadnieniem ich wyboru, istotne mechanizmy i zastosowane algorytmy.}
+todo - wstep
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Wzory matematyczne}
-\label{sec:wzory}
+\section{3rdchapter-todo}
+\label{sec:3todo}
 
-% poniższy tekst należy usunąć z finalnej wersji pracy.
-
-Przykład wzoru z odnośnikiem do literatury~\cite{author2021title}:
-
-\begin{equation}
-\Omega = \sum_{i=1}^n \gamma_i
-\label{eq:sum}
-\end{equation}
-
-Przykładowy odnośnik do wzoru~\eqref{eq:sum}.
-
-Przykładowy wzór w tekście $\lambda = \sum_{i=1}^n \delta_i$, bez numeracji.
+todo
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Algorytmy}
-\label{sec:algorytmy}
-
-Algorytm~\ref{alg:pseudo-code} przedstawia przykładowy algorytm zaprezentowany w~\cite{fiorio2017algorithm2e}. 
-
-\begin{algorithm}[!htbp]
-\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
-\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
-\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-\Input{A bitmap $Im$ of size $w\times l$}
-\Output{A partition of the bitmap}
-\BlankLine
-\emph{special treatment of the first line}\;
-\For{$i\leftarrow 2$ \KwTo $l$}{
-\emph{special treatment of the first element of line $i$}\;
-\For{$j\leftarrow 2$ \KwTo $w$}{\label{forins}
-\Left$\leftarrow$ \FindCompress{$Im[i,j-1]$}\;
-\Up$\leftarrow$ \FindCompress{$Im[i-1,]$}\;
-\This$\leftarrow$ \FindCompress{$Im[i,j]$}\;
-\If(\tcp*[h]{O(\Left,\This)==1}){\Left compatible with \This}{\label{lt}
-\lIf{\Left $<$ \This}{\Union{\Left,\This}}
-\lElse{\Union{\This,\Left}}
-}
-\If(\tcp*[f]{O(\Up,\This)==1}){\Up compatible with \This}{\label{ut}
-\lIf{\Up $<$ \This}{\Union{\Up,\This}}
-\tcp{\This is put under \Up to keep tree as flat as possible}\label{cmt}
-\lElse{\Union{\This,\Up}}\tcp*[h]{\This linked to \Up}\label{lelse}
-}
-}
-\lForEach{element $e$ of the line $i$}{\FindCompress{p}}
-}
-  \caption[Przykładowy algorytm]{Przykładowy algorytm (źródło: \cite{fiorio2017algorithm2e}).}
-  \label{alg:pseudo-code}
-\end{algorithm}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\section{Fragmenty kodu źródłowego}
-\label{sec:listingi}
-Listing~\ref{lst:maximum} przedstawia przykładowy fragment kodu źródłowego.
-
-\begin{lstlisting}[language=Python,float=!htbp,caption={[Przykładowy fragment kodu]Przykładowy fragment kodu (źródło:
-  \cite{author2021title})},label=lst:maximum]
-# The maximum of two numbers
-
-def maximum(x, y):
-
-    if x >= y:
-        return x
-    else:
-        return y
-
-x = 2
-y = 6
-print(maximum(x, y),"is the largest of the numbers ", x, " and ", y)
-
-\end{lstlisting}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{\ChapterTitleWorkOrganization}
 \label{sec:organizacja-pracy}
 
-% poniższą zawartość rodziału należy usunąć z finalnej wersji pracy.
-\emph{Struktura zespołu (role poszczególnych osób), krótki opis i uzasadnienie przyjętej metodyki i/lub kolejności prac, planowane i zrealizowane etapy prac ze wskazaniem udziału poszczególnych członków zespołu, wykorzystane praktyki i narzędzia w zarządzaniu projektem.}
+todo - wstep
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{4thchapter-todo}
+\label{sec:4todo}
+
+todo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{\ChapterTitleResults}
 \label{sec:wyniki-projektu}
 
-% poniższą zawartość rodziału należy usunąć z finalnej wersji pracy.
-\emph{Wskazanie wyników projektu (co konkretnie udało się uzyskać: oprogramowanie, dokumentacja, raporty z testów/wdrożenia, itd.), prezentacja wyników i ocena ich użyteczności (jak zostało to zweryfikowane --- np.\ wnioski klienta/użytkownika, zrealizowane testy wydajnościowe, itd.), istniejące ograniczenia i propozycje dalszych prac.}
+todo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{5thchapter-todo}
+\label{sec:5todo}
+
+todo
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \printbibliography
