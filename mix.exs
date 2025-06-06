@@ -16,12 +16,15 @@ defmodule ElixirDatasets.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      mod: {ElixirDatasets.Application, []},
+      extra_applications: [:logger, :inets, :ssl]
     ]
   end
 
   defp deps do
     [
+      {:jason, "~> 1.4.0"},
+
       # Dev
       {:ex_doc, "~> 0.21"},
 

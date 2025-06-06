@@ -2,10 +2,6 @@ defmodule ElixirDatasetsTest do
   use ExUnit.Case
   doctest ElixirDatasets
 
-  test "greets the world" do
-    assert ElixirDatasets.hello() == :world
-  end
-
   test "basic addition test" do
     assert 2 + 2 == 4
   end
