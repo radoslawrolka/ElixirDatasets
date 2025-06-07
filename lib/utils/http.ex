@@ -1,3 +1,7 @@
+# This file, part of the ElixirDatasets project, has been adapted from code originally under Apache License 2.0.
+# The original code can be found at:
+# https://github.com/elixir-nx/bumblebee/blob/710a645222948f80208c348d3a2589cbd3ab8e7d/lib/bumblebee/utils/http.ex
+
 defmodule ElixirDatasets.Utils.HTTP do
   @moduledoc false
 
@@ -209,13 +213,13 @@ defmodule ElixirDatasets.Utils.HTTP do
   def start_inets_profile() do
     # Starting an HTTP client profile allows us to scope the httpc
     # configuration options, such as proxy options
-    {:ok, _pid} = :inets.start(:httpc, profile: :elixir_datasets)
+    {:ok, _pid} = :inets.start(:httpc, profile: :elixirDatasets)
     set_proxy_options()
   end
 
   @doc false
   def stop_inets_profile() do
-    :inets.stop(:httpc, :elixir_datasets)
+    :inets.stop(:httpc, :elixirDatasets)
   end
 
   defp set_proxy_options() do

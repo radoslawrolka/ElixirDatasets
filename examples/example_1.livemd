@@ -6,11 +6,11 @@
 ##### Target version
 # Install dependencies
 # Mix.install([
-#   {:elixir_datasets, git: "https://github.com/radoslawrolka/ElixirDatasets"}
+#   {:elixirDatasets, git: "https://github.com/radoslawrolka/ElixirDatasets"}
 # ])
 ##### Local dev-testing version
 Mix.install([
-  {:elixir_datasets, path: "#{__DIR__}/.."},
+  {:elixirDatasets, path: "#{__DIR__}/.."},
   {:explorer, "0.10.0"}
 ],
 config: Config.Reader.read!("#{__DIR__}/../config/config.exs")

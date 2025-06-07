@@ -3,7 +3,7 @@ defmodule ElixirDatasets.MixProject do
 
   def project do
     [
-      app: :elixir_datasets,
+      app: :elixirDatasets,
       name: "ElixirDatasets",
       description: "A library for loading datasets from the Hugging Face Hub and local paths.",
       version: "0.1.0",

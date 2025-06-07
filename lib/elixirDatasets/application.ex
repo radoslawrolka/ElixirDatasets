@@ -1,3 +1,7 @@
+# This file, part of the ElixirDatasets project, has been adapted from code originally under Apache License 2.0.
+# The original code can be found at:
+# https://github.com/elixir-nx/bumblebee/blob/710a645222948f80208c348d3a2589cbd3ab8e7d/lib/bumblebee/application.ex
+
 defmodule ElixirDatasets.Application do
   @moduledoc false
 
