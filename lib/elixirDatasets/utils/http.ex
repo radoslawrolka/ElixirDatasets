@@ -247,4 +247,16 @@ defmodule ElixirDatasets.Utils.HTTP do
       :httpc.set_options([{proxy_scheme, {{host, uri.port}, no_proxy}}], :elixirDatasets)
     end
   end
+
+  # If the code is being run in the test environment, we expose
+  # the internal functions for testing purposes.
+  if Mix.env() == :test do
+    def http_ssl_opts_TEST() do
+      http_ssl_opts()
+    end
+
+    def set_proxy_options_TEST() do
+      set_proxy_options()
+    end
+  end
 end

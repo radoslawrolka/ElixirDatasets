@@ -43,7 +43,7 @@ defmodule ElixirDatasets do
   """
   @type repository :: {:hf, String.t()} | {:hf, String.t(), keyword()} | {:local, Path.t()}
 
-  defp do_load_spec(repository, repo_files, _moduleREMOVE, _architectureREMOVE) do
+  defp do_load_spec(repository, repo_files) do
     case repo_files do
       %{} ->
         paths =
@@ -79,13 +79,35 @@ defmodule ElixirDatasets do
     end
   end
 
-  def load_dataset(repository, opt \\ []) do
-    repository = normalize_repository!(repository)
-    {:hf, ri, opts} = repository
-    new_opts = Keyword.put(opts, :auth_token, opt[:auth_token])
+  @doc """
+  Loads a dataset from the given repository.
 
-    with {:ok, repo_files} <- get_repo_files({:hf, ri, new_opts}),
-         {:ok, paths} <- maybe_load_model_spec(new_opts, repository, repo_files) do
+  The repository can be either a local directory or a Hugging Face repository.
+
+  ## Options
+
+    * `:auth_token` - the token to use as HTTP bearer authorization
+      for remote files. If not provided, the token from the
+      `ELIXIRDATASETS_HF_TOKEN` environment variable is used.
+
+  ## Returns
+
+  An `{:ok, %{dataset: paths}}` tuple, where `paths` is a list of
+  paths to the downloaded dataset files. If the dataset cannot be
+  loaded, an `{:error, reason}` tuple is returned.
+  If the dataset is not found, an error is raised.
+
+  ## Examples
+
+      todo
+  """
+  @spec load_dataset(repository(), keyword()) ::
+          {:ok, %{dataset: [Path.t()]}} | {:error, String.t()}
+  def load_dataset(repository, opts \\ []) do
+    repository = normalize_repository!(repository)
+
+    with {:ok, repo_files} <- get_repo_files(repository),
+         {:ok, paths} <- maybe_load_model_spec(opts, repository, repo_files) do
       {:ok, %{dataset: paths}}
     end
   end
@@ -95,7 +117,7 @@ defmodule ElixirDatasets do
       if spec = opts[:spec] do
         {:ok, spec}
       else
-        do_load_spec(repository, repo_files, opts[:module], opts[:architecture])
+        do_load_spec(repository, repo_files)
       end
 
     with {:ok, spec} <- spec_result do
@@ -218,6 +240,18 @@ defmodule ElixirDatasets do
       Path.expand(dir)
     else
       :filename.basedir(:user_cache, "elixirDatasets")
+    end
+  end
+
+  # If the code is being run in the test environment, we expose
+  # the internal functions for testing purposes.
+  if Mix.env() == :test do
+    def do_load_spec_TEST(repository, repo_files) do
+      do_load_spec(repository, repo_files)
+    end
+
+    def decode_config_TEST(path) do
+      decode_config(path)
     end
   end
 end

@@ -1,5 +1,7 @@
 defmodule ElixirDatasets.Utils.ProgressBarTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
+
+  doctest ElixirDatasets.Utils.ProgressBar
 
   alias ElixirDatasets.Utils.ProgressBar
 

@@ -1,6 +1,8 @@
 defmodule ElixirDatasets.HuggingFace.HubTest do
   use ExUnit.Case, async: true
 
+  doctest ElixirDatasets.HuggingFace.Hub
+
   describe "file_url/3" do
     @repository_id "test-user/test-repo"
     @filename "test-file.txt"
@@ -51,8 +53,39 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     end
   end
 
-  # describe "cached_download/2" do
-  # end
+  describe "cached_download/2" do
+    @url "https://huggingface.co/datasets/aaaaa32r/elixirDatasets"
+    @urlRedirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"
+    @cache_dir "test_cache_dir_cached_download"
+    @cache_scope "test_cache_scope"
+    @opts [cache_dir: @cache_dir, cache_scope: @cache_scope]
+
+    test "No cache_scope" do
+      assert {:ok, _path} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(@url, cache_dir: @cache_dir)
+
+      # Clean up
+      File.rm_rf!(@cache_dir)
+    end
+
+    test "With cache_scope" do
+      File.mkdir_p!(@cache_dir)
+
+      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(@url, @opts)
+
+      # Clean up
+      File.rm_rf!(@cache_dir)
+    end
+
+    test "with cache_scope, redirect" do
+      File.mkdir_p!(@cache_dir)
+
+      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(@urlRedirect, @opts)
+
+      # Clean up
+      File.rm_rf!(@cache_dir)
+    end
+  end
 
   describe "cached_path_for_etag/3" do
     @dir "test_cache_dir_cached_path_for_etag"
@@ -91,7 +124,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
   describe "head_download/2" do
     @url "https://huggingface.co/datasets/aaaaa32r/elixirDatasets"
     @urlRedirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"
-    @urlNilHost "http://localhost:443"
+    # @urlNilHost "http://localhost:32123/sessions/7xre6dqd37a6olsi4dmdddndzz6te5cdimmshjblbbsot2cg" # This URL is not valid for testing, as it does not exist outside of my local environment
     @headers [{"Content-Type", "application/json"}]
 
     test "returns :ok with valid response, without redirection" do
@@ -104,10 +137,10 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
                ElixirDatasets.HuggingFace.Hub.head_download_TEST(@urlRedirect, @headers)
     end
 
-    test "returns :error, when host location is nil" do
-      assert {:error, _reason} =
-               ElixirDatasets.HuggingFace.Hub.head_download_TEST(@urlNilHost, @headers)
-    end
+    # test "returns :error, when host location is nil" do # todo
+    #   assert {:error, _reason} =
+    #            ElixirDatasets.HuggingFace.Hub.head_download_TEST(@urlNilHost, @headers)
+    # end
   end
 
   describe "finish_request" do
