@@ -16,7 +16,8 @@ Mix.install([
 config: Config.Reader.read!("#{__DIR__}/../config/config.exs")
 )
 
-auth_token = Application.get_env(:elixir_datasets, :hf_token)
+# get auth_token for downloading from HuggingFace 
+auth_token = Application.get_env(:elixirDatasets, :hf_token)
 :ok
 ```
 
@@ -33,11 +34,16 @@ import ElixirDatasets
 <!-- livebook:{"output":true} -->
 
 ```
-
+|=============================================================| 100% (104.18 KB)
 ```
+
 <!-- livebook:{"output":true} -->
 
 ```
+{:ok,
+ %{
+   dataset: ["/Users/radoslawrolka/Library/Caches/elixirDatasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra"]
+ }}
 ```
 
 ```elixir

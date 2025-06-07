@@ -23,10 +23,12 @@ defmodule ElixirDatasets.MixProject do
 
   defp deps do
     [
+      {:explorer, "~> 0.10.0"},
       {:jason, "~> 1.4.0"},
+      {:progress_bar, "~> 3.0"},
 
       # Dev
-      {:ex_doc, "~> 0.21"},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
 
       # Test
       {:excoveralls, "~> 0.13", only: :test}

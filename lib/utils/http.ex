@@ -24,7 +24,6 @@ defmodule ElixirDatasets.Utils.HTTP do
   """
   @spec download(String.t(), Path.t(), keyword()) :: :ok | {:error, String.t()}
   def download(url, path, opts \\ []) do
-    IO.inspect({:download, url, path, opts}, label: "Bumblebee.Utils.HTTP.download")
     path = IO.chardata_to_string(path)
     headers = build_headers(opts[:headers] || [])
 
@@ -43,13 +42,13 @@ defmodule ElixirDatasets.Utils.HTTP do
             if Process.alive?(caller) do
               send(caller, {:http, reply_info})
             else
-              :httpc.cancel_request(request_id, :bumblebee)
+              :httpc.cancel_request(request_id, :elixirDatasets)
             end
           end
 
           opts = [stream: :self, sync: false, receiver: receiver]
 
-          {:ok, request_id} = :httpc.request(:get, request, http_opts, opts, :bumblebee)
+          {:ok, request_id} = :httpc.request(:get, request, http_opts, opts, :elixirDatasets)
           download_loop(%{request_id: request_id, file: file, total_size: nil, size: nil})
         after
           File.close(file)
@@ -90,7 +89,7 @@ defmodule ElixirDatasets.Utils.HTTP do
         part_size = byte_size(body_part)
         state = update_in(state.size, &(&1 + part_size))
 
-        if Bumblebee.Utils.progress_bar_enabled?() &&
+        if ElixirDatasets.Utils.ProgressBar.progress_bar_enabled?() &&
              state.total_size && part_size != state.total_size do
           ProgressBar.render(state.size, state.total_size, suffix: :bytes)
         end
@@ -98,7 +97,7 @@ defmodule ElixirDatasets.Utils.HTTP do
         download_loop(state)
 
       {:error, error} ->
-        :httpc.cancel_request(state.request_id, :bumblebee)
+        :httpc.cancel_request(state.request_id, :elixirDatasets)
         {:error, error}
     end
   end
@@ -143,7 +142,6 @@ defmodule ElixirDatasets.Utils.HTTP do
   """
   @spec request(atom(), String.t(), keyword()) :: {:ok, response()} | {:error, String.t()}
   def request(method, url, opts \\ []) do
-    IO.inspect({method, url, opts}, label: "Bumblebee.Utils.HTTP.request")
     headers = build_headers(opts[:headers] || [])
     follow_redirects = Keyword.get(opts, :follow_redirects, true)
 
@@ -163,9 +161,9 @@ defmodule ElixirDatasets.Utils.HTTP do
       body_format: :binary
     ]
 
-    _ = :inets.start(:httpc, profile: :bumblebee)
+    _ = :inets.start(:httpc, profile: :elixirDatasets)
 
-    case :httpc.request(method, request, http_opts, opts, :bumblebee) do
+    case :httpc.request(method, request, http_opts, opts, :elixirDatasets) do
       {:ok, {{_, status, _}, headers, body}} ->
         {:ok, %{status: status, headers: parse_headers(headers), body: body}}
 
@@ -180,7 +178,7 @@ defmodule ElixirDatasets.Utils.HTTP do
         {to_charlist(key), to_charlist(value)}
       end)
 
-    [{~c"user-agent", ~c"bumblebee"} | headers]
+    [{~c"user-agent", ~c"elixirDatasets"} | headers]
   end
 
   defp parse_headers(headers) do
@@ -192,7 +190,7 @@ defmodule ElixirDatasets.Utils.HTTP do
   defp http_ssl_opts() do
     # Allow a user-specified CA certs to support, for example, HTTPS proxies
     cacert_opt =
-      case System.get_env("BUMBLEBEE_CACERTS_PATH") do
+      case System.get_env("ELIXIRDATASETS_CACERTS_PATH") do
         nil -> {:cacerts, :public_key.cacerts_get()}
         file -> {:cacertfile, file}
       end
@@ -242,7 +240,7 @@ defmodule ElixirDatasets.Utils.HTTP do
 
     if uri.host && uri.port do
       host = String.to_charlist(uri.host)
-      :httpc.set_options([{proxy_scheme, {{host, uri.port}, no_proxy}}], :bumblebee)
+      :httpc.set_options([{proxy_scheme, {{host, uri.port}, no_proxy}}], :elixirDatasets)
     end
   end
 end

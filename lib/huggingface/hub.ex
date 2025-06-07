@@ -65,9 +65,8 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   """
   @spec cached_download(String.t(), keyword()) :: {:ok, String.t()} | {:error, String.t()}
   def cached_download(url, opts \\ []) do
-    IO.inspect({:url, url}, label: "Bumblebee.HuggingFace.Hub.cached_download")
     cache_dir = opts[:cache_dir] || ElixirDatasets.cache_dir()
-    offline = Keyword.get(opts, :offline, bumblebee_offline?())
+    offline = Keyword.get(opts, :offline, elixirDatasets_offline?())
     auth_token = opts[:auth_token]
 
     dir = Path.join(cache_dir, "huggingface")
@@ -155,8 +154,6 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   end
 
   defp head_download(url, headers) do
-    IO.inspect({:head_download, url, headers}, label: "Bumblebee.HuggingFace.Hub.head_download")
-
     with {:ok, response} <-
            HTTP.request(:head, url, follow_redirects: false, headers: headers)
            |> finish_request(url) do
@@ -249,7 +246,7 @@ defmodule ElixirDatasets.HuggingFace.Hub do
     File.write(path, json)
   end
 
-  defp bumblebee_offline?() do
-    System.get_env("BUMBLEBEE_OFFLINE") in ~w(1 true)
+  defp elixirDatasets_offline?() do
+    System.get_env("ELIXIRDATASETS_OFFLINE") in ~w(1 true)
   end
 end
