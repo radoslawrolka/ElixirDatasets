@@ -122,7 +122,7 @@ defmodule ElixirDatasets do
 
   defp get_repo_files({:hf, repository_id, opts}) do
     subdir = opts[:subdir]
-    url = HuggingFace.Hub.file_listing_url(repository_id, subdir, opts[:revision], :dataset)
+    url = HuggingFace.Hub.file_listing_url(repository_id, subdir, opts[:revision])
     cache_scope = repository_id_to_cache_scope(repository_id)
 
     result =
@@ -171,7 +171,7 @@ defmodule ElixirDatasets do
         filename
       end
 
-    url = HuggingFace.Hub.file_url(repository_id, filename, opts[:revision], :datasets)
+    url = HuggingFace.Hub.file_url(repository_id, filename, opts[:revision])
     cache_scope = repository_id_to_cache_scope(repository_id)
 
     HuggingFace.Hub.cached_download(

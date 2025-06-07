@@ -15,11 +15,6 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   @spec file_url(String.t(), String.t(), String.t() | nil) :: String.t()
   def file_url(repository_id, filename, revision) do
     revision = revision || "main"
-    @huggingface_endpoint <> "/#{repository_id}/resolve/#{revision}/#{filename}"
-  end
-
-  def file_url(repository_id, filename, revision, :datasets) do
-    revision = revision || "main"
     @huggingface_endpoint <> "/datasets/#{repository_id}/resolve/#{revision}/#{filename}"
   end
 
@@ -28,13 +23,6 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   """
   @spec file_listing_url(String.t(), String.t() | nil, String.t() | nil) :: String.t()
   def file_listing_url(repository_id, subdir, revision) do
-    revision = revision || "main"
-    path = if(subdir, do: "/" <> subdir)
-    @huggingface_endpoint <> "/api/models/#{repository_id}/tree/#{revision}#{path}"
-  end
-
-  @spec file_listing_url(String.t(), String.t() | nil, String.t() | nil) :: String.t()
-  def file_listing_url(repository_id, subdir, revision, :dataset) do
     revision = revision || "main"
     path = if(subdir, do: "/" <> subdir)
     @huggingface_endpoint <> "/api/datasets/#{repository_id}/tree/#{revision}#{path}"
@@ -252,5 +240,43 @@ defmodule ElixirDatasets.HuggingFace.Hub do
 
   defp elixirDatasets_offline?() do
     System.get_env("ELIXIRDATASETS_OFFLINE") in ~w(1 true)
+  end
+
+  # If the code is being run in the test environment, we expose
+  # the internal functions for testing purposes.
+  if Mix.env() == :test do
+    def cached_path_for_etag_TEST(dir, url, etag) do
+      cached_path_for_etag(dir, url, etag)
+    end
+
+    def head_download_TEST(url, headers) do
+      head_download(url, headers)
+    end
+
+    def finish_request_TEST(response, url) do
+      finish_request(response, url)
+    end
+
+    def fetch_etag_TEST(response) do
+      fetch_etag(response)
+    end
+
+    def metadata_filename_TEST(url) do
+      metadata_filename(url)
+    end
+
+    def entry_filename_TEST(url, etag) do
+      entry_filename(url, etag)
+    end
+
+    def load_json_TEST(path) do
+      load_json(path)
+    end
+
+    def store_json_TEST(path, data) do
+      store_json(path, data)
+    end
+
+    def elixirDatasets_offline_TEST?, do: elixirDatasets_offline?()
   end
 end
