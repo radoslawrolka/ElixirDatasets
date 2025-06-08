@@ -46,13 +46,13 @@ defmodule ElixirDatasets.Utils.HTTP do
             if Process.alive?(caller) do
               send(caller, {:http, reply_info})
             else
-              :httpc.cancel_request(request_id, :elixirDatasets)
+              :httpc.cancel_request(request_id, :elixir_datasets)
             end
           end
 
           opts = [stream: :self, sync: false, receiver: receiver]
 
-          {:ok, request_id} = :httpc.request(:get, request, http_opts, opts, :elixirDatasets)
+          {:ok, request_id} = :httpc.request(:get, request, http_opts, opts, :elixir_datasets)
           download_loop(%{request_id: request_id, file: file, total_size: nil, size: nil})
         after
           File.close(file)
@@ -101,7 +101,7 @@ defmodule ElixirDatasets.Utils.HTTP do
         download_loop(state)
 
       {:error, error} ->
-        :httpc.cancel_request(state.request_id, :elixirDatasets)
+        :httpc.cancel_request(state.request_id, :elixir_datasets)
         {:error, error}
     end
   end
@@ -165,9 +165,9 @@ defmodule ElixirDatasets.Utils.HTTP do
       body_format: :binary
     ]
 
-    _ = :inets.start(:httpc, profile: :elixirDatasets)
+    _ = :inets.start(:httpc, profile: :elixir_datasets)
 
-    case :httpc.request(method, request, http_opts, opts, :elixirDatasets) do
+    case :httpc.request(method, request, http_opts, opts, :elixir_datasets) do
       {:ok, {{_, status, _}, headers, body}} ->
         {:ok, %{status: status, headers: parse_headers(headers), body: body}}
 
@@ -194,7 +194,7 @@ defmodule ElixirDatasets.Utils.HTTP do
   defp http_ssl_opts() do
     # Allow a user-specified CA certs to support, for example, HTTPS proxies
     cacert_opt =
-      case System.get_env("ELIXIRDATASETS_CACERTS_PATH") do
+      case System.get_env("ELIXIR_DATASETS_CACERTS_PATH") do
         nil -> {:cacerts, :public_key.cacerts_get()}
         file -> {:cacertfile, file}
       end
@@ -213,13 +213,13 @@ defmodule ElixirDatasets.Utils.HTTP do
   def start_inets_profile() do
     # Starting an HTTP client profile allows us to scope the httpc
     # configuration options, such as proxy options
-    {:ok, _pid} = :inets.start(:httpc, profile: :elixirDatasets)
+    {:ok, _pid} = :inets.start(:httpc, profile: :elixir_datasets)
     set_proxy_options()
   end
 
   @doc false
   def stop_inets_profile() do
-    :inets.stop(:httpc, :elixirDatasets)
+    :inets.stop(:httpc, :elixir_datasets)
   end
 
   defp set_proxy_options() do
@@ -244,7 +244,7 @@ defmodule ElixirDatasets.Utils.HTTP do
 
     if uri.host && uri.port do
       host = String.to_charlist(uri.host)
-      :httpc.set_options([{proxy_scheme, {{host, uri.port}, no_proxy}}], :elixirDatasets)
+      :httpc.set_options([{proxy_scheme, {{host, uri.port}, no_proxy}}], :elixir_datasets)
     end
   end
 

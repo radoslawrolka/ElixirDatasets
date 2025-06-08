@@ -1,3 +1,3 @@
-Application.put_env(:elixirDatasets, :progress_bar_enabled, false)
+Application.put_env(:elixir_datasets, :progress_bar_enabled, false)
 
 ExUnit.start()

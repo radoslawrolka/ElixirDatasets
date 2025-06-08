@@ -58,7 +58,7 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   @spec cached_download(String.t(), keyword()) :: {:ok, String.t()} | {:error, String.t()}
   def cached_download(url, opts \\ []) do
     cache_dir = opts[:cache_dir] || ElixirDatasets.cache_dir()
-    offline = Keyword.get(opts, :offline, elixirDatasets_offline?())
+    offline = Keyword.get(opts, :offline, elixir_datasets_offline?())
     auth_token = opts[:auth_token]
 
     dir = Path.join(cache_dir, "huggingface")
@@ -238,8 +238,8 @@ defmodule ElixirDatasets.HuggingFace.Hub do
     File.write(path, json)
   end
 
-  defp elixirDatasets_offline?() do
-    System.get_env("ELIXIRDATASETS_OFFLINE") in ~w(1 true)
+  defp elixir_datasets_offline?() do
+    System.get_env("ELIXIR_DATASETS_OFFLINE") in ~w(1 true)
   end
 
   # If the code is being run in the test environment, we expose
@@ -277,6 +277,6 @@ defmodule ElixirDatasets.HuggingFace.Hub do
       store_json(path, data)
     end
 
-    def elixirDatasets_offline_TEST?, do: elixirDatasets_offline?()
+    def elixir_datasets_offline_TEST?, do: elixir_datasets_offline?()
   end
 end

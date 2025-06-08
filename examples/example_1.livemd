@@ -6,18 +6,18 @@
 ##### Target version
 # Install dependencies
 # Mix.install([
-#   {:elixirDatasets, git: "https://github.com/radoslawrolka/ElixirDatasets"}
+#   {:elixir_datasets, git: "https://github.com/radoslawrolka/ElixirDatasets"}
 # ])
 ##### Local dev-testing version
 Mix.install([
-  {:elixirDatasets, path: "#{__DIR__}/.."},
+  {:elixir_datasets, path: "#{__DIR__}/.."},
   {:explorer, "0.10.0"}
 ],
 config: Config.Reader.read!("#{__DIR__}/../config/config.exs")
 )
 
 # get auth_token for downloading from HuggingFace 
-auth_token = Application.get_env(:elixirDatasets, :hf_token)
+auth_token = Application.get_env(:elixir_datasets, :hf_token)
 :ok
 ```
 
@@ -42,7 +42,7 @@ import ElixirDatasets
 ```
 {:ok,
  %{
-   dataset: ["/Users/radoslawrolka/Library/Caches/elixirDatasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra"]
+   dataset: ["/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra"]
  }}
 ```
 
@@ -64,5 +64,60 @@ df = Explorer.DataFrame.from_csv!(path)
    "I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is \"istanbulu cok seviyom burada olmak cok guzel\"",
    "I want you to act as an interviewer. I will be the candidate and you will ask me the interview questions for the `position` position. I want you to only reply as the interviewer. Do not write all the conversation at once. I want you to only do the interview with me. Ask me the questions and wait for my answers. Do not write explanations. Ask me the questions one by one like an interviewer does and wait for my answers. My first sentence is \"Hi\"",
    ...]
+>
+```
+
+```elixir
+{:ok, ds1} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"})
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+|==============================================================| 100% (92.20 KB)
+|=============================================================| 100% (698.84 KB)
+|==============================================================| 100% (90.00 KB)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ %{
+   dataset: ["/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei",
+    "/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/fbau5kbtksyowwsaebufmdc5km.ejtdqojzmuzwgyrygezdiyjrgjrdozbygjrtgmdcme2wgzbtgvsden3fmi3dknzvmqywemjqmq3dkzrxgmywcnrqgm2dqnbvgrqtsnjzei",
+    "/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/6czff2wi7db3bfzuqy5kh4m66m.ei2timrxmezgenjzmqyweolcmvsdczlbgvrwgm3ghe3dgobugnrgimjtmvqtonbugntdgmtegi3wknzume4tkn3bgnsdcobrmnrtknbvei"]
+ }}
+```
+
+```elixir
+{:ok, ds1} = ElixirDatasets.load_dataset(
+  {:local, "#{__DIR__}/../resources"})
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ %{
+   dataset: ["/Users/radoslawrolka/Desktop/elixir_datasets/examples/../resources/parquet-test.parquet",
+    "/Users/radoslawrolka/Desktop/elixir_datasets/examples/../resources/json-test.json",
+    "/Users/radoslawrolka/Desktop/elixir_datasets/examples/../resources/csv-test.csv"]
+ }}
+```
+
+```elixir
+%{dataset: path1} = ds1
+df1 = Explorer.DataFrame.from_csv!(Enum.at(path1, 2))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[10 x 2]
+  id s64 [1, 2, 3, 4, 5, ...]
+  number string ["one", "two", "three", "four", "five", ...]
 >
 ```

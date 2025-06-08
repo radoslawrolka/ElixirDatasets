@@ -55,7 +55,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
   describe "cached_download/2" do
     @url "https://huggingface.co/datasets/aaaaa32r/elixirDatasets"
-    @urlRedirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"
+    @url_redirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"
     @cache_dir "test_cache_dir_cached_download"
     @cache_scope "test_cache_scope"
     @opts [cache_dir: @cache_dir, cache_scope: @cache_scope]
@@ -80,7 +80,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     test "with cache_scope, redirect" do
       File.mkdir_p!(@cache_dir)
 
-      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(@urlRedirect, @opts)
+      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(@url_redirect, @opts)
 
       # Clean up
       File.rm_rf!(@cache_dir)
@@ -123,7 +123,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
   describe "head_download/2" do
     @url "https://huggingface.co/datasets/aaaaa32r/elixirDatasets"
-    @urlRedirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"
+    @url_redirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"
     # @urlNilHost "http://localhost:32123/sessions/7xre6dqd37a6olsi4dmdddndzz6te5cdimmshjblbbsot2cg" # This URL is not valid for testing, as it does not exist outside of my local environment
     @headers [{"Content-Type", "application/json"}]
 
@@ -133,8 +133,8 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     end
 
     test "returns :ok with valid response, with redirection" do
-      assert {:ok, _etag, _urlRedirect, true} =
-               ElixirDatasets.HuggingFace.Hub.head_download_TEST(@urlRedirect, @headers)
+      assert {:ok, _etag, _url_redirect, true} =
+               ElixirDatasets.HuggingFace.Hub.head_download_TEST(@url_redirect, @headers)
     end
 
     # test "returns :error, when host location is nil" do # todo
@@ -245,32 +245,32 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
   end
 
   describe "elixirDatasets_offline?/0" do
-    test "returns true when ELIXIRDATASETS_OFFLINE is set to '1'" do
-      System.put_env("ELIXIRDATASETS_OFFLINE", "1")
-      assert ElixirDatasets.HuggingFace.Hub.elixirDatasets_offline_TEST?() == true
-      System.delete_env("ELIXIRDATASETS_OFFLINE")
+    test "returns true when ELIXIR_DATASETS_OFFLINE is set to '1'" do
+      System.put_env("ELIXIR_DATASETS_OFFLINE", "1")
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == true
+      System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
 
-    test "returns true when ELIXIRDATASETS_OFFLINE is set to 'true'" do
-      System.put_env("ELIXIRDATASETS_OFFLINE", "true")
-      assert ElixirDatasets.HuggingFace.Hub.elixirDatasets_offline_TEST?() == true
-      System.delete_env("ELIXIRDATASETS_OFFLINE")
+    test "returns true when ELIXIR_DATASETS_OFFLINE is set to 'true'" do
+      System.put_env("ELIXIR_DATASETS_OFFLINE", "true")
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == true
+      System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
 
-    test "returns false when ELIXIRDATASETS_OFFLINE is not set" do
-      assert ElixirDatasets.HuggingFace.Hub.elixirDatasets_offline_TEST?() == false
+    test "returns false when ELIXIR_DATASETS_OFFLINE is not set" do
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == false
     end
 
-    test "returns false when ELIXIRDATASETS_OFFLINE is set to '0'" do
-      System.put_env("ELIXIRDATASETS_OFFLINE", "0")
-      assert ElixirDatasets.HuggingFace.Hub.elixirDatasets_offline_TEST?() == false
-      System.delete_env("ELIXIRDATASETS_OFFLINE")
+    test "returns false when ELIXIR_DATASETS_OFFLINE is set to '0'" do
+      System.put_env("ELIXIR_DATASETS_OFFLINE", "0")
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == false
+      System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
 
-    test "returns false when ELIXIRDATASETS_OFFLINE is set to 'false'" do
-      System.put_env("ELIXIRDATASETS_OFFLINE", "false")
-      assert ElixirDatasets.HuggingFace.Hub.elixirDatasets_offline_TEST?() == false
-      System.delete_env("ELIXIRDATASETS_OFFLINE")
+    test "returns false when ELIXIR_DATASETS_OFFLINE is set to 'false'" do
+      System.put_env("ELIXIR_DATASETS_OFFLINE", "false")
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == false
+      System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
   end
 end

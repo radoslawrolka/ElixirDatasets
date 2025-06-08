@@ -25,11 +25,11 @@ defmodule ElixirDatasets do
         * `:cache_dir` - the directory to store the downloaded files
           in. Defaults to the standard cache location for the given
           operating system. You can also configure it globally by
-          setting the `ELIXIRDATASETS_CACHE_DIR` environment variable
+          setting the `ELIXIR_DATASETS_CACHE_DIR` environment variable
 
         * `:offline` - if `true`, only cached files are accessed and
           missing files result in an error. You can also configure it
-          globally by setting the `ELIXIRDATASETS_OFFLINE` environment
+          globally by setting the `ELIXIR_DATASETS_OFFLINE` environment
           variable to `true`
 
         * `:auth_token` - the token to use as HTTP bearer authorization
@@ -88,7 +88,7 @@ defmodule ElixirDatasets do
 
     * `:auth_token` - the token to use as HTTP bearer authorization
       for remote files. If not provided, the token from the
-      `ELIXIRDATASETS_HF_TOKEN` environment variable is used.
+      `ELIXIR_DATASETS_HF_TOKEN` environment variable is used.
 
   ## Returns
 
@@ -232,14 +232,14 @@ defmodule ElixirDatasets do
   Returns the directory where downloaded files are stored.
 
   Defaults to the standard cache location for the given operating system.
-  Can be configured with the `ELIXIRDATASETS_CACHE_DIR` environment variable.
+  Can be configured with the `ELIXIR_DATASETS_CACHE_DIR` environment variable.
   """
   @spec cache_dir() :: String.t()
   def cache_dir() do
-    if dir = System.get_env("ELIXIRDATASETS_CACHE_DIR") do
+    if dir = System.get_env("ELIXIR_DATASETS_CACHE_DIR") do
       Path.expand(dir)
     else
-      :filename.basedir(:user_cache, "elixirDatasets")
+      :filename.basedir(:user_cache, "elixir_datasets")
     end
   end
 

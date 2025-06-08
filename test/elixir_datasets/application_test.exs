@@ -11,7 +11,7 @@ defmodule ElixirDatasets.ApplicationTest do
              "Application should start without errors"
 
       # Ensure the application is running
-      assert {:ok, _} = Application.ensure_all_started(:elixirDatasets),
+      assert {:ok, _} = Application.ensure_all_started(:elixir_datasets),
              "Application should be ensured to start without errors"
 
       # Stop the application again

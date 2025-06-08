@@ -23,12 +23,12 @@ defmodule ElixirDatasets.Utils.HTTPTest do
   describe "http_ssl_opts/0" do
     test "returns SSL options with CA certificate file" do
       path = "/test/path"
-      System.put_env("ELIXIRDATASETS_CACERTS_PATH", path)
+      System.put_env("ELIXIR_DATASETS_CACERTS_PATH", path)
 
       assert [{:cacertfile, ^path}, {_, _}, {_, _}] =
                ElixirDatasets.Utils.HTTP.http_ssl_opts_TEST()
 
-      System.delete_env("ELIXIRDATASETS_CACERTS_PATH")
+      System.delete_env("ELIXIR_DATASETS_CACERTS_PATH")
     end
   end
 

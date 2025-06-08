@@ -54,21 +54,40 @@ defmodule ElixirDatasetsTest do
     end
 
     test "loads a dataset from Hugging Face without opts" do
-      repositoryShort = {:hf, "aaaaa32r/elixirDatasets"}
-      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repositoryShort)
+      repository_short = {:hf, "aaaaa32r/elixirDatasets"}
+      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repository_short)
 
       File.rm_rf!(
         :filename.basedir(
           :user_cache,
-          "elixirDatasets" <> "/huggingface/aaaaa32r--elixirDatasets"
+          "elixir_datasets" <> "/huggingface/aaaaa32r--elixirDatasets"
         )
       )
     end
 
-    # test "loads a dataset from local directory" do
-    #   repository = {:local, "test/fixtures/datasets/local_dataset"}
-    #   assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repository)
-    # end
+    test "loads a dataset from local directory" do
+      repository = {:local, "resources"}
+      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repository)
+    end
+
+    test "raise error when invalid local directory" do
+      repository = {:local, "invalid/path"}
+      assert {:error, _reason} = ElixirDatasets.load_dataset(repository)
+    end
+
+    test "loads dataset offline" do
+      # Loads a dataset from Hugging Face in online mode
+      repository = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
+      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repository)
+      # Loads the same dataset in offline mode
+      repositoryOffline = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir, offline: true]}
+      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repositoryOffline)
+      # Loads not existing dataset in offline mode
+      repositoryOfflineInvalid = {:hf, "not/exists", [cache_dir: @cache_dir, offline: true]}
+      assert {:error, _reason} = ElixirDatasets.load_dataset(repositoryOfflineInvalid)
+      # Clean up cache directory
+      File.rm_rf!(@cache_dir)
+    end
 
     test "loads a dataset from Hugging Face with subdirectory" do
       repositorySubdir =
@@ -113,27 +132,27 @@ defmodule ElixirDatasetsTest do
 
   describe "cache_dir/0" do
     test "Cache directory in ENV" do
-      if System.get_env("ELIXIRDATASETS_CACHE_DIR") do
-        assert ElixirDatasets.cache_dir() == System.get_env("ELIXIRDATASETS_CACHE_DIR")
+      if System.get_env("ELIXIR_DATASETS_CACHE_DIR") do
+        assert ElixirDatasets.cache_dir() == System.get_env("ELIXIR_DATASETS_CACHE_DIR")
       else
         path = "test/cache"
-        System.put_env("ELIXIRDATASETS_CACHE_DIR", path)
+        System.put_env("ELIXIR_DATASETS_CACHE_DIR", path)
         expected_dir = Path.expand(path)
         assert ElixirDatasets.cache_dir() == expected_dir
-        System.delete_env("ELIXIRDATASETS_CACHE_DIR")
+        System.delete_env("ELIXIR_DATASETS_CACHE_DIR")
       end
     end
 
     test "Cache directory not set" do
-      if env_var = System.get_env("ELIXIRDATASETS_CACHE_DIR") do
-        System.delete_env("ELIXIRDATASETS_CACHE_DIR")
+      if env_var = System.get_env("ELIXIR_DATASETS_CACHE_DIR") do
+        System.delete_env("ELIXIR_DATASETS_CACHE_DIR")
       end
 
-      expected_dir = :filename.basedir(:user_cache, "elixirDatasets")
+      expected_dir = :filename.basedir(:user_cache, "elixir_datasets")
       assert ElixirDatasets.cache_dir() == expected_dir
 
       if env_var do
-        System.put_env("ELIXIRDATASETS_CACHE_DIR", env_var)
+        System.put_env("ELIXIR_DATASETS_CACHE_DIR", env_var)
       end
     end
   end
