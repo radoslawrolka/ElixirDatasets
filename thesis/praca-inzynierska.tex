@@ -372,13 +372,186 @@ Poniżej przedstawiono przykładowe scenariusze użytkowania systemu, które ilu
 \chapter{\ChapterTitleRealizationAspects}
 \label{sec:wybrane-aspekty-realizacji}
 
-todo - wstep
+Niniejszy rozdział poświęcony jest praktycznym aspektom implementacji biblioteki. Celem tego rozdziału jest przedstawienie kluczowych decyzji projektowych, które miały wpływ na strukturę i funkcjonalności finalnego produktu. Rozdział ten stanowi podstawę do głębszego zrozumienia technicznego podejścia przyjętego podczas tworzenia biblioteki oraz wyjaśnia, jakie specyficzne problemy zostały rozwiązane w trakcie pracy nad projektem.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{3rdchapter-todo}
-\label{sec:3todo}
+\section{Architektura systemu}
+\label{sec:architektura-systemu}
 
-todo
+System opracowany w ramach tej pracy inżynierskiej został skonstruowany tak, aby zapewnić użytkownikowi łatwy dostęp do popularnych zestawów danych wykorzystywanych w uczeniu maszynowym oraz umożliwić dodawanie i zarządzanie własnymi zbiorami danych. Aby osiągnąć te cele, architektura systemu została podzielona na trzy główne moduły. 
+\newline\par
+Moduł networkingowy jest odpowiedzialny za wszystkie operacje wymagające komunikacji z zewnętrznymi serwerami za pomocą protokołu HTTP. Jego głównymi zadaniami są: pobieranie danych z zewnętrznych źródeł, przesyłanie żądań o dostęp do zbiorów danych i odbieranie odpowiedzi. 
+\newline\par
+Moduł HuggingFace odpowiada za integrację z API Hugging Face, co pozwala na wyszukiwanie, pobieranie i zarządzanie zbiorami danych dostępnymi na platformie oraz autoryzację do materiałów z ograniczonym dostępem. 
+\newline\par
+Interfejs biblioteki ElixirDatasets to komponent, z którym bezpośrednio wchodzi w interakcję użytkownik końcowy. Stanowi on "fasadę" dla wszystkich operacji dostępnych w bibliotece, ukrywając za sobą złożoność modułów niższego poziomu. Każdy z tych komponentów pełni specyficzne funkcje, które razem tworzą spójny i efektywny system.
+
+\begin{figure}[!htbp]
+  \centering
+\includegraphics[width=.9\textwidth]{schemat-systemu.png}
+\caption[Schemat systemu]{Schemat systemu}
+\label{fig:schemat-systemu}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stos technologiczny}
+\label{sec:stos-technologiczny}
+
+Niniejszy rozdział opisuje technologie wybrane do budowy i wsparcia rozwoju naszej biblioteki w Elixirze. Przedstawione zostaną zarówno główne składniki stosu technologicznego, jak i przyczyny ich wyboru, co umożliwi zrozumienie, dlaczego stanowią one optymalne rozwiązanie.
+
+\subsection{Elixir i biblioteka standardowa}
+Język programowania Elixir został wybrany jako główny język programowania ze względu na jego skalowalność, wydajność oraz wyjątkowe wsparcie dla programowania współbieżnego. Biblioteka standardowa Eliksira dostarcza szeroką gamę modułów i funkcji, które pomagają w efektywnym budowaniu aplikacji, w tym w obsłudze sieciowej, przetwarzaniu danych i konstrukcjach współbieżnych.
+
+\subsection{Explorer}
+Współpraca z danymi wymaga używania narzędzi, które umożliwiają łatwą manipulację i transformację zbiorów danych. Biblioteka Explorer służy do łatwego zarządzania danymi w Elixirze, oferując funkcje podobne do tych z pakietu pandas w Pythonie. Umożliwia ona efektywne przetwarzanie dużych zbiorów danych.
+
+\subsection{Mix}
+Mix jest narzędziem służącym do zarządzania projektami w Elixirze, które umożliwia kompilację kodu, jego testowanie oraz zarządzanie zależnościami. Mix jest integralną częścią ekosystemu Elixir i stanowi fundament pod względem konstrukcji i administracji projektami.
+
+\subsection{ExDoc}
+Dokumentacja jest niezmiernie ważna dla utrzymania i rozwijania projektów programistycznych, zwłaszcza tych otwartych, gdzie inni programiści mogą wnosić wkład. ExDoc to narzędzie do generowania dokumentacji w Elixirze, które pozwala na tworzenie przejrzystej i łatwo przeszukiwalnej dokumentacji dla projektów.
+
+\subsection{ExUnit i ExCoveralls}
+Zapewnienie jakości kodu poprzez testy jest fundamentem stabilnego oprogramowania. ExUnit to framework testowy dostarczany razem z Elixirem, który umożliwia pisanie czytelnych i efektywnych testów jednostkowych. ExCoveralls z kolei to narzędzie, które pozwala na mierzenie pokrycia kodu testami, co jest ważnym wskaźnikiem jakości projektu programistycznego.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Przegląd poszczególnych komponentów}
+\label{sec:przeglad-poszczegolnych-komponentow}
+
+W tej sekcji dokonujemy szczegółowego przeglądu kluczowych komponentów systemu, które mają zasadnicze znaczenie dla działania i efektywności naszej biblioteki. Każdy z komponentów odpowiada za specyficzne funkcje i jest istotny zarówno z punktu widzenia realizacji podstawowych zadań, jak i możliwości rozbudowy czy utrzymania całego systemu.
+
+\subsection{Moduł Interfejsu}
+\label{sec:modul-interfejsu}
+
+Moduł interfejsu odgrywa kluczową rolę w naszej bibliotece, zapewniając interaktywny dostęp do funkcjonalności platformy HuggingFace/datasets. Ten komponent ma za zadanie odtworzenie interfejsu tej platformy, co umożliwia użytkownikom łatwe pobieranie zbiorów danych, ich udostępnianie oraz przeglądanie szczegółowych informacji o danych przed ich pobraniem.
+\newline \par
+Interaktywność modułu interfejsu znacząco ułatwia korzystanie z bogatych zasobów dostępnych na platformie Hugging Face, pozwalając na bezpośrednie i intuicyjne wykorzystanie dostępnych zbiorów w procesach analitycznych i badawczych. Dzięki temu użytkownicy mogą nie tylko efektywnie zarządzać danymi, ale również optymalizować czas potrzebny na przygotowanie i przetwarzanie informacji niezbędnych do analiz lub treningów modeli uczenia maszynowego.
+\newline \par
+Podsumowując, moduł interfejsu jest niezbędnym elementem biblioteki, umożliwiającym integrację z zewnętrznymi źródłami danych i zapewniającym użytkownikowi dostęp do funkcjonalności kluczowych dla efektywnego wykorzystania dostępnych zbiorów danych.
+
+\subsection{Moduł HuggingFace}
+\label{sec:modul-huggingface}
+
+Moduł HuggingFace w bibliotece ElixirDatasets pełni kluczową rolę w zapewnianiu dostępu do szerokiej gamy zbiorów danych dostępnych na platformie Hugging Face. Ten komponent modułu jest odpowiedzialny za interakcję z API Hugging Face, co ułatwia pobieranie danych, ich udostępnianie, a także podgląd informacji o zbiorach przed ich pobraniem.
+\newline \par
+Dzięki wykorzystaniu funkcji `file\_url` i `file\_listing\_url`, moduł umożliwia uzyskanie URL-i do konkretnych plików i listowania zawartości repozytorium na platformie Hugging Face. Obejmuje to zarówno publiczne zbiory danych, jak i te prywatne, dostępne tylko dla autoryzowanych użytkowników. Proces ten jest wspomagany przez mechanizm cache'owania, gdzie każde pobrane pliki są zapisywane lokalnie wraz z ich metadanymi, co pozwala na optymalizację kolejnych zapytań.
+\newline \par
+Dodatkowo, rozszerzona funkcja `cached\_download` pozwala na pobieranie plików z zastosowaniem cache bazującego na ETagach (Entity Tags). Jeśli zasób nie uległ zmianie, dane mogą być serwowane bezpośrednio z lokalnego cache, co znacznie przyspiesza dostęp i redukuje zużycie zasobów sieciowych.
+\newline \par
+Użytkownik może również korzystać z opcjonalnych ustawień, takich jak tryb offline, który zapewnia dostęp do zasobów nawet w przypadku braku połączenia z Internetem, pod warunkiem że dane zostały wcześniej pobrane i zapisane w cache'u.
+
+\subsection{Moduł networkingowy}
+\label{sec:modul-networkingowy}
+
+Moduł networkingowy w projekcie ElixirDatasets pełni fundamentalną rolę w umożliwianiu komunikacji sieciowej, stosując się do wiodących standardów praktyk internetowych. Jest odpowiedzialny za mechaniczne aspekty pobierania danych, obsługę protokołów HTTP/HTTPS oraz zarządzanie połączeniami sieciowymi. Moduł ten, zaimplementowany w `ElixirDatasets.Utils.HTTP`, służy jako centralny punkt dla wszystkich operacji sieciowych wykonanych przez bibliotekę.
+\newline
+Fundamentalne funkcje modułu networkingowego obejmują:
+\begin{itemize}
+    \item \textbf{Pobieranie danych:} Moduł potrafi wykonywać bezpieczne żądania do zdalnych serwerów, pobierając dane bezpośrednio na lokalne dyski użytkownika. To mechanizm, który stoi za funkcją `download`, pozwala na efektywne zarządzanie przepływem danych.
+    \item \textbf{Zarządzanie nagłówkami HTTP:} Za pomocą funkcji `get\_header`, moduł umożliwia manipulację i odczyt nagłówków HTTP, co jest kluczowe do prawidłowego rozumienia i kontrolowania odpowiedzi serwera.
+    \item \textbf{Opcje konfiguracyjne:} Użytkownicy mogą dostosować wiele aspektów żądań HTTP, takich jak nagłówki, ciało żądania, czy timeout, co daje elastyczność potrzebną do obsługi różnorodnych scenariuszy użytecznych.
+\end{itemize}
+
+Jedną z istotnych cech modułu jest jego zdolność do obsługi przekierowań i autoryzacji, co czyni go potężnym narzędziem do integracji z różnymi API oferującymi dane. Ponadto, moduł zapewnia mechanizmy bezpieczeństwa, takie jak weryfikacja certyfikatów SSL czy obsługa etykiet ETag, które minimalizują ryzyko przechwycenia danych i umożliwiają inteligentne zarządzanie cache'owaniem.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Ciekawsze algorytmy i mechanizmy systemu}
+\label{sec:ciekawsze-algorytmy-i-mechanizmy-systemu}
+
+Poniższa sekcja koncentruje się na przedstawieniu najbardziej istotnych komponentów opracowywanego systemu. Zostaną one omówione nie tylko pod kątem szczegółowego działania, ale także w kontekście ich wpływu na całość tworzonego systemu.
+
+\subsection{Cacheowanie danych}
+\label{sec:cacheowanie-danych}
+
+Cacheowanie danych jest krytycznym aspektem naszego systemu, zwiększającym jego efektywność poprzez redukcję liczby koniecznych operacji wejścia/wyjścia, zewnętrznych zapytań API oraz pobrań danych, które już wcześniej zostały załadowane. Aby zminimalizować niepotrzebne operacje, szczególnie w przypadku wielokrotnych uruchomień kodu przez użytkownika, implementujemy mechanizm etag (entity tag) oraz OId (Object Identifier). Etag i OId to unikalne identyfikatory przypisane do każdej wersji zasobu, które umożliwiają jednoznaczne stwierdzenie, czy przechowywana wersja zasobu nadal jest aktualna.
+\newline \par
+Przykładem wykorzystania etagu oraz oidu może być kontrola stanu zbiorów danych na zdalnym repozytorium. Poniżej przedstawiono przykłady odpowiedzi serwera, ilustrującej zastosowanie etagu i oidu:
+
+\begin{lstlisting}[language=Python,float=!htbp,caption={[Podgląd odpowiedzi serwera z etagiem]Podgląd odpowiedzi serwera z etagiem},label=lst:odpowiedz-ze-stanem-etag]
+{
+  "etag": "W/\"129-cBr/GjmAu235zSmcAE8hRzjbA90\"",
+  "url": "https://huggingface.co/api/datasets/fka/awesome-chatgpt-prompts"
+}%                 
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,float=!htbp,caption={[Podgląd odpowiedzi serwera z oid]Podgląd odpowiedzi serwera z oid},label=lst:odpowiedz-ze-stanem-oid]
+[
+    {
+        "type": "file",
+        "oid": "f4f3945bd7150d3e12988485c42da1f8c29c59f8",
+        "size": 2265,
+        "path": ".gitattributes"
+    },
+    {
+        "type": "file",
+        "oid": "d3dc1fd0061ff5ebb4c34451bd6c17d4547b6612",
+        "size": 339,
+        "path": "README.md"
+    },{
+        "type": "file",
+        "oid": "6df098dd5d2ff6d9fedd3aa052e6fd49c3389b77",
+        "size": 104186,
+        "path": "prompts.csv"
+    }
+]%   
+\end{lstlisting}
+
+\subsection{Pasek Postępu (ProgressBar)}
+\label{sec:progress-bar}
+
+Aby ułatwić użytkownikom wizualizację postępu pobierania dużych zbiorów danych, w bibliotece został zaimplementowany pasek postępu (ProgressBar). Jest to narzędzie graficzne, które dynamicznie aktualizuje się w trakcie pobierania danych, pokazując użytkownikowi w sposób bezpośredni ile danych już zostało pobrane, a ile pozostało do końca procesu. Taka wizualizacja jest szczególnie przydatna w przypadku pobierania dużych zbiorów danych, gdzie proces może trwać znaczną ilość czasu.
+
+\begin{figure}[!htbp]
+  \centering
+\includegraphics[width=.9\textwidth]{ProgressBar.png}
+\caption[Zas]{Przykład wizualizacji paska postępu}
+\label{fig:progressbar}
+\end{figure}
+
+\subsection{Przykłady LiveBook}
+\label{sec:przyklady-livebook}
+
+LiveBook to narzędzie interaktywne, zaprojektowane do tworzenia dokumentów, które mogą zawierać zarówno treść edukacyjną jak i wykonywalny kod. W ramach naszej biblioteki w języku Elixir, zintegrowaliśmy przykłady LiveBook, które umożliwiają użytkownikom eksperymentowanie z kodem na żywo, bezpośrednio w przeglądarce.
+
+Te interaktywne dokumenty są niezwykle przydatne w edukacji i prezentacji możliwości biblioteki, ponieważ pozwalają na natychmiastowe obserwowanie wyników działania kodu. Użytkownicy mogą modyfikować lub rozwijać przykłady, co zwiększa ich zrozumienie działania biblioteki i zachęca do głębszego eksplorowania jej funkcji.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{livebook.png}
+  \caption{Przykład wykorzystania LiveBook}
+  \label{fig:livebook}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Zapewnienie jakości}
+\label{sec:zapewnienie-jakosci}
+
+W projektowaniu oprogramowania, zapewnienie jakości odgrywa kluczową rolę w sprawdzaniu, czy produkt spełnia oczekiwania użytkowników i wewnętrzne standardy jakości przed jego wydaniem. W kontekście rozwijania biblioteki przedstawione zostaną techniki testowania automatycznego oraz utrzymywania jakości oprogramowania.
+
+\subsection{Testy jednostkowe}
+\label{sec:testy-jednostkowe}
+
+Testy jednostkowe koncentrują się na pojedynczych, izolowanych fragmentach kodu, takich jak funkcje lub metody, sprawdzając, czy zachowują się one zgodnie z oczekiwaniami na podstawie zdefiniowanych przypadków testowych. W projektowanej bibliotece w języku Elixir, testy te są realizowane z wykorzystaniem frameworka ExUnit, który oferuje wsparcie dla asercji, testowania równoległego, a także umożliwia łatwą integrację z narzędziami do pomiaru pokrycia kodu testami, takimi jak ExCoveralls, którego pokrycie testami zostało ustawione na 90\%. Efektywne wykorzystanie testów jednostkowych pozwala na szybką identyfikację i izolację błędów oraz zapewnia stabilność kodu poprzez ciągłą weryfikację jego poprawności w miarę jego rozwoju.
+
+\subsection{Analiza statyczna kodu}
+\label{sec:analiza-statyczna-kodu}
+
+W napisanej bibliotece zostały wykorzystane narzędzia analizy statycznej kodu, które przeprowadzało rygorystyczne sprawdzanie typów oraz wykrywanie nieosiągalnych fragmentów kodu. Z uwagi na dynamiczną naturę Elixira, narzędzie to stanowi kluczowy element zapewniający dodatkowe bezpieczeństwo typów, które nie jest domyślnie ścisłe w tym języku. Ponadto, w procesie tworzenia biblioteki wykorzystano narzędzia zapewniające przestrzeganie ujednoliconego stylu kodowania, co znacząco przyczyniło się do poprawy czytelności kodu. Te narzędzia automatycznie egzekwowały zasady dotyczące formatowania i struktury kodu, co ułatwiło współpracę w zespole i zwiększyło efektywność w utrzymaniu oraz rozwijaniu projektu. Implementacja analizy statycznej pozwala na wcześniejsze zidentyfikowanie problemów oraz ułatwia utrzymanie wysokiej jakości kodu.
+
+\subsection{Ciągła integracja (CI)}
+\label{sec:ciagla-integracja}
+
+Kluczowym narzędziem usprawniającym proces ciągłej integracji jest GitHub Actions. Ta platforma CI/CD pozwala na automatyczne wykonywanie różnorodnych operacji w arbitralnie skonfigurowanym środowisku wirtualnym. W naszym przypadku, każde zgłoszenie do repozytorium inicjuje serię zadań w GitHub Actions, które obejmują kompilację kodu w trybie ścisłym, uruchomienie testów, zgodność z ustanowionymi standardami formatowania, a także analizę pokrycia testami.
+
+\subsection{Code review}
+\label{sec:code-review}
+
+Code review, czyli przegląd kodu prez innego członka zespołu, jest niezastąpionym procesem w cyklu rozwoju oprogramowania. Proces ten polegał na ocenie kodu przez osobę niezwiązaną bezpośrednio z implementacją przy utworzeniu żądania dodania nowych funkcjonalności do oficjalnej gałęzi repozytorium. Dopiero po pozytywnym rozpatrzeniu takiego wniosku możliwe było połączenie dwóch wersji.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Podsumowanie}
+\label{sec:podsumowanie}
+Biblioteka została zaprojektowana zgodnie z zasadami modularności, co klarownie definiuje rolę i odpowiedzialności poszczególnych segmentów kodu. Narzędzia oraz technologie użyte do jej rozwoju są powszechnie akceptowane i standardowe w społeczności deweloperów Elixira. Dla zapewnienia niezawodności systemu stosowane są różnorodne formy testowania, a także regularne recenzje kodu wewnątrz zespołu. Jakość kodu jest dodatkowo monitorowana przez narzędzia do statycznej analizy, co potwierdza wysokie standardy jego utrzymania.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
