@@ -4,7 +4,7 @@
 
 defmodule ElixirDatasets.HuggingFace.Hub do
   @moduledoc false
-
+  @compile if Mix.env() == :test, do: :export_all
   alias ElixirDatasets.Utils.HTTP
 
   @huggingface_endpoint "https://huggingface.co"
@@ -240,43 +240,5 @@ defmodule ElixirDatasets.HuggingFace.Hub do
 
   defp elixir_datasets_offline?() do
     System.get_env("ELIXIR_DATASETS_OFFLINE") in ~w(1 true)
-  end
-
-  # If the code is being run in the test environment, we expose
-  # the internal functions for testing purposes.
-  if Mix.env() == :test do
-    def cached_path_for_etag_TEST(dir, url, etag) do
-      cached_path_for_etag(dir, url, etag)
-    end
-
-    def head_download_TEST(url, headers) do
-      head_download(url, headers)
-    end
-
-    def finish_request_TEST(response, url) do
-      finish_request(response, url)
-    end
-
-    def fetch_etag_TEST(response) do
-      fetch_etag(response)
-    end
-
-    def metadata_filename_TEST(url) do
-      metadata_filename(url)
-    end
-
-    def entry_filename_TEST(url, etag) do
-      entry_filename(url, etag)
-    end
-
-    def load_json_TEST(path) do
-      load_json(path)
-    end
-
-    def store_json_TEST(path, data) do
-      store_json(path, data)
-    end
-
-    def elixir_datasets_offline_TEST?, do: elixir_datasets_offline?()
   end
 end

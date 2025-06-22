@@ -26,7 +26,7 @@ defmodule ElixirDatasets.Utils.HTTPTest do
       System.put_env("ELIXIR_DATASETS_CACERTS_PATH", path)
 
       assert [{:cacertfile, ^path}, {_, _}, {_, _}] =
-               ElixirDatasets.Utils.HTTP.http_ssl_opts_TEST()
+               ElixirDatasets.Utils.HTTP.http_ssl_opts()
 
       System.delete_env("ELIXIR_DATASETS_CACERTS_PATH")
     end
@@ -34,13 +34,13 @@ defmodule ElixirDatasets.Utils.HTTPTest do
 
   describe "set_proxy_options/0" do
     test "sets proxy options" do
-      assert nil == ElixirDatasets.Utils.HTTP.set_proxy_options_TEST()
+      assert nil == ElixirDatasets.Utils.HTTP.set_proxy_options()
 
       System.put_env("HTTP_PROXY", "http://proxy.example.com:8080")
       System.put_env("HTTPS_PROXY", "https://proxy.example.com:8080")
       System.put_env("NO_PROXY", "localhost,127.0.0.1")
 
-      assert :ok == ElixirDatasets.Utils.HTTP.set_proxy_options_TEST()
+      assert :ok == ElixirDatasets.Utils.HTTP.set_proxy_options()
 
       System.delete_env("HTTP_PROXY")
       System.delete_env("HTTPS_PROXY")

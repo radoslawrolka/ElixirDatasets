@@ -3,6 +3,7 @@
 # https://github.com/elixir-nx/bumblebee/blob/710a645222948f80208c348d3a2589cbd3ab8e7d/lib/bumblebee/utils/http.ex
 
 defmodule ElixirDatasets.Utils.HTTP do
+  @compile if Mix.env() == :test, do: :export_all
   @moduledoc false
 
   @type response :: %{status: status(), headers: headers(), body: binary()}
@@ -245,18 +246,6 @@ defmodule ElixirDatasets.Utils.HTTP do
     if uri.host && uri.port do
       host = String.to_charlist(uri.host)
       :httpc.set_options([{proxy_scheme, {{host, uri.port}, no_proxy}}], :elixir_datasets)
-    end
-  end
-
-  # If the code is being run in the test environment, we expose
-  # the internal functions for testing purposes.
-  if Mix.env() == :test do
-    def http_ssl_opts_TEST() do
-      http_ssl_opts()
-    end
-
-    def set_proxy_options_TEST() do
-      set_proxy_options()
     end
   end
 end

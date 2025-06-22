@@ -100,7 +100,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       File.write!(Path.join(@dir, @fileJson), Jason.encode!(%{"etag" => @etag}))
       expected_path = @dir <> "/" <> @fileContent
 
-      assert ElixirDatasets.HuggingFace.Hub.cached_path_for_etag_TEST(@dir, @url, @etag) ==
+      assert ElixirDatasets.HuggingFace.Hub.cached_path_for_etag(@dir, @url, @etag) ==
                expected_path
 
       # Clean up
@@ -113,7 +113,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       File.mkdir_p!(@dir)
       File.write!(Path.join(@dir, @fileJson), Jason.encode!(%{"etag" => "invalid-etag"}))
 
-      assert ElixirDatasets.HuggingFace.Hub.cached_path_for_etag_TEST(@dir, @url, @etag) == nil
+      assert ElixirDatasets.HuggingFace.Hub.cached_path_for_etag(@dir, @url, @etag) == nil
 
       # Clean up
       File.rm!(Path.join(@dir, @fileJson))
@@ -129,28 +129,28 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
     test "returns :ok with valid response, without redirection" do
       assert {:ok, _etag, @url, false} =
-               ElixirDatasets.HuggingFace.Hub.head_download_TEST(@url, @headers)
+               ElixirDatasets.HuggingFace.Hub.head_download(@url, @headers)
     end
 
     test "returns :ok with valid response, with redirection" do
       assert {:ok, _etag, _url_redirect, true} =
-               ElixirDatasets.HuggingFace.Hub.head_download_TEST(@url_redirect, @headers)
+               ElixirDatasets.HuggingFace.Hub.head_download(@url_redirect, @headers)
     end
 
     # test "returns :error, when host location is nil" do # todo
     #   assert {:error, _reason} =
-    #            ElixirDatasets.HuggingFace.Hub.head_download_TEST(@urlNilHost, @headers)
+    #            ElixirDatasets.HuggingFace.Hub.head_download(@urlNilHost, @headers)
     # end
   end
 
   describe "finish_request" do
     test "response is :ok" do
-      assert ElixirDatasets.HuggingFace.Hub.finish_request_TEST(:ok, @url) == :ok
+      assert ElixirDatasets.HuggingFace.Hub.finish_request(:ok, @url) == :ok
     end
 
     test "response is :ok, status in 100..399" do
       response = {:ok, %{status: 200}}
-      assert ElixirDatasets.HuggingFace.Hub.finish_request_TEST(response, @url) == response
+      assert ElixirDatasets.HuggingFace.Hub.finish_request(response, @url) == response
     end
 
     test "response is :ok, status is out 100..399" do
@@ -163,14 +163,14 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       ]
 
       Enum.each(responses, fn response ->
-        assert {:error, _} = ElixirDatasets.HuggingFace.Hub.finish_request_TEST(response, @url)
+        assert {:error, _} = ElixirDatasets.HuggingFace.Hub.finish_request(response, @url)
       end)
     end
 
     test "response is error" do
       response = {:error, "test-error"}
 
-      assert ElixirDatasets.HuggingFace.Hub.finish_request_TEST(response, @url) ==
+      assert ElixirDatasets.HuggingFace.Hub.finish_request(response, @url) ==
                {:error, "failed to make an HTTP request, reason: \"test-error\""}
     end
   end
@@ -183,7 +183,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
         body: "{}"
       }
 
-      assert ElixirDatasets.HuggingFace.Hub.fetch_etag_TEST(response) ==
+      assert ElixirDatasets.HuggingFace.Hub.fetch_etag(response) ==
                {:ok, "1234567890abcdef"}
     end
 
@@ -194,7 +194,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
         body: "{}"
       }
 
-      assert ElixirDatasets.HuggingFace.Hub.fetch_etag_TEST(response) ==
+      assert ElixirDatasets.HuggingFace.Hub.fetch_etag(response) ==
                {:error, "no ETag found on the resource"}
     end
   end
@@ -205,7 +205,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     test "generates correct metadata filename from URL" do
       expected_filename = "jrdifprgyy26hfylusnlbth2ie.json"
 
-      assert ElixirDatasets.HuggingFace.Hub.metadata_filename_TEST(@url) == expected_filename
+      assert ElixirDatasets.HuggingFace.Hub.metadata_filename(@url) == expected_filename
     end
   end
 
@@ -215,7 +215,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
       expected_entry_filename = "jrdifprgyy26hfylusnlbth2ie.gezdgnbvgy3tqojqmfrggzdfmy"
 
-      assert ElixirDatasets.HuggingFace.Hub.entry_filename_TEST(@url, etag) ==
+      assert ElixirDatasets.HuggingFace.Hub.entry_filename(@url, etag) ==
                expected_entry_filename
     end
   end
@@ -225,10 +225,10 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     test "stores JSON data to a file and loads it back" do
       path = "test_data.json"
 
-      assert ElixirDatasets.HuggingFace.Hub.store_json_TEST(path, @data) == :ok
+      assert ElixirDatasets.HuggingFace.Hub.store_json(path, @data) == :ok
       assert File.exists?(path)
 
-      assert ElixirDatasets.HuggingFace.Hub.load_json_TEST(path) == {:ok, @data}
+      assert ElixirDatasets.HuggingFace.Hub.load_json(path) == {:ok, @data}
 
       # Clean up
       File.rm!(path)
@@ -237,39 +237,39 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     test "returns error when unable to write to file and returns error when trying to load" do
       path = "/invalid/path/test_data.json"
 
-      assert ElixirDatasets.HuggingFace.Hub.store_json_TEST(path, @data) ==
+      assert ElixirDatasets.HuggingFace.Hub.store_json(path, @data) ==
                {:error, :enoent}
 
-      assert ElixirDatasets.HuggingFace.Hub.load_json_TEST(path) == :error
+      assert ElixirDatasets.HuggingFace.Hub.load_json(path) == :error
     end
   end
 
   describe "elixirDatasets_offline?/0" do
     test "returns true when ELIXIR_DATASETS_OFFLINE is set to '1'" do
       System.put_env("ELIXIR_DATASETS_OFFLINE", "1")
-      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == true
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline?() == true
       System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
 
     test "returns true when ELIXIR_DATASETS_OFFLINE is set to 'true'" do
       System.put_env("ELIXIR_DATASETS_OFFLINE", "true")
-      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == true
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline?() == true
       System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
 
     test "returns false when ELIXIR_DATASETS_OFFLINE is not set" do
-      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == false
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline?() == false
     end
 
     test "returns false when ELIXIR_DATASETS_OFFLINE is set to '0'" do
       System.put_env("ELIXIR_DATASETS_OFFLINE", "0")
-      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == false
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline?() == false
       System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
 
     test "returns false when ELIXIR_DATASETS_OFFLINE is set to 'false'" do
       System.put_env("ELIXIR_DATASETS_OFFLINE", "false")
-      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline_TEST?() == false
+      assert ElixirDatasets.HuggingFace.Hub.elixir_datasets_offline?() == false
       System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
   end

@@ -6,7 +6,7 @@ defmodule ElixirDatasets do
   @moduledoc """
   Todo: Add documentation for ElixirDatasets.
   """
-
+  @compile if Mix.env() == :test, do: :export_all
   alias ElixirDatasets.HuggingFace
   @valid_extensions ["json", "csv", "txt", "parquet"]
 
@@ -240,18 +240,6 @@ defmodule ElixirDatasets do
       Path.expand(dir)
     else
       :filename.basedir(:user_cache, "elixir_datasets")
-    end
-  end
-
-  # If the code is being run in the test environment, we expose
-  # the internal functions for testing purposes.
-  if Mix.env() == :test do
-    def do_load_spec_TEST(repository, repo_files) do
-      do_load_spec(repository, repo_files)
-    end
-
-    def decode_config_TEST(path) do
-      decode_config(path)
     end
   end
 end
