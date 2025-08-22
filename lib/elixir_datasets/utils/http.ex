@@ -75,7 +75,7 @@ defmodule ElixirDatasets.Utils.HTTP do
     {:error, "download failed, reason: #{inspect(error)}"}
   end
 
-  defp download_receive(state, {_, {{_, 200, _}, _headers, body}}) do
+  defp download_receive(state, {_, {{_, status, _}, _headers, body}}) when status in [200, 201] do
     safe_binwrite(state.file, body)
   end
 

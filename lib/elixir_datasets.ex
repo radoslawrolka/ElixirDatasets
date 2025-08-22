@@ -75,7 +75,7 @@ defmodule ElixirDatasets do
     |> Jason.decode()
     |> case do
       {:ok, data} -> {:ok, data}
-      _ -> {:error, "failed to parse the config file, it is not a valid JSON"}
+      {:error, reason} -> {:error, "failed to parse the config file, it is not a valid JSON. Reason: #{inspect(reason)}"}
     end
   end
 
