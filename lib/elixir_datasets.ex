@@ -85,13 +85,11 @@ defmodule ElixirDatasets do
 
       df = Explorer.DataFrame.from_parquet!(parquet_path)
 
-      # build a CSV path (works even if your cache file has no .parquet suffix)
       csv_path =
         parquet_path
-        |> Path.rootname(".parquet")   # if no .parquet present, it just returns the same path
+        |> Path.rootname(".parquet")
         |> Kernel.<>(".csv")
 
-      # ✅ write to a file path (don’t pass nil)
       :ok = Explorer.DataFrame.to_csv(df, csv_path, header: true)
 
       IO.puts("CSV written:\n" <> csv_path)
