@@ -34,7 +34,11 @@ import ElixirDatasets
 <!-- livebook:{"output":true} -->
 
 ```
-|=============================================================| 100% (104.18 KB)
+Loading file
+gitattributes
+md
+csv
+/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra
 ```
 
 <!-- livebook:{"output":true} -->
@@ -42,7 +46,7 @@ import ElixirDatasets
 ```
 {:ok,
  %{
-   dataset: ["/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra"]
+   dataset: ["/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra"]
  }}
 ```
 
@@ -75,9 +79,22 @@ df = Explorer.DataFrame.from_csv!(path)
 <!-- livebook:{"output":true} -->
 
 ```
+Loading file
+gitattributes
+md
+parquet
 |==============================================================| 100% (92.20 KB)
+/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/6czff2wi7db3bfzuqy5kh4m66m.ei2timrxmezgenjzmqyweolcmvsdczlbgvrwgm3ghe3dgobugnrgimjtmvqtonbugntdgmtegi3wknzume4tkn3bgnsdcobrmnrtknbvei
+parquet
 |=============================================================| 100% (698.84 KB)
+/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/fbau5kbtksyowwsaebufmdc5km.ejtdqojzmuzwgyrygezdiyjrgjrdozbygjrtgmdcme2wgzbtgvsden3fmi3dknzvmqywemjqmq3dkzrxgmywcnrqgm2dqnbvgrqtsnjzei
+parquet
 |==============================================================| 100% (90.00 KB)
+/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei
+Converting
+/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei
+CSV written:
+/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei.csv
 ```
 
 <!-- livebook:{"output":true} -->
@@ -85,9 +102,9 @@ df = Explorer.DataFrame.from_csv!(path)
 ```
 {:ok,
  %{
-   dataset: ["/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei",
-    "/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/fbau5kbtksyowwsaebufmdc5km.ejtdqojzmuzwgyrygezdiyjrgjrdozbygjrtgmdcme2wgzbtgvsden3fmi3dknzvmqywemjqmq3dkzrxgmywcnrqgm2dqnbvgrqtsnjzei",
-    "/Users/radoslawrolka/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/6czff2wi7db3bfzuqy5kh4m66m.ei2timrxmezgenjzmqyweolcmvsdczlbgvrwgm3ghe3dgobugnrgimjtmvqtonbugntdgmtegi3wknzume4tkn3bgnsdcobrmnrtknbvei"]
+   dataset: ["/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei.csv",
+    "/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/fbau5kbtksyowwsaebufmdc5km.ejtdqojzmuzwgyrygezdiyjrgjrdozbygjrtgmdcme2wgzbtgvsden3fmi3dknzvmqywemjqmq3dkzrxgmywcnrqgm2dqnbvgrqtsnjzei",
+    "/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/6czff2wi7db3bfzuqy5kh4m66m.ei2timrxmezgenjzmqyweolcmvsdczlbgvrwgm3ghe3dgobugnrgimjtmvqtonbugntdgmtegi3wknzume4tkn3bgnsdcobrmnrtknbvei"]
  }}
 ```
 
@@ -99,11 +116,23 @@ df = Explorer.DataFrame.from_csv!(path)
 <!-- livebook:{"output":true} -->
 
 ```
+Loading file
+csv
+/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/csv-test.csv
+json
+/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/json-test.json
+parquet
+/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/parquet-test.parquet
+```
+
+<!-- livebook:{"output":true} -->
+
+```
 {:ok,
  %{
-   dataset: ["/Users/radoslawrolka/Desktop/elixir_datasets/examples/../resources/parquet-test.parquet",
-    "/Users/radoslawrolka/Desktop/elixir_datasets/examples/../resources/json-test.json",
-    "/Users/radoslawrolka/Desktop/elixir_datasets/examples/../resources/csv-test.csv"]
+   dataset: ["/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/parquet-test.parquet",
+    "/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/json-test.json",
+    "/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/csv-test.csv"]
  }}
 ```
 

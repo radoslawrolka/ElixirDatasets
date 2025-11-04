@@ -44,15 +44,25 @@ defmodule ElixirDatasets do
   @type repository :: {:hf, String.t()} | {:hf, String.t(), keyword()} | {:local, Path.t()}
 
   defp do_load_spec(repository, repo_files) do
+    IO.puts("Loading file")
     case repo_files do
       %{} ->
         paths =
           Enum.reduce(repo_files, [], fn {file_name, etag}, acc ->
             extension = file_name |> String.split(".") |> List.last()
+            IO.puts(extension)
 
             if extension in @valid_extensions do
               case download(repository, file_name, etag) do
                 {:ok, path} ->
+                  IO.puts(path)
+                  path =
+                    if String.downcase(Path.extname(path)) == ".eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei" do
+                      convert_parquet_to_csv(path)
+                    else
+                      path
+                    end
+
                   [path | acc]
 
                 {:error, reason} ->
@@ -66,6 +76,30 @@ defmodule ElixirDatasets do
           end)
 
         {:ok, paths}
+    end
+  end
+
+  defp convert_parquet_to_csv(parquet_path) do
+    try do
+      IO.puts("Converting\n" <> parquet_path)
+
+      df = Explorer.DataFrame.from_parquet!(parquet_path)
+
+      # build a CSV path (works even if your cache file has no .parquet suffix)
+      csv_path =
+        parquet_path
+        |> Path.rootname(".parquet")   # if no .parquet present, it just returns the same path
+        |> Kernel.<>(".csv")
+
+      # ✅ write to a file path (don’t pass nil)
+      :ok = Explorer.DataFrame.to_csv(df, csv_path, header: true)
+
+      IO.puts("CSV written:\n" <> csv_path)
+      csv_path
+    rescue
+      e ->
+        IO.warn("Failed to convert #{parquet_path} to CSV: #{Exception.message(e)}")
+        parquet_path
     end
   end
 
