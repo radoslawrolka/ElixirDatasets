@@ -561,13 +561,208 @@ Biblioteka została zaprojektowana zgodnie z zasadami modularności, co klarowni
 \chapter{\ChapterTitleWorkOrganization}
 \label{sec:organizacja-pracy}
 
-todo - wstep
+Ten rozdział poświęcony jest szczegółowemu przedstawieniu metodyki i technik, które zostały wykorzystane w trakcie realizacji projektu. Obejmuje on dokładny opis kolejnych etapów prac, a także sposób podziału odpowiedzialności i zadań w zespole projektowym. Ponadto, wskazuje i charakteryzuje narzędzia, które wspierały komunikację i zarządzanie organizacją pracy w trakcie procesu tworzenia.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{4thchapter-todo}
-\label{sec:4todo}
+\section{Charakterystyka projektu}
+\label{sec:charakterystyka-projektu}
 
-todo
+Tworzona praca inżynierska ma charakter rozwojowy. Jej celem było stworzenie wyspecjalizowanej biblioteki w języku Elixir, koncentrującej się na efektywnym pozyskiwaniu, zarządzaniu i ładowaniu zbiorów danych powszechnie stosowanych w dziedzinie uczenia maszynowego.
+
+Projekt od początku zakładał stworzenie solidnego fundamentu do pracy z danymi, opierając się na architekturze języka Elixir. Wymagania dotyczące kluczowych obszarów funkcjonalnych, takich jak mechanizmy pobierania danych z zewnętrznych repozytoriów ($np.$ Hugging Face Hub) oraz metody ich efektywnego ładowania do pamięci, były znane i stanowiły trzon planu prac. Projekt ten koncentrował się na dostarczeniu narzędzia umożliwiającego szybki start pracy analitycznej, automatyzując etap pozyskiwania i przygotowania danych źródłowych.
+
+Realizacja projektu przebiegała zgodnie z procesem przyrostowo-iteracyjnym. Prace rozpoczęto od fazy badawczo-prototypowej, której celem było potwierdzenie wykonalności kluczowych założeń architektonicznych i technicznych w środowisku Elixir. Następnie, implementacja właściwa została podzielona na logiczne przyrosty (moduły), obejmujące kolejno funkcjonalności związane z pobieraniem i zarządzaniem danymi oraz ich ładowaniem i wstępnym przeglądaniem. Każdy moduł był rozwijany i testowany w krótkich iteracjach, co pozwoliło na sukcesywne budowanie stabilnej biblioteki i minimalizację wystąpienia błędów. Takie podejście umożliwiło optymalne wykorzystanie zasobów i skupienie się na dostarczeniu stabilnego rdzenia systemu.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Osoby w projekcie}
+\label{sec:osoby-w-projekcie}
+
+\noindent Projekt był realizowany przez zespół składający się z dwóch członków:
+\begin{itemize}
+    \item Radosław Rolka
+    \item Weronika Wojtas
+\end{itemize}
+Opiekę merytoryczną oraz rolę klienta pełnił dr inż. Aleksander Smywiński-Pohl.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Zespół i podział obowiązków}
+\label{sec:zespol-i-podzial-obowiazkow}
+
+Projekt realizowany był przez zespół dwuosobowy, w którym każdy z członków odpowiadał za określone obszary funkcjonalności biblioteki. Podział obowiązków był zaplanowany w taki sposób, aby maksymalnie wykorzystać umiejętności każdego członka zespołu oraz zapewnić efektywny przebieg prac.
+\newline\newline
+\noindent\textbf{Radosław Rolka} odpowiadał za następujące obszary projektu:
+\begin{itemize}
+    \item \textbf{Architektura systemu} – projektowanie ogólnej struktury biblioteki oraz definiowanie interakcji między poszczególnymi modułami.
+    \item \textbf{Moduł networkingowy} – implementacja funkcji odpowiedzialnych za pobieranie danych z zewnętrznych źródeł poprzez protokół HTTP/HTTPS.
+    \item \textbf{Moduł HuggingFace} – integracja z API platformy Hugging Face Hub, obsługa autoryzacji oraz zarządzanie dostępem do zbiorów danych.
+    \item \textbf{System cacheowania} – implementacja mechanizmu cacheowania danych bazującego na etagach i OId, optymalizacja wydajności pobierania.
+    \item \textbf{Główny interfejs biblioteki} – tworzenie publicznego API biblioteki.
+    \item \textbf{Ciągła integracja (CI/CD)} – konfiguracja GitHub Actions, automatyzacja testów i kontrola jakości kodu.
+\end{itemize}
+
+\noindent\textbf{Weronika Wojtas} odpowiadała za następujące obszary projektu:
+\begin{itemize}
+    \item \textbf{Transformacja danych} – implementacja funkcji do wczytywania i przetwarzania danych z różnych formatów (TXT, CSV, JSON, Parquet).
+    \item \textbf{Integracja z Explorer} – zapewnienie kompatybilności biblioteki z narzędziem Explorer do pracy z dataframe'ami i seriami.
+    \item \textbf{Testy jednostkowe} – pisanie kompleksowych testów jednostkowych dla wszystkich modułów biblioteki z użyciem frameworka ExUnit.
+    \item \textbf{Dokumentacja} – tworzenie dokumentacji technicznej i przykładów użycia kodu w formie LiveBook.
+    \item \textbf{Pokrycie testami} – monitorowanie i utrzymanie wysokiego poziomu pokrycia kodu testami (target: 80\%) z wykorzystaniem ExCoveralls.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Organizacja prac i wykorzystane narzędzia}
+\label{sec:organizacja-prac-i-wykorzystane-narzedzia}
+
+W tej sekcji opisane zostały metody i narzędzia wykorzystane do organizacji pracy nad tworzoną biblioteką. Zawiera ona opis przyjętej metodyki oraz kanałów komunikacji, a także listę kluczowych narzędzi wspierających proces programowania, kontroli wersji oraz zarządzania zadaniami.
+
+\subsection{Metodyka i Organizacja Pracy}
+
+W projekcie zastosowano metodykę iteracyjną w zakresie planowania i przeglądu postępów. Kluczowe elementy organizacji pracy obejmowały:
+
+\begin{itemize}
+    \item \textbf{Zarządzanie Zadaniami}: Do tworzenia, przypisywania i śledzenia zadań wykorzystywano wbudowany w repozytorium system GitHub Issues. 
+    \item \textbf{Kontrola Wersji}: Do zarządzania kodem źródłowym oraz współpracy używano systemu kontroli wersji Git oraz platformy GitHub. Dzięki temu możliwe było tworzenie rozdzielnych gałęzi roboczych (branches), przeprowadzanie Code Review oraz weryfikowanie zmian przed ich włączeniem do głównej gałęzi ($main$).
+\end{itemize}
+
+% Todo: dodaj screenshot GHIssues
+% Todo: dodaj screenshot z repo strona główna
+
+Podział i przydział zadań odbywał się na regularnych spotkaniach, najczęściej zaraz po omówieniu postępów i rozwiązaniu napotkanych problemów.
+
+\subsection{Komunikacja i Spotkania}
+
+Komunikacja była realizowana na dwóch płaszczyznach: wewnątrz zespołu oraz z opiekunem (klientem).
+
+Komunikacja codzienna i omawianie pilnych spraw odbywało się głównie za pośrednictwem komunikatorów Facebook Messenger oraz Discord. Kanały te służyły do szybkiego rozwiązywania bieżących problemów technicznych i organizacyjnych. Uzupełnieniem komunikacji zdalnej były regularne spotkania stacjonarne, które odbywały się co kilka tygodni. Spotkania te były kluczowe dla synchronizacji strategicznych działań, dogłębnego omówienia architektury systemu, a także wspólnego pisania i edytowania tekstu pracy inżynierskiej.
+
+% Todo: dodaj screenshot z messenger
+
+Kontakt z opiekunem odbywał się w kluczowych momentach realizacji projektu. Pierwsze spotkanie miało charakter konsultacyjny, służąc ostatecznemu sprecyzowaniu celów i zakresu funkcjonalnego biblioteki na etapie definiowania wymagań. Kolejne kontakty były wykorzystywane do cyklicznych prezentacji postępu prac. Taki rytm współpracy pozwalał na wczesne uzyskanie informacji zwrotnej i weryfikację, czy kierunek rozwoju systemu jest zgodny z pierwotnymi założeniami.
+
+\subsection{Narzędzia Wykorzystane w Projekcie}
+
+Do stworzenia, zarządzania i dokumentowania projektu wykorzystano szereg narzędzi, które można podzielić na kilka kategorii:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3.5cm}|p{3.5cm}|p{7cm}|}
+\hline
+\textbf{Obszar} & \textbf{Narzędzia} & \textbf{Opis} \\ \hline
+
+Kontrola wersji i zarządzanie & Git / GitHub &
+Hostowanie kodu źródłowego, kontrola wersji, tworzenie pull requestów oraz
+zarządzanie zadaniami poprzez GitHub Issues. \\ \hline
+
+Środowisko programistyczne & IntelliJ IDEA / Visual Studio Code &
+Główne środowiska programistyczne ($IDE$) wykorzystywane do tworzenia kodu w języku Elixir. \\ \hline
+
+Dokumentacja i testowanie & Livebook &
+Narzędzie do tworzenia interaktywnych notatników w Elixirze, wykorzystane do
+prezentacji i tworzenia przykładów zastosowania biblioteki. \\ \hline
+
+Dokumentacja końcowa & Overleaf &
+Platforma chmurowa wykorzystana do wspólnego pisania i formatowania
+niniejszej pracy inżynierskiej w LaTeX-u. \\ \hline
+
+\end{tabular}
+\caption{Zestawienie wykorzystanych narzędzi projektowych}
+\end{table}
+
+Wykorzystanie natywnych funkcji platformy GitHub (Issues i Git) do zarządzania zadaniami oraz kontroli wersji okazało się wystarczające dla projektu o ograniczonym, jednoosobowym/dwuosobowym zespole, eliminując konieczność stosowania bardziej złożonych narzędzi typu Jira czy Trello.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Zastosowane techniki i praktyki}
+\label{sec:zastosowane-techniki-i-praktyki}
+
+W trakcie realizacji projektu zespół stosował szereg technik i praktyk mających na celu zapewnienie wysokiej jakości kodu, efektywności pracy oraz łatwości utrzymania projektu w przyszłości. Poniżej opisano najważniejsze z nich.
+
+\subsection{Ciągła integracja (CI/CD) z GitHub Actions}
+
+Projekt wykorzystuje platformę GitHub Actions do automatyzacji procesów ciągłej integracji. Każde push'owanie do głównej gałęzi repozytorium oraz każde pull request'owanie inicjuje serię testów i kontroli jakości w arbitralnie skonfigurowanym środowisku wirtualnym. Główne zadania wykonywane w ramach CI/CD to:
+
+\begin{itemize}
+    \item \textbf{Kompilacja i testy} – Kod jest kompilowany, a następnie uruchamiane są wszystkie testy jednostkowe.
+    \item \textbf{Kontrola formatowania} – Automatycznie sprawdzane jest, czy kod spełnia standardy formatowania.
+    \item \textbf{Sprawdzanie ostrzeżeń} – Kompilacja w trybie surowym, co oznacza, że wszelkie ostrzeżenia są traktowane jako błędy i uniemożliwiają pomyślne ukończenie pipeline'u.
+\end{itemize}
+
+% Todo : dodaj zdjęcie CI run'a
+
+\subsection{Moduledoc - Dokumentacja i przykłady w kodzie}
+
+Każdy moduł publiczny oraz funkcja publiczna jest opatrzona dokumentacją w kodzie oraz przykładami użycia. Podane opisy są automatycznie przetwarzane do postaci ustandaryzowanej dokumentacji w ekosystemie, a następnie jest weryfikowane ich działanie oraz zgodność z implementacją, co zapobiega powstawaniu nieaktualnych lub błędnych informacji w dokumentacji. Przykładowa dokumentacja funkcji zawiera następujące elementy:
+
+\begin{itemize}
+    \item Opis przeznaczenia i zastosowania
+    \item Podpisy funkcji ze specyfikacją typów
+    \item Przykłady użycia
+    \item Informacje o błędach, które funkcja może zwrócić
+\end{itemize}
+
+% Todo : dodaj zdjęcie module doca
+% Todo : dodaj zdjęcie wygenerowanej dokumentacji
+
+\subsection{Refaktoryzacja kodu}
+Regularna refaktoryzacja kodu była integralną częścią procesu rozwoju biblioteki. Zespół dążył do utrzymania kodu w czystej i zrozumiałej formie, co ułatwiało jego dalszy rozwój i utrzymanie. Refaktoryzacja obejmowała między innymi:
+\begin{itemize}
+    \item Uproszczenie złożonych funkcji i modułów
+    \item Usuwanie redundantnego kodu
+    \item Poprawę czytelności poprzez lepsze nazewnictwo i strukturę kodu
+\end{itemize}
+
+\subsection{Pair programming}
+W niektórych kluczowych momentach projektu, zespół stosował technikę pair programming, gdzie dwóch programistów wspólnie pracowało nad jednym zadaniem. Ta praktyka pozwalała na szybsze rozwiązywanie problemów, wymianę wiedzy oraz poprawę jakości kodu poprzez bieżącą weryfikację i dyskusję nad implementowanymi rozwiązaniami. Dzięki temu zespół mógł efektywniej radzić sobie z trudnymi wyzwaniami technicznymi oraz zwiększyć spójność kodu.
+
+\subsection{Test Driven Development (TDD)}
+Zespół stosował podejście Test Driven Development (TDD), które polega na pisaniu testów jednostkowych przed implementacją funkcjonalności. Ta praktyka pozwalała na lepsze zrozumienie wymagań oraz zapewniała, że każda nowa funkcjonalność była odpowiednio przetestowana od samego początku. TDD pomagało również w utrzymaniu wysokiej jakości kodu oraz ułatwiało refaktoryzację, ponieważ istniała pewność, że zmiany nie wprowadzą regresji. Przebieg TDD obejmował następujące kroki:
+\begin{itemize}
+    \item \textbf{Red Phase}: Napisanie testu jednostkowego, który definiuje oczekiwaną funkcjonalność
+    \item \textbf{Green Phase}: Uruchomienie testu, który początkowo powinien zakończyć się niepowodzeniem, a następnie implementacja minimalnej ilości kodu potrzebnej do przejścia testu
+    \item \textbf{Refactor Phase}: Refaktoryzacja kodu w celu poprawy jego struktury i czytelności, przy jednoczesnym zachowaniu przejścia wszystkich testów
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Przebieg prac}
+\label{sec:przebieg-prac}
+
+Realizacja projektu została podzielona na trzy główne, sekwencyjne fazy, które odzwierciedlają przyjętą metodykę przyrostowo-iteracyjną oraz specyfikę tworzenia biblioteki programistycznej.
+
+\subsection{Faza Koncepcyjna i Planowania Architektury}
+
+Faza ta obejmowała wstępny okres projektu, koncentrując się na badaniach, analizie i planowaniu strategicznym:
+
+\begin{itemize}
+    \item Definicja Zakresu i Celu: Ostateczne sprecyzowanie celu pracy jako stworzenia biblioteki do pobierania, zarządzania i ładowania zbiorów danych dla uczenia maszynowego w języku Elixir.
+    \item Wybór Stosu Technologicznego: Zatwierdzenie języka Elixir jako głównego narzędzia oraz wybór kluczowych bibliotek i technik niezbędnych do efektywnej obsługi operacji $I/O$, zarządzania pamięcią, oraz przetwarzania zbiorów danych.
+    \item Opracowanie modułowej struktury biblioteki. Zdecydowano o podziale na odrębne moduły odpowiedzialne za integrację z API zewnętrznymi (pobieranie), oraz parsowanie i ładowanie danych do wewnętrznego formatu.
+\end{itemize}
+
+\subsection{Faza Implementacji}
+
+Faza implementacyjna była realizowana iteracyjnie, skupiając się na budowie i testowaniu dwóch głównych przyrostów funkcjonalnych:
+
+\begin{itemize}
+    \item \textbf{Implementacja modułu pobierania i zarządzania} - prace rozpoczęto od budowy fundamentu biblioteki, koncentrując się na interakcji ze światem zewnętrznym. Pierwszy etap polegał na integracji ze źródłami danych. Opracowano mechanizmy komunikacji z zewnętrznymi repozytoriami. Równolegle wdrożono funkcje zarządzania plikami, tworząc mechanizmy do obsługi pobranych zbiorów danych na dysku, w tym weryfikacji integralności plików oraz podstawowego zarządzania ścieżkami dostępu.
+    \item \textbf{Implementacja modułu ładowania i parsowania} - po zapewnieniu możliwości dostępu do danych, skupiono się na ich efektywnym wczytywaniu. Opracowano parsery danych, wdrażając wydajne funkcje do parsowania popularnych formatów. Fazę tę zakończyło stworzenie przykładów użycia i funkcjonalności w środowisku Livebook oraz na serwerze Elixira, które miały posłużyć do weryfikacji i demonstracji kluczowych funkcji biblioteki.
+\end{itemize}
+
+\subsection{Faza Testowania, Optymalizacji i Dokumentacji}
+
+Ostatnia faza koncentrowała się na stabilizacji, weryfikacji i finalizacji produktu:
+
+\begin{itemize}
+    \item \textbf{Testowanie funkcjonalne}: przeprowadzono testy jednostkowe kluczowych modułów (pobieranie, parsowanie) oraz testy integracyjne, sprawdzające spójne działanie całej biblioteki.
+    \item \textbf{Optymalizacja wydajności}: skupiono się na identyfikacji i usunięciu potencjalnych wąskich gardeł w operacjach $I/O$, dążąc do jak najwydajniejszego ładowania dużych zbiorów danych.
+    \item \textbf{Dokumentacja}: całość prac została podsumowana w niniejszej pracy inżynierskiej, a dodatkowo utworzono szczegółową dokumentację techniczną biblioteki, opisującą interfejsy modułów i sposób instalacji.
+\end{itemize}
+
+%todo zdjęcie harmonogramu/timelineu
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Podsumowanie}
+\label{sec:podsumowanie}
+
+Prace nad projektem były starannie zaplanowane i zorganizowane, co pozwoliło na efektywne wykorzystanie zasobów zespołu oraz osiągnięcie założonych celów w określonym czasie. Wykorzystanie narzędzi organizujących i synchronizujących pracę zespołu było kluczowe dla sukcesu projektu, umożliwiając płynną komunikację i skuteczne zarządzanie zadaniami. Przyjęte techniki i praktyki programistyczne zapewniły wysoką jakość kodu oraz stabilność finalnego produktu.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -580,10 +775,36 @@ todo
 todo
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{5thchapter-todo}
-\label{sec:5todo}
+\section{Zrealizowane funkcjonalnosci}
+\label{sec:zrealizowane-funkcjonalnosci}
 
 todo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Główne scenariusze uzytkowania}
+\label{sec:glowne-scenariusze-uzytkowania}
+
+todo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dalszy rozwój projektu}
+\label{sec:dalszy-rozwoj-projektu}
+
+todo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Subiektywna ocena projektu}
+\label{sec:subiektywna-ocena-projektu}
+
+todo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Podsumowanie}
+\label{sec:podsumowanie}
+
+todo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \printbibliography
