@@ -24,7 +24,7 @@ jobs:
           otp-version: '26.0'
 
       - name: 💾 Restore dependencies cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: deps
           key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
@@ -34,6 +34,6 @@ jobs:
         run: mix deps.get
 
       - name: 🚀 Publish to Hex.pm
-        run: mix hex.publish package --yes
+        run: mix hex.publish --yes
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}

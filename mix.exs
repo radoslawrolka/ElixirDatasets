@@ -38,7 +38,7 @@ defmodule ElixirDatasets.MixProject do
 
   defp package do
     [
-      contributors: ["Radoslaw Rolka", "Weronika Wojtas"],
+
       maintainers: ["Radoslaw Rolka", "Weronika Wojtas"],
       licenses: ["MIT"],
       links: %{
