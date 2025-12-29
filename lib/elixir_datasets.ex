@@ -54,7 +54,8 @@ defmodule ElixirDatasets do
               case download(repository, file_name, etag) do
                 {:ok, path} ->
                   path =
-                    if String.downcase(Path.extname(path)) == ".eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei" do
+                    if String.downcase(Path.extname(path)) ==
+                         ".eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei" do
                       convert_parquet_to_csv(path)
                     else
                       path
@@ -99,8 +100,12 @@ defmodule ElixirDatasets do
     |> File.read!()
     |> Jason.decode()
     |> case do
-      {:ok, data} -> {:ok, data}
-      {:error, reason} -> {:error, "failed to parse the config file, it is not a valid JSON. Reason: #{inspect(reason)}"}
+      {:ok, data} ->
+        {:ok, data}
+
+      {:error, reason} ->
+        {:error,
+         "failed to parse the config file, it is not a valid JSON. Reason: #{inspect(reason)}"}
     end
   end
 
