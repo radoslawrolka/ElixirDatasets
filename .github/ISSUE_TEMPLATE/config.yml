@@ -1,0 +1,10 @@
+# Issue Template Configuration
+
+blank_issues_enabled: false
+contact_links:
+  - name: Project Documentation
+    url: https://radoslawrolka.github.io/ElixirDatasets/
+    about: Read the project documentation
+  - name: GitHub Repository
+    url: https://github.com/radoslawrolka/ElixirDatasets
+    about: Visit the project repository
