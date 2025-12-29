@@ -17,26 +17,33 @@ on:
 jobs:
   deploy:
     name: 🚀 Deploy Website
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
     timeout-minutes: 30
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v3
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
 
-      - name: 🔧 Setup mix
-        uses: erlef/setup-beam@v1
-        with:
-          elixir-version: '1.14.4'
-          otp-version: '26.0'
-      
-      - name: 📦 Install Dependencies
-        run: mix deps.get
+    - name: 🔧 Set up Elixir
+      uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21 # v1.16.0
+      with:
+        elixir-version: '1.17.2' # [Required] Define the Elixir version
+        otp-version: '26.0'      # [Required] Define the Erlang/OTP version
 
-      - name: 🔨 Build Website
-        run: mix docs
+    - name: 💾 Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+
+    - name: 📦 Install dependencies
+      run: mix deps.get
+
+    - name: 🔨 Build Website
+      run: mix docs
       
-      - name: 🌐 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./doc
+    - name: 🌐 Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./doc
