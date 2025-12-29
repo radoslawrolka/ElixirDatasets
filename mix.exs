@@ -4,6 +4,8 @@ defmodule ElixirDatasets.MixProject do
   def project do
     [
       app: :elixir_datasets,
+      name: "ElixirDatasets",
+      description: "A library for loading datasets from the Hugging Face Hub and local paths.",
       version: "0.1.0",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
@@ -12,20 +14,24 @@ defmodule ElixirDatasets.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      mod: {ElixirDatasets.Application, []},
+      extra_applications: [:logger, :inets, :ssl]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-      {:ex_doc, "~> 0.21"},
-      {:excoveralls, "~> 0.13", only: [:test]}
+      {:explorer, "~> 0.10.0"},
+      {:jason, "~> 1.4.0"},
+      {:progress_bar, "~> 3.0"},
+
+      # Dev
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+
+      # Test
+      {:excoveralls, "~> 0.13", only: :test}
     ]
   end
 end
