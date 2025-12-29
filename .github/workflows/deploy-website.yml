@@ -13,6 +13,7 @@ on:
       - 'mix.lock'
       - '**/*.md'
       - '.github/workflows/deploy-website.yml'
+      - '!test/**'
 
 permissions:
   contents: read
