@@ -30,7 +30,7 @@ concurrency:
 jobs:
   build:
     name: 🚀 Build, Test and Format
-    runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
+    runs-on: ubuntu-22.04 # ubuntu-latest have issues on github actions
     timeout-minutes: 30
     env:
       MIX_ENV: test
