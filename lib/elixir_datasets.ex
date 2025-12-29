@@ -53,6 +53,13 @@ defmodule ElixirDatasets do
             if extension in @valid_extensions do
               case download(repository, file_name, etag) do
                 {:ok, path} ->
+                  path =
+                    if String.downcase(Path.extname(path)) == ".eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei" do
+                      convert_parquet_to_csv(path)
+                    else
+                      path
+                    end
+
                   [path | acc]
 
                 {:error, reason} ->
@@ -66,6 +73,24 @@ defmodule ElixirDatasets do
           end)
 
         {:ok, paths}
+    end
+  end
+
+  defp convert_parquet_to_csv(parquet_path) do
+    try do
+      df = Explorer.DataFrame.from_parquet!(parquet_path)
+
+      csv_path =
+        parquet_path
+        |> Path.rootname(".parquet")
+        |> Kernel.<>(".csv")
+
+      :ok = Explorer.DataFrame.to_csv(df, csv_path, header: true)
+      csv_path
+    rescue
+      e ->
+        IO.warn("Failed to convert #{parquet_path} to CSV: #{Exception.message(e)}")
+        parquet_path
     end
   end
 
