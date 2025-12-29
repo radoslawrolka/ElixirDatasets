@@ -10,6 +10,7 @@ on:
       - '**.exs'
       - 'mix.exs'
       - 'mix.lock'
+      - '.github/workflows/elixir.yml'
   pull_request:
     branches: [ "master" ]
     paths:
@@ -17,14 +18,22 @@ on:
       - '**.exs'
       - 'mix.exs'
       - 'mix.lock'
+      - '.github/workflows/elixir.yml'
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: 🚀 Build, Test and Format
     runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
+    timeout-minutes: 30
+    env:
+      MIX_ENV: test
     steps:
     - name: 📥 Checkout repository
       uses: actions/checkout@v4
