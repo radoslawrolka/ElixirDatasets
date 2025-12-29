@@ -6,28 +6,34 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**.ex'
+      - '**.exs'
+      - 'mix.exs'
+      - 'mix.lock'
+      - '**/*.md'
 
 jobs:
   deploy:
-    name: Deploy Website
+    name: 🚀 Deploy Website
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup mix
+      - name: 🔧 Setup mix
         uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.14.4'
           otp-version: '26.0'
       
-      - name: Install Dependencies
+      - name: 📦 Install Dependencies
         run: mix deps.get
 
-      - name: Build Website
+      - name: 🔨 Build Website
         run: mix docs
       
-      - name: Deploy to GitHub Pages
+      - name: 🌐 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

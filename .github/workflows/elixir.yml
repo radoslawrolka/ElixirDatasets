@@ -1,105 +1,58 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Elixir CI
+
+run-name: Elixir CI
 
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - '**.ex'
+      - '**.exs'
+      - 'mix.exs'
+      - 'mix.lock'
   pull_request:
     branches: [ "master" ]
+    paths:
+      - '**.ex'
+      - '**.exs'
+      - 'mix.exs'
+      - 'mix.lock'
 
 permissions:
   contents: read
 
 jobs:
   build:
-    name: Build and test
+    name: 🚀 Build, Test and Format
     runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Elixir
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Set up Elixir
       uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21 # v1.16.0
       with:
         elixir-version: '1.17.2' # [Required] Define the Elixir version
         otp-version: '26.0'      # [Required] Define the Erlang/OTP version
-    - name: Restore dependencies cache
+
+    - name: 💾 Restore dependencies cache
       uses: actions/cache@v3
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: ${{ runner.os }}-mix-
-    - name: Install dependencies
+
+    - name: 📦 Install dependencies
       run: mix deps.get
-    - name: Run tests
-      run: mix test
 
-
-  check_format:
-    name: Check format
-    runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Elixir
-      uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21 # v1.16.0
-      with:
-        elixir-version: '1.17.2' # [Required] Define the Elixir version
-        otp-version: '26.0'      # [Required] Define the Erlang/OTP version
-    - name: Restore dependencies cache
-      uses: actions/cache@v3
-      with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
-    - name: Check format
-      run: mix format --check-formatted
-
-
-  check_warnings: # might be disabled in future, if really necessary
-    name: Check Warnings
-    runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Elixir
-      uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21 # v1.16.0
-      with:
-        elixir-version: '1.17.2' # [Required] Define the Elixir version
-        otp-version: '26.0'      # [Required] Define the Erlang/OTP version
-    - name: Restore dependencies cache
-      uses: actions/cache@v3
-      with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
-    - name: Install dependencies
-      run: mix deps.get
-    - name: Check Warnings
+    - name: ⚠️ Check Warnings
       run: mix compile --warnings-as-errors
 
+    - name: ✅ Run tests
+      run: mix test
 
-  coverage:
-    name: Tests coverage
-    runs-on: ubuntu-22.04 # ubuntu-latest have issues on gituhb actions
-    env:
-      MIX_ENV: test
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Elixir
-      uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21 # v1.16.0
-      with:
-        elixir-version: '1.17.2' # [Required] Define the Elixir version
-        otp-version: '26.0'      # [Required] Define the Erlang/OTP version
-    - name: Restore dependencies cache
-      uses: actions/cache@v3
-      with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
-    - name: Install Dependencies and Compile
-      run: |
-        mix deps.get
-        mix compile
-    - name: Run Coverage
+    - name: 📊 Run Coverage
       run: mix coveralls
+
+    - name: 🎨 Check format
+      run: mix format --check-formatted
