@@ -97,7 +97,7 @@ defmodule ElixirDatasetsTest do
       File.rm_rf!(@cache_dir)
     end
 
-    # might be not exaclty what we want?
+    # might be not exactly what we want?
     test "loads a dataset from Hugging Face with spec" do
       repositorySpec = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
 
