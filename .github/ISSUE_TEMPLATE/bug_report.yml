@@ -1,0 +1,71 @@
+name: 🐛 Bug Report
+description: Report a bug to help us improve the project
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve our project! Please fill out the form as accurately as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 🐛 Bug Description
+      description: Clearly and concisely describe the problem
+      placeholder: Describe what happened here...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 📋 Steps to Reproduce
+      description: How can we reproduce the problem?
+      placeholder: |
+        1. Do this...
+        2. Then do this...
+        3. You'll see the error
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: ✅ Expected Behavior
+      description: What should happen instead?
+      placeholder: Describe what should happen...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: ❌ Actual Behavior
+      description: What actually happened?
+      placeholder: Describe the actual result...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 🌍 Environment
+      description: Provide information about your environment
+      placeholder: |
+        - Elixir version: 1.14.0
+        - OTP version: 25.1
+        - Project version: 0.1.0
+        - Operating system: macOS/Linux/Windows
+      value: |
+        - Elixir version: 
+        - OTP version: 
+        - Project version: 
+        - Operating system: 
+    validations:
+      required: false
