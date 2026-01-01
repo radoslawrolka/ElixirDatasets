@@ -8,7 +8,7 @@ defmodule ElixirDatasets do
   """
   @compile if Mix.env() == :test, do: :export_all
   alias ElixirDatasets.HuggingFace
-  @valid_extensions_list ["json", "csv", "parquet"]
+  @valid_extensions_list ["jsonl", "csv", "parquet"]
 
   @typedoc """
   A location to fetch dataset files from.
@@ -24,26 +24,27 @@ defmodule ElixirDatasets do
   @type t_repository :: {:hf, String.t()} | {:hf, String.t(), keyword()} | {:local, Path.t()}
 
   defp do_load_spec(repository, repo_files) do
-    case repo_files do
-      %{} ->
-        paths =
-          Enum.reduce(repo_files, [], fn {file_name, etag}, acc ->
-            extension = file_name |> String.split(".") |> List.last()
+    paths =
+      Enum.reduce_while(repo_files, [], fn {file_name, etag}, acc ->
+        extension = file_name |> Path.extname() |> String.trim_leading(".")
 
-            if extension in @valid_extensions_list do
-              case download(repository, file_name, etag) do
-                {:ok, path} -> [path | acc]
-                {:error, reason} ->
-                  raise ArgumentError, """
-                  failed to download #{file_name} from #{inspect(repository)}: #{reason}
-                  """
-              end
-            else
-              acc
-            end
-          end)
+        if extension in @valid_extensions_list do
+          case download(repository, file_name, etag) do
+            {:ok, path} ->
+              {:cont, [{path, extension} | acc]}
 
-        {:ok, paths}
+            {:error, reason} ->
+              {:halt,
+               {:error, "failed to download #{file_name} from #{inspect(repository)}: #{reason}"}}
+          end
+        else
+          {:cont, acc}
+        end
+      end)
+
+    case paths do
+      {:error, _} = error -> error
+      paths -> {:ok, Enum.reverse(paths)}
     end
   end
 
@@ -84,25 +85,34 @@ defmodule ElixirDatasets do
       todo
   """
   @spec load_dataset(t_repository(), keyword()) ::
-          {:ok, %{dataset: [Path.t()]}} | {:error, String.t()}
+          {:ok, [Explorer.DataFrame.t()]} | {:error, Exception.t()}
   def load_dataset(repository, opts \\ []) do
     repository = normalize_repository!(repository)
 
     with {:ok, repo_files} <- get_repo_files(repository),
-         {:ok, paths} <- maybe_load_model_spec(opts, repository, repo_files) do
-      {:ok, %{dataset: paths}}
+         {:ok, paths_with_extensions} <- maybe_load_model_spec(opts, repository, repo_files) do
+      ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions)
     end
   end
 
-  defp maybe_load_model_spec(opts, repository, repo_files) do
-    spec_result =
-      if spec = opts[:spec] do
-        {:ok, spec}
-      else
-        do_load_spec(repository, repo_files)
-      end
+  @doc """
+  Similar to `load_dataset/2` but raises an error if loading fails.
 
-    with {:ok, spec} <- spec_result do
+  ## Returns
+
+    * a list of loaded datasets
+    * raises an error if loading fails
+  """
+  @spec load_dataset!(t_repository(), keyword()) :: [Explorer.DataFrame.t()]
+  def load_dataset!(repository, opts \\ []) do
+    case load_dataset(repository, opts) do
+      {:ok, datasets} -> datasets
+      {:error, reason} -> raise reason
+    end
+  end
+
+  defp maybe_load_model_spec(_opts, repository, repo_files) do
+    with {:ok, spec} <- do_load_spec(repository, repo_files) do
       {:ok, spec}
     end
   end
