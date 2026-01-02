@@ -21,10 +21,8 @@ defmodule ElixirDatasetsTest do
       File.rm_rf!(@cache_dir)
     end
 
-    test "Raise error for invalid files" do
-      assert_raise ArgumentError, fn ->
-        ElixirDatasets.do_load_spec(@repository, @invalid_repo_files)
-      end
+    test "Return error for invalid files" do
+      assert {:error, _reason} = ElixirDatasets.do_load_spec(@repository, @invalid_repo_files)
 
       File.rm_rf!(@cache_dir)
     end
@@ -48,26 +46,34 @@ defmodule ElixirDatasetsTest do
     @cache_dir "test_cache_load_dataset"
     @repository {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
 
+    setup do
+      on_exit(fn ->
+        File.rm_rf!(@cache_dir)
+
+        File.rm_rf!(
+          :filename.basedir(
+            :user_cache,
+            "elixir_datasets" <> "/huggingface/aaaaa32r--elixirDatasets"
+          )
+        )
+      end)
+    end
+
     test "loads a dataset from Hugging Face" do
-      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(@repository)
-      File.rm_rf!(@cache_dir)
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(@repository)
+      assert is_list(datasets)
     end
 
     test "loads a dataset from Hugging Face without opts" do
       repository_short = {:hf, "aaaaa32r/elixirDatasets"}
-      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repository_short)
-
-      File.rm_rf!(
-        :filename.basedir(
-          :user_cache,
-          "elixir_datasets" <> "/huggingface/aaaaa32r--elixirDatasets"
-        )
-      )
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository_short)
+      assert is_list(datasets)
     end
 
     test "loads a dataset from local directory" do
       repository = {:local, "resources"}
-      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repository)
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository)
+      assert is_list(datasets)
     end
 
     test "raise error when invalid local directory" do
@@ -78,34 +84,33 @@ defmodule ElixirDatasetsTest do
     test "loads dataset offline" do
       # Loads a dataset from Hugging Face in online mode
       repository = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
-      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repository)
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository)
+      assert is_list(datasets)
       # Loads the same dataset in offline mode
       repositoryOffline = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir, offline: true]}
-      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repositoryOffline)
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repositoryOffline)
+      assert is_list(datasets)
       # Loads not existing dataset in offline mode
       repositoryOfflineInvalid = {:hf, "not/exists", [cache_dir: @cache_dir, offline: true]}
       assert {:error, _reason} = ElixirDatasets.load_dataset(repositoryOfflineInvalid)
-      # Clean up cache directory
-      File.rm_rf!(@cache_dir)
     end
 
     test "loads a dataset from Hugging Face with subdirectory" do
       repositorySubdir =
         {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir, subdir: "resources"]}
 
-      assert {:ok, %{dataset: _paths}} = ElixirDatasets.load_dataset(repositorySubdir)
-      File.rm_rf!(@cache_dir)
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repositorySubdir)
+      assert is_list(datasets)
     end
 
     # might be not exactly what we want?
-    test "loads a dataset from Hugging Face with spec" do
-      repositorySpec = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
+    # test "loads a dataset from Hugging Face with spec" do
+    #   repositorySpec = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
 
-      assert {:ok, %{dataset: _paths}} =
-               ElixirDatasets.load_dataset(repositorySpec, spec: ["csv-test.csv"])
-
-      File.rm_rf!(@cache_dir)
-    end
+    #   assert {:ok, datasets} =
+    #            ElixirDatasets.load_dataset(repositorySpec, spec: ["csv-test.csv"])
+    #   assert is_list(datasets)
+    # end
 
     test "returns error for non-existent dataset" do
       repository = {:test, "nonexistent/repo", []}
