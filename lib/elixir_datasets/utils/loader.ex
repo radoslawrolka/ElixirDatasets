@@ -53,20 +53,14 @@ defmodule ElixirDatasets.Utils.Loader do
     Explorer.DataFrame.from_ndjson(path)
   end
 
-  @spec load_dataset_from_file(Path.t(), String.t()) ::
-          Explorer.DataFrame.t() | {:error, Exception.t()}
   defp load_dataset_from_file(path, "csv") do
     Explorer.DataFrame.from_csv(path)
   end
 
-  @spec load_dataset_from_file(Path.t(), String.t()) ::
-          Explorer.DataFrame.t() | {:error, Exception.t()}
   defp load_dataset_from_file(path, "parquet") do
     Explorer.DataFrame.from_parquet(path)
   end
 
-  @spec load_dataset_from_file(Path.t(), String.t()) ::
-          Explorer.DataFrame.t() | {:error, Exception.t()}
   defp load_dataset_from_file(path, _unsupported_format) do
     {:error, "Unsupported file format for file: #{path}"}
   end
