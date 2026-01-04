@@ -21,14 +21,18 @@ defmodule ElixirDatasets.Utils.Saver do
     file_extension =
       options[:file_extension] || Path.extname(filepath) |> String.trim_leading(".")
 
-    case file_extension do
-      "jsonl" -> Explorer.DataFrame.to_ndjson(df, filepath)
-      "csv" -> Explorer.DataFrame.to_csv(df, filepath)
-      "parquet" -> Explorer.DataFrame.to_parquet(df, filepath)
-      _ -> {:error, "Unsupported file format: #{file_extension}"}
-    end
+    result =
+      case file_extension do
+        "jsonl" -> Explorer.DataFrame.to_ndjson(df, filepath)
+        "csv" -> Explorer.DataFrame.to_csv(df, filepath)
+        "parquet" -> Explorer.DataFrame.to_parquet(df, filepath)
+        _ -> {:error, "Unsupported file format: #{file_extension}"}
+      end
 
-    filepath
+    case result do
+      {:error, _reason} = error -> error
+      _ -> filepath
+    end
   end
 
   # Verifies that the provided options for saving are valid.

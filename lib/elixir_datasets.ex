@@ -141,6 +141,7 @@ defmodule ElixirDatasets do
     end
   end
 
+  @spec upload_dataset(Explorer.DataFrame.t(), t_repository(), String.t()) :: any()
   def upload_dataset(df, repository, file_extension) do
     ElixirDatasets.Utils.Uploader.upload_dataset(df, repository, file_extension)
   end
