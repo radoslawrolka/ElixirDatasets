@@ -13,7 +13,9 @@ defmodule ElixirDatasetsTest do
   describe "do_load_spec/2" do
     @cache_dir "test_cache_do_load_spec"
     @repository {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
-    @valid_repo_files %{"resources/csv-test.csv" => "\"2dccc814f47c01b5344abbb72367a5b322656b0b\""}
+    @valid_repo_files %{
+      "resources/csv-test.csv" => "\"2dccc814f47c01b5344abbb72367a5b322656b0b\""
+    }
     @invalid_repo_files %{"invalid.csv" => "\"1234567890asdfgh\""}
 
     test "Loads valid files" do
