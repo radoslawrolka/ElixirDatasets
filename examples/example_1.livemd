@@ -34,11 +34,7 @@ import ElixirDatasets
 <!-- livebook:{"output":true} -->
 
 ```
-Loading file
-gitattributes
-md
-csv
-/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra
+|===============================================================| 100% (1.28 MB)
 ```
 
 <!-- livebook:{"output":true} -->
@@ -46,7 +42,7 @@ csv
 ```
 {:ok,
  %{
-   dataset: ["/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ei3gizrqhe4gizbvmqzgmzrwmq4wmzlemqzwcyjqguzgkntgmq2dsyztgm4dsyrxg4ra"]
+   dataset: ["/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/fka--awesome-chatgpt-prompts/krhbigr23rk3ghn3sp775jlooa.ejqtcolbmjswimjymu2doojugy3tcy3fheywcojsgy3ggnbyg5tgkmbxhbqwmmrsmura"]
  }}
 ```
 
@@ -59,42 +55,24 @@ df = Explorer.DataFrame.from_csv!(path)
 
 ```
 #Explorer.DataFrame<
-  Polars[203 x 2]
-  act string ["An Ethereum Developer", "SEO Prompt", "Linux Terminal",
-   "English Translator and Improver", "`position` Interviewer", ...]
+  Polars[919 x 5]
+  act string ["Ethereum Developer", "Linux Terminal", "English Translator and Improver",
+   "Job Interviewer", "JavaScript Console", ...]
   prompt string ["Imagine you are an experienced Ethereum developer tasked with creating a smart contract for a blockchain messenger. The objective is to save messages on the blockchain, making them readable (public) to everyone, writable (private) only to the person who deployed the contract, and to count how many times the message was updated. Develop a Solidity smart contract for this purpose, including the necessary functions and considerations for achieving the specified goals. Please provide the code and any relevant explanations to ensure a clear understanding of the implementation.",
-   "Using WebPilot, create an outline for an article that will be 2,000 words on the keyword 'Best SEO prompts' based on the top 10 results from Google. Include every relevant heading possible. Keep the keyword density of the headings high. For each section of the outline, include the word count. Include FAQs section in the outline too, based on people also ask section from Google for the keyword. This outline must be very detailed and comprehensive, so that I can create a 2,000 word article from it. Generate a long list of LSI and NLP keywords related to my keyword. Also include any other words related to the keyword. Give me a list of 3 relevant external links to include and the recommended anchor text. Make sure they’re not competing articles. Split the outline into part 1 and part 2.",
    "I want you to act as a linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. do not write explanations. do not type commands unless I instruct you to do so. when i need to tell you something in english, i will do so by putting text inside curly brackets {like this}. my first command is pwd",
    "I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is \"istanbulu cok seviyom burada olmak cok guzel\"",
-   "I want you to act as an interviewer. I will be the candidate and you will ask me the interview questions for the `position` position. I want you to only reply as the interviewer. Do not write all the conversation at once. I want you to only do the interview with me. Ask me the questions and wait for my answers. Do not write explanations. Ask me the questions one by one like an interviewer does and wait for my answers. My first sentence is \"Hi\"",
+   "I want you to act as an interviewer. I will be the candidate and you will ask me the interview questions for the ${Position:Software Developer} position. I want you to only reply as the interviewer. Do not write all the conversation at once. I want you to only do the interview with me. Ask me the questions and wait for my answers. Do not write explanations. Ask me the questions one by one like an interviewer does and wait for my answers.\n\nMy first sentence is \"Hi\"",
+   "I want you to act as a javascript console. I will type commands and you will reply with what the javascript console should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. do not write explanations. do not type commands unless I instruct you to do so. when i need to tell you something in english, i will do so by putting text inside curly brackets {like this}. my first command is console.log(\"Hello World\");",
    ...]
+  for_devs boolean [true, true, false, false, true, ...]
+  type string ["TEXT", "TEXT", "TEXT", "TEXT", "TEXT", ...]
+  contributor string ["ameya-2003", "f", "f", "f,iltekin", "omerimzali", ...]
 >
 ```
 
 ```elixir
 {:ok, ds1} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"})
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-Loading file
-gitattributes
-md
-parquet
-|==============================================================| 100% (92.20 KB)
-/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/6czff2wi7db3bfzuqy5kh4m66m.ei2timrxmezgenjzmqyweolcmvsdczlbgvrwgm3ghe3dgobugnrgimjtmvqtonbugntdgmtegi3wknzume4tkn3bgnsdcobrmnrtknbvei
-parquet
-|=============================================================| 100% (698.84 KB)
-/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/fbau5kbtksyowwsaebufmdc5km.ejtdqojzmuzwgyrygezdiyjrgjrdozbygjrtgmdcme2wgzbtgvsden3fmi3dknzvmqywemjqmq3dkzrxgmywcnrqgm2dqnbvgrqtsnjzei
-parquet
-|==============================================================| 100% (90.00 KB)
-/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei
-Converting
-/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei
-CSV written:
-/Users/weronikawojtas/Library/Caches/elixir_datasets/huggingface/cornell-movie-review-data--rotten_tomatoes/74ksm4myyes3ltirhgm7jvz3la.eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei.csv
 ```
 
 <!-- livebook:{"output":true} -->
@@ -111,18 +89,6 @@ CSV written:
 ```elixir
 {:ok, ds1} = ElixirDatasets.load_dataset(
   {:local, "#{__DIR__}/../resources"})
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-Loading file
-csv
-/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/csv-test.csv
-json
-/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/json-test.json
-parquet
-/Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/parquet-test.parquet
 ```
 
 <!-- livebook:{"output":true} -->
@@ -149,4 +115,34 @@ df1 = Explorer.DataFrame.from_csv!(Enum.at(path1, 2))
   id s64 [1, 2, 3, 4, 5, ...]
   number string ["one", "two", "three", "four", "five", ...]
 >
+```
+
+## Get Dataset Info
+
+Fetch dataset metadata from Hugging Face API:
+
+```elixir
+{:ok, info} = ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets")
+
+IO.puts("Dataset: #{info["id"]}")
+
+dataset_info = info["cardData"]["dataset_info"] |> Enum.at(0)
+IO.puts("Config: #{dataset_info["config_name"]}")
+IO.puts("Features: #{inspect(dataset_info["features"])}")
+IO.puts("Training examples: #{dataset_info["splits"] |> Enum.at(0) |> Map.get("num_examples")}")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Dataset: aaaaa32r/elixirDatasets
+Config: csv
+Features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}]
+Training examples: 10
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```

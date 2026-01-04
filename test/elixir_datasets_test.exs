@@ -156,4 +156,24 @@ defmodule ElixirDatasetsTest do
       end
     end
   end
+
+  describe "get_dataset_info/2" do
+    test "fetches dataset info from Hugging Face API" do
+      assert {:ok, info} = ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets")
+      assert is_map(info)
+      assert info["id"] == "aaaaa32r/elixirDatasets"
+
+      assert is_map(info["cardData"])
+      dataset_info = info["cardData"]["dataset_info"]
+      assert is_list(dataset_info)
+
+      first_config = Enum.at(dataset_info, 0)
+      assert first_config["config_name"] == "csv"
+      assert is_list(first_config["features"])
+      assert is_list(first_config["splits"])
+
+      first_split = Enum.at(first_config["splits"], 0)
+      assert first_split["num_examples"] == 10
+    end
+  end
 end
