@@ -90,8 +90,29 @@ nil
 <!-- livebook:{"output":true} -->
 
 ```
-{:error,
- "HTTP Error 404: {\"error\":\"A file with the name \\\"briefly-576460442698708888-7FDZDhwtp6dOsH5dAT\\\" does not exist\"}"}
+nil
+```
+
+```elixir
+ElixirDatasets.Utils.Uploader.upload_file_via_lfs(
+  "/Users/radoslawrolka/Downloads/companies-2023-q4-sm.csv.zip",
+  "aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+LFS URLs: {:upload_url,
+ "https://hf-hub-lfs-us-east-1.s3-accelerate.amazonaws.com/repos/8d/e8/8de800873e186c50ef2351c880045c4372b1cdf42fca0147c2095d0fbe6a3245/024d8bfa9162444abd3032d827c732d37db202ea6ef1eb88f1ee2428736e0593?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2JU7TKAQLC2QXPN7%2F20260104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260104T122048Z&X-Amz-Expires=900&X-Amz-Signature=aa5c8a7eccecc32f343132309d42ee5514d96add680c5bae615c56b2db242110&X-Amz-SignedHeaders=host&x-amz-storage-class=INTELLIGENT_TIERING&x-id=PutObject",
+ :verify_url,
+ "https://huggingface.co/datasets/aaaaa32r/elixirDatasets.git/info/lfs/objects/verify"}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ ~c"{\"success\":true,\"commitOid\":\"1c0732aec7c45ef597e66d29e408f3898bec28f2\",\"commitUrl\":\"https://huggingface.co/datasets/aaaaa32r/elixirDatasets/commit/1c0732aec7c45ef597e66d29e408f3898bec28f2\",\"hookOutput\":\"\"}"}
 ```
 
 ## Load dataset
