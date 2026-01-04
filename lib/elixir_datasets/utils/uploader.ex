@@ -118,7 +118,6 @@ defmodule ElixirDatasets.Utils.Uploader do
          size <- byte_size(file_content),
          {:ok, upload_url, verify_url, verify_token} <-
            initiate_lfs_batch(repository, token, oid, size),
-         IO.inspect({:upload_url, upload_url, :verify_url, verify_url}, label: "LFS URLs"),
          :ok <- upload_to_s3(upload_url, file_content),
          :ok <- verify_lfs_upload(verify_url, verify_token, oid, size),
          {:ok, response} <-
