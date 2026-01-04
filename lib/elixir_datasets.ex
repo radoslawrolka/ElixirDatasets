@@ -111,6 +111,10 @@ defmodule ElixirDatasets do
     end
   end
 
+  def upload_dataset(df, repository, file_extension) do
+    ElixirDatasets.Utils.Uploader.upload_dataset(df, repository, file_extension)
+  end
+
   defp maybe_load_model_spec(_opts, repository, repo_files) do
     with {:ok, spec} <- do_load_spec(repository, repo_files) do
       {:ok, spec}
