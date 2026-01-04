@@ -33,6 +33,67 @@ import ElixirDatasets
 ElixirDatasets
 ```
 
+```elixir
+[ df_head | df_tail ] = ElixirDatasets.load_dataset!({:local, "#{__DIR__}/../resources"})
+IO.inspect(df_head)
+IO.inspect(df_tail)
+nil
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[11 x 2]
+  id s64 [0, 1, 2, 3, 4, ...]
+  number string ["csv", "one", "two", "three", "four", ...]
+>
+[
+  #Explorer.DataFrame<
+    Polars[11 x 2]
+    id s64 [0, 1, 2, 3, 4, ...]
+    number string ["jsonl", "one", "two", "three", "four", ...]
+  >,
+  #Explorer.DataFrame<
+    Polars[11 x 2]
+    id s64 [0, 1, 2, 3, 4, ...]
+    number string ["parquet", "one", "two", "three", "four", ...]
+  >
+]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+nil
+```
+
+```elixir
+# ElixirDatasets.upload_dataset(
+#   df_head,
+#   "aaaaa32r/elixirDatasets",
+#   [file_extension: "csv"])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+nil
+```
+
+```elixir
+# ElixirDatasets.Utils.Uploader.delete_file_from_dataset(
+#   "aaaaa32r/elixirDatasets", 
+#   "briefly-576460442698708888-7FDZDhwtp6dOsH5dAT")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:error,
+ "HTTP Error 404: {\"error\":\"A file with the name \\\"briefly-576460442698708888-7FDZDhwtp6dOsH5dAT\\\" does not exist\"}"}
+```
+
 ## Load dataset
 
 ```elixir
