@@ -14,6 +14,7 @@ defmodule ElixirDatasets.Utils.Uploader do
   def upload_dataset(df, repository, options) do
     verify_options!(options)
     temp_file = ElixirDatasets.Utils.Saver.save_dataset_to_file(df, options)
+
     # file_extension = Keyword.get(options, :file_extension) || Path.extname(temp_file) |> String.trim_leading(".")
 
     with {:ok, token} <- get_hf_token(),
@@ -22,7 +23,15 @@ defmodule ElixirDatasets.Utils.Uploader do
          {:ok, filename} <- get_filename(temp_file, options),
          commit_msg <- Keyword.get(options, :commit_message, "Commit from ElixirDatasets"),
          description <- Keyword.get(options, :description, ""),
-         {:ok, response} <- commit_to_huggingface(repository, token, filename, encoded_content, commit_msg, description) do
+         {:ok, response} <-
+           commit_to_huggingface(
+             repository,
+             token,
+             filename,
+             encoded_content,
+             commit_msg,
+             description
+           ) do
       File.rm(temp_file)
       {:ok, response}
     else
@@ -52,12 +61,14 @@ defmodule ElixirDatasets.Utils.Uploader do
   """
   @spec delete_file_from_dataset(String.t(), String.t(), keyword()) ::
           {:ok, String.t()} | {:error, String.t() | Exception.t()}
-  def delete_file_from_dataset(repository, filename, options \\ []) when is_binary(repository) and is_binary(filename) do
+  def delete_file_from_dataset(repository, filename, options \\ [])
+      when is_binary(repository) and is_binary(filename) do
     commit_msg = Keyword.get(options, :commit_message, "Delete file from ElixirDatasets")
     description = Keyword.get(options, :description, "")
 
     with {:ok, token} <- get_hf_token(),
-         {:ok, response} <- delete_from_huggingface(repository, token, filename, commit_msg, description) do
+         {:ok, response} <-
+           delete_from_huggingface(repository, token, filename, commit_msg, description) do
       {:ok, response}
     else
       {:error, reason} -> {:error, reason}
@@ -94,7 +105,8 @@ defmodule ElixirDatasets.Utils.Uploader do
   """
   @spec upload_file_via_lfs(String.t(), String.t(), keyword()) ::
           {:ok, String.t()} | {:error, String.t()}
-  def upload_file_via_lfs(file_path, repository, options \\ []) when is_binary(file_path) and is_binary(repository) do
+  def upload_file_via_lfs(file_path, repository, options \\ [])
+      when is_binary(file_path) and is_binary(repository) do
     commit_msg = Keyword.get(options, :commit_message, "Upload file via LFS from ElixirDatasets")
     description = Keyword.get(options, :description, "")
     repo_filename = Keyword.get(options, :repo_filename, Path.basename(file_path))
@@ -103,11 +115,13 @@ defmodule ElixirDatasets.Utils.Uploader do
          {:ok, file_content} <- File.read(file_path),
          oid <- calculate_sha256(file_content),
          size <- byte_size(file_content),
-         {:ok, upload_url, verify_url, verify_token} <- initiate_lfs_batch(repository, token, oid, size),
+         {:ok, upload_url, verify_url, verify_token} <-
+           initiate_lfs_batch(repository, token, oid, size),
          IO.inspect({:upload_url, upload_url, :verify_url, verify_url}, label: "LFS URLs"),
          :ok <- upload_to_s3(upload_url, file_content),
          :ok <- verify_lfs_upload(verify_url, verify_token, oid, size),
-         {:ok, response} <- commit_lfs_file(repository, token, repo_filename, oid, size, commit_msg, description) do
+         {:ok, response} <-
+           commit_lfs_file(repository, token, repo_filename, oid, size, commit_msg, description) do
       {:ok, response}
     else
       {:error, reason} -> {:error, reason}
@@ -124,17 +138,18 @@ defmodule ElixirDatasets.Utils.Uploader do
   defp initiate_lfs_batch(repository, token, oid, size) do
     url = "#{@huggingface_endpoint}/datasets/#{repository}.git/info/lfs/objects/batch"
 
-    payload = Jason.encode!(%{
-      "operation" => "upload",
-      "transfers" => ["basic"],
-      "objects" => [
-        %{
-          "oid" => oid,
-          "size" => size
-        }
-      ],
-      "hash_algo" => "sha256"
-    })
+    payload =
+      Jason.encode!(%{
+        "operation" => "upload",
+        "transfers" => ["basic"],
+        "objects" => [
+          %{
+            "oid" => oid,
+            "size" => size
+          }
+        ],
+        "hash_algo" => "sha256"
+      })
 
     headers = [
       {~c"Content-Type", ~c"application/vnd.git-lfs+json"},
@@ -142,13 +157,34 @@ defmodule ElixirDatasets.Utils.Uploader do
       {~c"Authorization", ~c"Bearer #{token}"}
     ]
 
-    case :httpc.request(:post, {String.to_charlist(url), headers, ~c"application/vnd.git-lfs+json", String.to_charlist(payload)}, [], []) do
+    case :httpc.request(
+           :post,
+           {String.to_charlist(url), headers, ~c"application/vnd.git-lfs+json",
+            String.to_charlist(payload)},
+           [],
+           []
+         ) do
       {:ok, {{_protocol, 200, _message}, _headers, response_body}} ->
         case Jason.decode(response_body) do
-          {:ok, %{"objects" => [%{"actions" => %{"upload" => %{"href" => upload_url}, "verify" => %{"href" => verify_url, "header" => %{"Authorization" => verify_token}}}}]}} ->
+          {:ok,
+           %{
+             "objects" => [
+               %{
+                 "actions" => %{
+                   "upload" => %{"href" => upload_url},
+                   "verify" => %{
+                     "href" => verify_url,
+                     "header" => %{"Authorization" => verify_token}
+                   }
+                 }
+               }
+             ]
+           }} ->
             {:ok, upload_url, verify_url, verify_token}
+
           {:ok, _} ->
             {:error, "Unexpected LFS batch response format: #{response_body}"}
+
           {:error, _} ->
             {:error, "Failed to parse LFS batch response"}
         end
@@ -167,8 +203,14 @@ defmodule ElixirDatasets.Utils.Uploader do
       {~c"Content-Type", ~c"application/octet-stream"}
     ]
 
-    case :httpc.request(:put, {String.to_charlist(upload_url), headers, ~c"application/octet-stream", file_content}, [], []) do
-      {:ok, {{_protocol, status_code, _message}, _headers, _response_body}} when status_code in 200..299 ->
+    case :httpc.request(
+           :put,
+           {String.to_charlist(upload_url), headers, ~c"application/octet-stream", file_content},
+           [],
+           []
+         ) do
+      {:ok, {{_protocol, status_code, _message}, _headers, _response_body}}
+      when status_code in 200..299 ->
         :ok
 
       {:ok, {{_protocol, status_code, _message}, _headers, response_body}} ->
@@ -181,17 +223,24 @@ defmodule ElixirDatasets.Utils.Uploader do
 
   @doc false
   defp verify_lfs_upload(verify_url, _verify_token, oid, size) do
-    payload = Jason.encode!(%{
-      "oid" => oid,
-      "size" => size
-    })
+    payload =
+      Jason.encode!(%{
+        "oid" => oid,
+        "size" => size
+      })
 
     headers = [
       {~c"Authorization", ~c"Bearer #{get_hf_token() |> elem(1)}"},
       {~c"Content-Type", ~c"application/json"}
     ]
 
-    case :httpc.request(:post, {String.to_charlist(verify_url), headers, ~c"application/json", String.to_charlist(payload)}, [], []) do
+    case :httpc.request(
+           :post,
+           {String.to_charlist(verify_url), headers, ~c"application/json",
+            String.to_charlist(payload)},
+           [],
+           []
+         ) do
       {:ok, {{_protocol, 200, _message}, _headers, _response_body}} ->
         :ok
 
@@ -208,23 +257,25 @@ defmodule ElixirDatasets.Utils.Uploader do
     url = "#{@huggingface_endpoint}/api/datasets/#{repository}/commit/main"
 
     # Prepare NDJSON payload
-    header_line = Jason.encode!(%{
-      "key" => "header",
-      "value" => %{
-        "summary" => commit_msg,
-        "description" => description
-      }
-    })
+    header_line =
+      Jason.encode!(%{
+        "key" => "header",
+        "value" => %{
+          "summary" => commit_msg,
+          "description" => description
+        }
+      })
 
-    lfs_file_line = Jason.encode!(%{
-      "key" => "lfsFile",
-      "value" => %{
-        "path" => filename,
-        "algo" => "sha256",
-        "oid" => oid,
-        "size" => size
-      }
-    })
+    lfs_file_line =
+      Jason.encode!(%{
+        "key" => "lfsFile",
+        "value" => %{
+          "path" => filename,
+          "algo" => "sha256",
+          "oid" => oid,
+          "size" => size
+        }
+      })
 
     body = "#{header_line}\n#{lfs_file_line}"
 
@@ -233,8 +284,14 @@ defmodule ElixirDatasets.Utils.Uploader do
       {~c"Content-Type", ~c"application/x-ndjson"}
     ]
 
-    case :httpc.request(:post, {String.to_charlist(url), headers, ~c"application/x-ndjson", String.to_charlist(body)}, [], []) do
-      {:ok, {{_protocol, status_code, _message}, _headers, response_body}} when status_code in 200..299 ->
+    case :httpc.request(
+           :post,
+           {String.to_charlist(url), headers, ~c"application/x-ndjson", String.to_charlist(body)},
+           [],
+           []
+         ) do
+      {:ok, {{_protocol, status_code, _message}, _headers, response_body}}
+      when status_code in 200..299 ->
         {:ok, response_body}
 
       {:ok, {{_protocol, status_code, _message}, _headers, response_body}} ->
@@ -245,23 +302,25 @@ defmodule ElixirDatasets.Utils.Uploader do
     end
   end
 
-  @doc """
-  Verifies that the provided options for uploading are valid.
-  """
+  # Verifies that the provided options for uploading are valid.
   @spec verify_options!(keyword()) :: :ok | no_return()
   defp verify_options!(options) do
     verify_file_extension!(options)
   end
 
-  @doc """
-  Verifies that the provided file extension is valid if given.
-  """
+  # Verifies that the provided file extension is valid if given.
   @spec verify_file_extension!(keyword()) :: :ok | no_return()
   defp verify_file_extension!(options) do
     case Keyword.get(options, :file_extension) do
-      nil -> :ok
-      ext when ext in @valid_extensions -> :ok
-      ext -> raise ArgumentError, "Invalid file extension: #{ext}. Supported extensions are: #{@valid_extensions |> Enum.join(", ")}"
+      nil ->
+        :ok
+
+      ext when ext in @valid_extensions ->
+        :ok
+
+      ext ->
+        raise ArgumentError,
+              "Invalid file extension: #{ext}. Supported extensions are: #{@valid_extensions |> Enum.join(", ")}"
     end
   end
 
@@ -282,26 +341,35 @@ defmodule ElixirDatasets.Utils.Uploader do
   end
 
   @doc false
-  defp commit_to_huggingface(repository, token, filename, encoded_content, commit_msg, description) do
+  defp commit_to_huggingface(
+         repository,
+         token,
+         filename,
+         encoded_content,
+         commit_msg,
+         description
+       ) do
     url = "#{@huggingface_endpoint}/api/datasets/#{repository}/commit/main"
 
     # Prepare NDJSON payload
-    header_line = Jason.encode!(%{
-      "key" => "header",
-      "value" => %{
-        "summary" => commit_msg,
-        "description" => description
-      }
-    })
+    header_line =
+      Jason.encode!(%{
+        "key" => "header",
+        "value" => %{
+          "summary" => commit_msg,
+          "description" => description
+        }
+      })
 
-    file_line = Jason.encode!(%{
-      "key" => "file",
-      "value" => %{
-        "content" => encoded_content,
-        "path" => filename,
-        "encoding" => "base64"
-      }
-    })
+    file_line =
+      Jason.encode!(%{
+        "key" => "file",
+        "value" => %{
+          "content" => encoded_content,
+          "path" => filename,
+          "encoding" => "base64"
+        }
+      })
 
     body = "#{header_line}\n#{file_line}"
 
@@ -310,11 +378,19 @@ defmodule ElixirDatasets.Utils.Uploader do
       {~c"Content-Type", ~c"application/x-ndjson"}
     ]
 
-    case :httpc.request(:post, {String.to_charlist(url), headers, ~c"application/x-ndjson", String.to_charlist(body)}, [], []) do
-      {:ok, {{_protocol, status_code, _message}, _headers, response_body}} when status_code in 200..299 ->
+    case :httpc.request(
+           :post,
+           {String.to_charlist(url), headers, ~c"application/x-ndjson", String.to_charlist(body)},
+           [],
+           []
+         ) do
+      {:ok, {{_protocol, status_code, _message}, _headers, response_body}}
+      when status_code in 200..299 ->
         {:ok, response_body}
+
       {:ok, {{_protocol, status_code, _message}, _headers, response_body}} ->
         {:error, "HTTP Error #{status_code}: #{response_body}"}
+
       {:error, reason} ->
         {:error, reason}
     end
@@ -325,20 +401,22 @@ defmodule ElixirDatasets.Utils.Uploader do
     url = "#{@huggingface_endpoint}/api/datasets/#{repository}/commit/main"
 
     # Prepare NDJSON payload
-    header_line = Jason.encode!(%{
-      "key" => "header",
-      "value" => %{
-        "summary" => commit_msg,
-        "description" => description
-      }
-    })
+    header_line =
+      Jason.encode!(%{
+        "key" => "header",
+        "value" => %{
+          "summary" => commit_msg,
+          "description" => description
+        }
+      })
 
-    deleted_file_line = Jason.encode!(%{
-      "key" => "deletedFile",
-      "value" => %{
-        "path" => filename
-      }
-    })
+    deleted_file_line =
+      Jason.encode!(%{
+        "key" => "deletedFile",
+        "value" => %{
+          "path" => filename
+        }
+      })
 
     body = "#{header_line}\n#{deleted_file_line}"
 
@@ -347,11 +425,19 @@ defmodule ElixirDatasets.Utils.Uploader do
       {~c"Content-Type", ~c"application/x-ndjson"}
     ]
 
-    case :httpc.request(:post, {String.to_charlist(url), headers, ~c"application/x-ndjson", String.to_charlist(body)}, [], []) do
-      {:ok, {{_protocol, status_code, _message}, _headers, response_body}} when status_code in 200..299 ->
+    case :httpc.request(
+           :post,
+           {String.to_charlist(url), headers, ~c"application/x-ndjson", String.to_charlist(body)},
+           [],
+           []
+         ) do
+      {:ok, {{_protocol, status_code, _message}, _headers, response_body}}
+      when status_code in 200..299 ->
         {:ok, response_body}
+
       {:ok, {{_protocol, status_code, _message}, _headers, response_body}} ->
         {:error, "HTTP Error #{status_code}: #{response_body}"}
+
       {:error, reason} ->
         {:error, reason}
     end
