@@ -8,90 +8,43 @@ defmodule ElixirDatasets do
   """
   @compile if Mix.env() == :test, do: :export_all
   alias ElixirDatasets.HuggingFace
-  @valid_extensions ["json", "csv", "txt", "parquet"]
+  @valid_extensions_list ["jsonl", "csv", "parquet"]
 
   @typedoc """
-  A location to fetch model files from.
+  A location to fetch dataset files from.
+  Can be either a Hugging Face repository or a local resources:
 
-  Can be either:
+    * `{:hf, repository_id}` - the Hugging Face repository ID
 
-    * `{:hf, repository_id}` - the repository on Hugging Face. Options
-      may be passed as the third element:
+    * `{:hf, repository_id, options}` - the Hugging Face repository ID
+      with additional options
 
-        * `:revision` - the specific model version to use, it can be
-          any valid git identifier, such as branch name, tag name, or
-          a commit hash
-
-        * `:cache_dir` - the directory to store the downloaded files
-          in. Defaults to the standard cache location for the given
-          operating system. You can also configure it globally by
-          setting the `ELIXIR_DATASETS_CACHE_DIR` environment variable
-
-        * `:offline` - if `true`, only cached files are accessed and
-          missing files result in an error. You can also configure it
-          globally by setting the `ELIXIR_DATASETS_OFFLINE` environment
-          variable to `true`
-
-        * `:auth_token` - the token to use as HTTP bearer authorization
-          for remote files
-
-        * `:subdir` - the directory within the repository where the
-          files are located
-
-    * `{:local, directory}` - the directory containing model files
-
+    * `{:local, path}` - a local directory or file path containing the datasets
   """
-  @type repository :: {:hf, String.t()} | {:hf, String.t(), keyword()} | {:local, Path.t()}
+  @type t_repository :: {:hf, String.t()} | {:hf, String.t(), keyword()} | {:local, Path.t()}
 
   defp do_load_spec(repository, repo_files) do
-    case repo_files do
-      %{} ->
-        paths =
-          Enum.reduce(repo_files, [], fn {file_name, etag}, acc ->
-            extension = file_name |> String.split(".") |> List.last()
+    paths =
+      Enum.reduce_while(repo_files, [], fn {file_name, etag}, acc ->
+        extension = file_name |> Path.extname() |> String.trim_leading(".")
 
-            if extension in @valid_extensions do
-              case download(repository, file_name, etag) do
-                {:ok, path} ->
-                  path =
-                    if String.downcase(Path.extname(path)) ==
-                         ".eizwkyjyhe2gkmzzgrrwimrugqytgyrxhaytoojqgy4dgojsgrqtenjzha2tan3ege2dmzdbhfrdiylegbqteyjqge4dgmddg43wembqei" do
-                      convert_parquet_to_csv(path)
-                    else
-                      path
-                    end
+        if extension in @valid_extensions_list do
+          case download(repository, file_name, etag) do
+            {:ok, path} ->
+              {:cont, [{path, extension} | acc]}
 
-                  [path | acc]
+            {:error, reason} ->
+              {:halt,
+               {:error, "failed to download #{file_name} from #{inspect(repository)}: #{reason}"}}
+          end
+        else
+          {:cont, acc}
+        end
+      end)
 
-                {:error, reason} ->
-                  raise ArgumentError, """
-                  failed to download #{file_name} from #{inspect(repository)}: #{reason}
-                  """
-              end
-            else
-              acc
-            end
-          end)
-
-        {:ok, paths}
-    end
-  end
-
-  defp convert_parquet_to_csv(parquet_path) do
-    try do
-      df = Explorer.DataFrame.from_parquet!(parquet_path)
-
-      csv_path =
-        parquet_path
-        |> Path.rootname(".parquet")
-        |> Kernel.<>(".csv")
-
-      :ok = Explorer.DataFrame.to_csv(df, csv_path, header: true)
-      csv_path
-    rescue
-      e ->
-        IO.warn("Failed to convert #{parquet_path} to CSV: #{Exception.message(e)}")
-        parquet_path
+    case paths do
+      {:error, _} = error -> error
+      paths -> {:ok, Enum.reverse(paths)}
     end
   end
 
@@ -161,26 +114,40 @@ defmodule ElixirDatasets do
 
       todo
   """
-  @spec load_dataset(repository(), keyword()) ::
-          {:ok, %{dataset: [Path.t()]}} | {:error, String.t()}
+  @spec load_dataset(t_repository(), keyword()) ::
+          {:ok, [Explorer.DataFrame.t()]} | {:error, Exception.t()}
   def load_dataset(repository, opts \\ []) do
     repository = normalize_repository!(repository)
 
     with {:ok, repo_files} <- get_repo_files(repository),
-         {:ok, paths} <- maybe_load_model_spec(opts, repository, repo_files) do
-      {:ok, %{dataset: paths}}
+         {:ok, paths_with_extensions} <- maybe_load_model_spec(opts, repository, repo_files) do
+      ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions)
     end
   end
 
-  defp maybe_load_model_spec(opts, repository, repo_files) do
-    spec_result =
-      if spec = opts[:spec] do
-        {:ok, spec}
-      else
-        do_load_spec(repository, repo_files)
-      end
+  @doc """
+  Similar to `load_dataset/2` but raises an error if loading fails.
 
-    with {:ok, spec} <- spec_result do
+  ## Returns
+
+    * a list of loaded datasets
+    * raises an error if loading fails
+  """
+  @spec load_dataset!(t_repository(), keyword()) :: [Explorer.DataFrame.t()]
+  def load_dataset!(repository, opts \\ []) do
+    case load_dataset(repository, opts) do
+      {:ok, datasets} -> datasets
+      {:error, reason} -> raise reason
+    end
+  end
+
+  @spec upload_dataset(Explorer.DataFrame.t(), t_repository(), String.t()) :: any()
+  def upload_dataset(df, repository, file_extension) do
+    ElixirDatasets.Utils.Uploader.upload_dataset(df, repository, file_extension)
+  end
+
+  defp maybe_load_model_spec(_opts, repository, repo_files) do
+    with {:ok, spec} <- do_load_spec(repository, repo_files) do
       {:ok, spec}
     end
   end
