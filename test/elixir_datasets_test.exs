@@ -13,7 +13,9 @@ defmodule ElixirDatasetsTest do
   describe "do_load_spec/2" do
     @cache_dir "test_cache_do_load_spec"
     @repository {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir]}
-    @valid_repo_files %{"csv-test.csv" => "\"2dccc814f47c01b5344abbb72367a5b322656b0b\""}
+    @valid_repo_files %{
+      "resources/csv-test.csv" => "\"2dccc814f47c01b5344abbb72367a5b322656b0b\""
+    }
     @invalid_repo_files %{"invalid.csv" => "\"1234567890asdfgh\""}
 
     test "Loads valid files" do
@@ -159,6 +161,26 @@ defmodule ElixirDatasetsTest do
       if env_var do
         System.put_env("ELIXIR_DATASETS_CACHE_DIR", env_var)
       end
+    end
+  end
+
+  describe "get_dataset_info/2" do
+    test "fetches dataset info from Hugging Face API" do
+      assert {:ok, info} = ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets")
+      assert is_map(info)
+      assert info["id"] == "aaaaa32r/elixirDatasets"
+
+      assert is_map(info["cardData"])
+      dataset_info = info["cardData"]["dataset_info"]
+      assert is_list(dataset_info)
+
+      first_config = Enum.at(dataset_info, 0)
+      assert first_config["config_name"] == "csv"
+      assert is_list(first_config["features"])
+      assert is_list(first_config["splits"])
+
+      first_split = Enum.at(first_config["splits"], 0)
+      assert first_split["num_examples"] == 10
     end
   end
 end

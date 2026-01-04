@@ -265,4 +265,32 @@ ElixirDatasets.load_dataset({:local, "#{__DIR__}/../resources"})
  ]}
 ```
 
----
+## Get Dataset Info
+
+Fetch dataset metadata from Hugging Face API:
+
+```elixir
+{:ok, info} = ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets")
+
+IO.puts("Dataset: #{info["id"]}")
+
+dataset_info = info["cardData"]["dataset_info"] |> Enum.at(0)
+IO.puts("Config: #{dataset_info["config_name"]}")
+IO.puts("Features: #{inspect(dataset_info["features"])}")
+IO.puts("Training examples: #{dataset_info["splits"] |> Enum.at(0) |> Map.get("num_examples")}")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Dataset: aaaaa32r/elixirDatasets
+Config: csv
+Features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}]
+Training examples: 10
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```

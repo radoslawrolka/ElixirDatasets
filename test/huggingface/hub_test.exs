@@ -53,6 +53,16 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     end
   end
 
+  describe "dataset_info_url/1" do
+    @repository_id "test-user/test-repo"
+
+    test "returns correct URL for dataset info API" do
+      expected_url = "https://huggingface.co/api/datasets/test-user/test-repo"
+
+      assert ElixirDatasets.HuggingFace.Hub.dataset_info_url(@repository_id) == expected_url
+    end
+  end
+
   describe "cached_download/2" do
     @url "https://huggingface.co/datasets/aaaaa32r/elixirDatasets"
     @url_redirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"

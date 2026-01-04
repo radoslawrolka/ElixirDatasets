@@ -29,6 +29,14 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   end
 
   @doc """
+  Returns a URL to fetch dataset information from the Hugging Face API.
+  """
+  @spec dataset_info_url(String.t()) :: String.t()
+  def dataset_info_url(repository_id) do
+    @huggingface_endpoint <> "/api/datasets/#{repository_id}"
+  end
+
+  @doc """
   Downloads file from the given URL and returns a path to the file.
 
   The file is cached based on the received ETag. Subsequent requests
