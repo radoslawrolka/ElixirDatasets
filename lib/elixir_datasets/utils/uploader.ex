@@ -15,25 +15,28 @@ defmodule ElixirDatasets.Utils.Uploader do
     verify_options!(options)
     temp_file = ElixirDatasets.Utils.Saver.save_dataset_to_file(df, options)
 
-    with {:ok, token} <- get_hf_token(),
-         {:ok, file_content} <- File.read(temp_file),
-         encoded_content <- Base.encode64(file_content),
-         {:ok, filename} <- get_filename(temp_file, options),
-         commit_msg <- Keyword.get(options, :commit_message, "Commit from ElixirDatasets"),
-         description <- Keyword.get(options, :description, ""),
-         {:ok, response} <-
-           commit_to_huggingface(
-             repository,
-             token,
-             filename,
-             encoded_content,
-             commit_msg,
-             description
-           ) do
+    try do
+      with {:ok, token} <- get_hf_token(),
+           {:ok, file_content} <- File.read(temp_file),
+           encoded_content <- Base.encode64(file_content),
+           {:ok, filename} <- get_filename(temp_file, options),
+           commit_msg <- Keyword.get(options, :commit_message, "Commit from ElixirDatasets"),
+           description <- Keyword.get(options, :description, ""),
+           {:ok, response} <-
+             commit_to_huggingface(
+               repository,
+               token,
+               filename,
+               encoded_content,
+               commit_msg,
+               description
+             ) do
+        {:ok, response}
+      else
+        {:error, reason} -> {:error, reason}
+      end
+    after
       File.rm(temp_file)
-      {:ok, response}
-    else
-      {:error, reason} -> {:error, reason}
     end
   end
 
