@@ -110,6 +110,36 @@ defmodule ElixirDatasets do
   end
 
   @doc """
+  Fetches dataset information from the Hugging Face API.
+
+  ## Parameters
+
+    * `repository_id` - the Hugging Face dataset repository ID (e.g., "aaaaa32r/elixirDatasets")
+    * `opts` - optional keyword list with the following options:
+      * `:auth_token` - the token to use as HTTP bearer authorization
+
+  ## Returns
+
+  Returns `{:ok, dataset_info}` where `dataset_info` is a map containing the dataset metadata,
+  or `{:error, reason}` if the request fails.
+  """
+  @spec get_dataset_info(String.t(), keyword()) :: {:ok, map()} | {:error, String.t()}
+  def get_dataset_info(repository_id, opts \\ []) when is_binary(repository_id) do
+    url = HuggingFace.Hub.dataset_info_url(repository_id)
+
+    headers =
+      case opts[:auth_token] || System.get_env("HF_TOKEN") do
+        nil -> []
+        auth_token -> [{"Authorization", "Bearer #{auth_token}"}]
+      end
+
+    with {:ok, response} <- ElixirDatasets.Utils.HTTP.request(:get, url, headers: headers),
+         {:ok, data} <- Jason.decode(response.body) do
+      {:ok, data}
+    end
+  end
+
+  @doc """
   Loads a dataset from the given repository.
 
   The repository can be either a local directory or a Hugging Face repository.
