@@ -15,8 +15,6 @@ defmodule ElixirDatasets.Utils.Uploader do
     verify_options!(options)
     temp_file = ElixirDatasets.Utils.Saver.save_dataset_to_file(df, options)
 
-    # file_extension = Keyword.get(options, :file_extension) || Path.extname(temp_file) |> String.trim_leading(".")
-
     with {:ok, token} <- get_hf_token(),
          {:ok, file_content} <- File.read(temp_file),
          encoded_content <- Base.encode64(file_content),
