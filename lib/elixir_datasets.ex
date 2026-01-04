@@ -122,25 +122,15 @@ defmodule ElixirDatasets do
 
   Returns `{:ok, dataset_info}` where `dataset_info` is a map containing the dataset metadata,
   or `{:error, reason}` if the request fails.
-
-  ## Examples
-
-      # Example: ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets")
-      # {:ok, %{"id" => "aaaaa32r/elixirDatasets", "author" => "aaaaa32r", ...}}
-
-      # Example: ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets", auth_token: "hf_...")
-      # {:ok, %{"id" => "aaaaa32r/elixirDatasets", "author" => "aaaaa32r", ...}}
-
   """
   @spec get_dataset_info(String.t(), keyword()) :: {:ok, map()} | {:error, String.t()}
   def get_dataset_info(repository_id, opts \\ []) when is_binary(repository_id) do
     url = HuggingFace.Hub.dataset_info_url(repository_id)
 
     headers =
-      if auth_token = System.get_env("HF_TOKEN") do
-        [{"Authorization", "Bearer #{auth_token}"}]
-      else
-        []
+      case opts[:auth_token] || System.get_env("HF_TOKEN") do
+        nil -> []
+        auth_token -> [{"Authorization", "Bearer #{auth_token}"}]
       end
 
     with {:ok, response} <- ElixirDatasets.Utils.HTTP.request(:get, url, headers: headers),
