@@ -7,7 +7,7 @@ defmodule ElixirDatasets.MixProject do
       name: "ElixirDatasets",
       description: "A library for loading datasets from the Hugging Face Hub and local paths.",
       package: package(),
-      version: "0.1.0",
+      version: "0.0.1",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),

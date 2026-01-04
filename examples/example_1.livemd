@@ -6,7 +6,7 @@
 ##### Target version
 # Install dependencies
 # Mix.install([
-#   {:elixir_datasets, git: "https://github.com/radoslawrolka/ElixirDatasets"}
+#   {:elixir_datasets, "0.0.1"}
 # ])
 ##### Local dev-testing version
 Mix.install([
@@ -105,12 +105,6 @@ ElixirDatasets.load_dataset(
 <!-- livebook:{"output":true} -->
 
 ```
-|===============================================================| 100% (1.17 MB)
-```
-
-<!-- livebook:{"output":true} -->
-
-```
 {:ok,
  [
    #Explorer.DataFrame<
@@ -134,14 +128,6 @@ ElixirDatasets.load_dataset(
 ElixirDatasets.load_dataset!(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"}, 
   %{auth_token: auth_token})
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-|==============================================================| 100% (92.20 KB)
-|=============================================================| 100% (698.84 KB)
-|==============================================================| 100% (90.00 KB)
 ```
 
 <!-- livebook:{"output":true} -->
