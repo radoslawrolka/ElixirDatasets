@@ -275,9 +275,9 @@ defmodule ElixirDatasets do
       multiple configurations, this specifies which one to use. Files are matched
       by looking for the config name in the file path (e.g., "sst2/train.parquet").
 
-    * `:streaming` - if `true`, returns a Stream that progressively yields rows
-      without downloading files. Data is fetched on-demand as you iterate.
-      Useful for large datasets. Default is `false`.
+    * `:streaming` - if `true`, returns an enumerable that progressively yields
+      data rows (maps) without loading the entire dataset into memory. Data is
+      fetched on-demand as you iterate. Useful for large datasets. Default is `false`.
 
   ### HuggingFace Hub Options
 
@@ -297,11 +297,9 @@ defmodule ElixirDatasets do
     * `:download_mode` - controls download/cache behavior. Can be:
       - `:reuse_dataset_if_exists` (default) - reuse cached data if available
       - `:force_redownload` - always download, even if cached
-      - `:force_redownload_and_prepare` - redownload and reprocess
 
     * `:verification_mode` - controls verification checks. Can be:
       - `:basic_checks` (default) - basic validation
-      - `:all_checks` - comprehensive validation
       - `:no_checks` - skip all validation
 
     * `:num_proc` - number of processes to use for parallel dataset processing.
@@ -409,20 +407,32 @@ defmodule ElixirDatasets do
   defp filter_by_config_name(repo_files, nil), do: repo_files
 
   defp filter_by_config_name(repo_files, config_name) do
-    Enum.filter(repo_files, fn {file_name, _etag} ->
-      String.contains?(file_name, config_name)
-    end)
-    |> Map.new()
+    filtered =
+      Enum.filter(repo_files, fn {file_name, _etag} ->
+        String.contains?(file_name, config_name)
+      end)
+
+    if is_map(repo_files) do
+      Map.new(filtered)
+    else
+      filtered
+    end
   end
 
   defp filter_by_split(repo_files, nil), do: repo_files
 
   defp filter_by_split(repo_files, split) when is_binary(split) do
-    Enum.filter(repo_files, fn {file_name, _etag} ->
-      base_name = Path.basename(file_name, Path.extname(file_name))
-      String.contains?(base_name, split)
-    end)
-    |> Map.new()
+    filtered =
+      Enum.filter(repo_files, fn {file_name, _etag} ->
+        base_name = Path.basename(file_name, Path.extname(file_name))
+        String.contains?(base_name, split)
+      end)
+
+    if is_map(repo_files) do
+      Map.new(filtered)
+    else
+      filtered
+    end
   end
 
   defp maybe_load_model_spec(opts, repository, repo_files) do

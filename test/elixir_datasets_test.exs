@@ -376,7 +376,7 @@ defmodule ElixirDatasetsTest do
       IO.puts("     Speedup: #{Float.round(speedup, 2)}x")
 
       assert time_parallel <= time_sequential * 1.5,
-             "Parallel processing should not be significantly slower than sequential"
+             "Parallel processing overhead should be reasonable for this dataset size (no more than 1.5x slower than sequential)"
     end
 
     test "num_proc produces same results as sequential" do
