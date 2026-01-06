@@ -420,7 +420,7 @@ defmodule ElixirDatasetsTest do
       # Parallel should be faster (or at least not significantly slower)
       # We use a relaxed assertion since overhead might affect small datasets
       assert time_parallel <= time_sequential * 1.5,
-             "Parallel processing should not be significantly slower than sequential"
+             "Parallel processing overhead should be reasonable for this dataset size (no more than 1.5x slower than sequential)"
     end
 
     test "num_proc produces same results as sequential" do
