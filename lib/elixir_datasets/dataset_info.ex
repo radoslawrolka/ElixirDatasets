@@ -163,6 +163,13 @@ defmodule ElixirDatasets.DatasetInfo do
 
   ## Examples
 
+      iex> dataset_info = %ElixirDatasets.DatasetInfo{
+      ...>   config_name: "csv",
+      ...>   features: [%{"name" => "id", "dtype" => "int64"}],
+      ...>   splits: [%{"name" => "train", "num_examples" => 10}]
+      ...> }
+      iex> ElixirDatasets.DatasetInfo.write_to_directory(dataset_info, "/tmp/my_dataset")
+      {:ok, "/tmp/my_dataset/dataset_info.json"}
       iex> ElixirDatasets.DatasetInfo.from_directory("/tmp/my_dataset")
       {:ok, %ElixirDatasets.DatasetInfo{
         config_name: "csv",

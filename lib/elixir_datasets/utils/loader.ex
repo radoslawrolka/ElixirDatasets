@@ -48,7 +48,7 @@ defmodule ElixirDatasets.Utils.Loader do
   end
 
   @spec load_dataset_from_file(Path.t(), String.t()) ::
-          Explorer.DataFrame.t() | {:error, Exception.t()}
+          {:ok, Explorer.DataFrame.t()} | {:error, Exception.t()}
   defp load_dataset_from_file(path, "jsonl") do
     Explorer.DataFrame.from_ndjson(path)
   end

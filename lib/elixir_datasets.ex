@@ -277,7 +277,8 @@ defmodule ElixirDatasets do
     end
   end
 
-  @spec upload_dataset(Explorer.DataFrame.t(), t_repository(), String.t()) :: any()
+  @spec upload_dataset(Explorer.DataFrame.t(), String.t(), keyword()) ::
+          {:error, String.t()} | {:ok, binary()}
   def upload_dataset(df, repository, file_extension) do
     ElixirDatasets.Utils.Uploader.upload_dataset(df, repository, file_extension)
   end
