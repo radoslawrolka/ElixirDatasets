@@ -305,7 +305,8 @@ defmodule ElixirDatasets do
       datasets = ElixirDatasets.load_dataset!({:hf, "dataset_name"}, split: "train")
 
   """
-  @spec load_dataset!(t_repository(), keyword()) :: [Explorer.DataFrame.t()] | [{Path.t(), String.t()}]
+  @spec load_dataset!(t_repository(), keyword()) ::
+          [Explorer.DataFrame.t()] | [{Path.t(), String.t()}]
   def load_dataset!(repository, opts \\ []) do
     case load_dataset(repository, opts) do
       {:ok, datasets} -> datasets
@@ -332,8 +333,6 @@ defmodule ElixirDatasets do
 
   defp filter_by_config_name(repo_files, config_name) do
     Enum.filter(repo_files, fn {file_name, _etag} ->
-      # Match files that contain the config name in their path
-      # e.g., "sst2/train.parquet" or "sst2-train.parquet"
       String.contains?(file_name, config_name)
     end)
     |> Map.new()
@@ -343,8 +342,6 @@ defmodule ElixirDatasets do
 
   defp filter_by_split(repo_files, split) when is_binary(split) do
     Enum.filter(repo_files, fn {file_name, _etag} ->
-      # Match files that contain the split name
-      # Common patterns: "train.csv", "train-00000.parquet", "data/train.jsonl"
       base_name = Path.basename(file_name, Path.extname(file_name))
       String.contains?(base_name, split)
     end)
