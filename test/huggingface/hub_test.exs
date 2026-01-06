@@ -126,6 +126,112 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
       File.rm_rf!(@cache_dir)
     end
+
+    test "verification_mode: :no_checks skips file existence check in offline mode" do
+      File.mkdir_p!(@cache_dir)
+
+      assert {:ok, cached_path} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(@url, @opts)
+
+      assert File.exists?(cached_path)
+
+      File.rm!(cached_path)
+      refute File.exists?(cached_path)
+
+      assert {:error, error_msg} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(
+                 @url,
+                 @opts ++ [offline: true, verification_mode: :basic_checks]
+               )
+
+      assert error_msg =~ "cached file not found"
+
+      assert {:ok, returned_path} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(
+                 @url,
+                 @opts ++ [offline: true, verification_mode: :no_checks]
+               )
+
+      assert returned_path == cached_path
+      refute File.exists?(returned_path)
+
+      File.rm_rf!(@cache_dir)
+    end
+
+    test "verification_mode: :basic_checks fails when cached file is missing" do
+      File.mkdir_p!(@cache_dir)
+
+      assert {:ok, cached_path} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(@url, @opts)
+
+      assert File.exists?(cached_path)
+
+      File.rm!(cached_path)
+
+      assert {:error, error_msg} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(
+                 @url,
+                 @opts ++ [offline: true, verification_mode: :basic_checks]
+               )
+
+      assert error_msg =~ "cached file not found"
+
+      File.rm_rf!(@cache_dir)
+    end
+
+    test "verification_mode comparison: :basic_checks vs :no_checks" do
+      File.mkdir_p!(@cache_dir)
+
+      {:ok, cached_path} = ElixirDatasets.HuggingFace.Hub.cached_download(@url, @opts)
+      File.rm!(cached_path)
+
+      IO.puts("\n  🔍 Testing verification_mode behavior:")
+      IO.puts("    Cache file deleted: #{cached_path}")
+
+      IO.puts("\n    1. With verification_mode: :basic_checks (offline)")
+      result_basic =
+        ElixirDatasets.HuggingFace.Hub.cached_download(
+          @url,
+          @opts ++ [offline: true, verification_mode: :basic_checks]
+        )
+
+      case result_basic do
+        {:error, msg} ->
+          IO.puts("       ✓ Failed as expected: #{msg}")
+          assert msg =~ "cached file not found"
+
+        {:ok, _} ->
+          IO.puts("       ✗ Should have failed!")
+          flunk("Expected :basic_checks to fail with missing file")
+      end
+
+      IO.puts("\n    2. With verification_mode: :no_checks (offline)")
+
+      result_no_checks =
+        ElixirDatasets.HuggingFace.Hub.cached_download(
+          @url,
+          @opts ++ [offline: true, verification_mode: :no_checks]
+        )
+
+      case result_no_checks do
+        {:ok, path} ->
+          IO.puts("       ✓ Succeeded (returns path without checking)")
+          IO.puts("       ✓ Returned path: #{path}")
+          IO.puts("       ✓ File exists? #{File.exists?(path)}")
+          assert path == cached_path
+          refute File.exists?(path)
+
+        {:error, msg} ->
+          IO.puts("       ✗ Should have succeeded!")
+          flunk("Expected :no_checks to succeed, got error: #{msg}")
+      end
+
+      IO.puts("\n    ✅ verification_mode works correctly!")
+      IO.puts("       :basic_checks = validates file exists")
+      IO.puts("       :no_checks = skips validation (faster but risky)")
+
+      File.rm_rf!(@cache_dir)
+    end
   end
 
   describe "cached_path_for_etag/3" do
