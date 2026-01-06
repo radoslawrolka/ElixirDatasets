@@ -70,9 +70,7 @@ defmodule ElixirDatasets.HuggingFace.Hub do
       - `:basic_checks` (default) - basic validation
       - `:all_checks` - comprehensive validation
       - `:no_checks` - skip all validation
-
-    * `:storage_options` - key/value pairs for cloud storage backends.
-      Currently not implemented but reserved for future use.
+      Note: Currently only `:no_checks` is implemented to skip file existence checks.
 
   """
   @spec cached_download(String.t(), keyword()) :: {:ok, String.t()} | {:error, String.t()}
@@ -114,7 +112,6 @@ defmodule ElixirDatasets.HuggingFace.Hub do
           {:ok, %{"etag" => etag}} ->
             entry_path = Path.join(dir, entry_filename(url, etag))
 
-            # Verify file exists unless verification is disabled
             if verification_mode == :no_checks or File.exists?(entry_path) do
               {:ok, entry_path}
             else
@@ -131,7 +128,6 @@ defmodule ElixirDatasets.HuggingFace.Hub do
 
       true ->
         with {:ok, etag, download_url, redirect?} <- head_download(url, headers) do
-          # Check if we should reuse cached file (unless force_redownload)
           cached_entry =
             if download_mode != :force_redownload, do: cached_path_for_etag(dir, url, etag)
 

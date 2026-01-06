@@ -24,28 +24,59 @@ defmodule ElixirDatasets do
   """
   @type t_repository :: {:hf, String.t()} | {:hf, String.t(), keyword()} | {:local, Path.t()}
 
-  defp do_load_spec(repository, repo_files) do
-    paths =
-      Enum.reduce_while(repo_files, [], fn {file_name, etag}, acc ->
+  defp do_load_spec(repository, repo_files, num_proc \\ 1) do
+    files_to_download =
+      Enum.filter(repo_files, fn {file_name, _etag} ->
         extension = file_name |> Path.extname() |> String.trim_leading(".")
-
-        if extension in @valid_extensions_list do
-          case download(repository, file_name, etag) do
-            {:ok, path} ->
-              {:cont, [{path, extension} | acc]}
-
-            {:error, reason} ->
-              {:halt,
-               {:error, "failed to download #{file_name} from #{inspect(repository)}: #{reason}"}}
-          end
-        else
-          {:cont, acc}
-        end
+        extension in @valid_extensions_list
       end)
 
-    case paths do
-      {:error, _} = error -> error
-      paths -> {:ok, Enum.reverse(paths)}
+    if num_proc > 1 do
+      files_to_download
+      |> Task.async_stream(
+        fn {file_name, etag} ->
+          extension = file_name |> Path.extname() |> String.trim_leading(".")
+
+          case download(repository, file_name, etag) do
+            {:ok, path} -> {:ok, {path, extension}}
+            {:error, reason} -> {:error, "failed to download #{file_name}: #{reason}"}
+          end
+        end,
+        max_concurrency: num_proc,
+        ordered: false
+      )
+      |> Enum.reduce_while({:ok, []}, fn
+        {:ok, {:ok, path_ext}}, {:ok, acc} ->
+          {:cont, {:ok, [path_ext | acc]}}
+
+        {:ok, {:error, reason}}, _acc ->
+          {:halt, {:error, reason}}
+
+        {:exit, reason}, _acc ->
+          {:halt, {:error, "task failed: #{inspect(reason)}"}}
+      end)
+      |> case do
+        {:ok, paths} -> {:ok, Enum.reverse(paths)}
+        error -> error
+      end
+    else
+      # Sequential processing (original behavior)
+      Enum.reduce_while(files_to_download, [], fn {file_name, etag}, acc ->
+        extension = file_name |> Path.extname() |> String.trim_leading(".")
+
+        case download(repository, file_name, etag) do
+          {:ok, path} ->
+            {:cont, [{path, extension} | acc]}
+
+          {:error, reason} ->
+            {:halt,
+             {:error, "failed to download #{file_name} from #{inspect(repository)}: #{reason}"}}
+        end
+      end)
+      |> case do
+        {:error, _} = error -> error
+        paths -> {:ok, Enum.reverse(paths)}
+      end
     end
   end
 
@@ -273,8 +304,10 @@ defmodule ElixirDatasets do
       - `:all_checks` - comprehensive validation
       - `:no_checks` - skip all validation
 
-    * `:storage_options` - key/value pairs for cloud storage backends
-      (e.g., AWS S3, Google Cloud Storage).
+    * `:num_proc` - number of processes to use for parallel dataset processing.
+      Default is `1` (no parallelization). Set to a higher number to speed up
+      dataset downloading and loading. For example, `num_proc: 4` will use 4
+      parallel processes.
 
   ## Returns
 
@@ -300,6 +333,7 @@ defmodule ElixirDatasets do
     split = opts[:split]
     name = opts[:name]
     streaming = opts[:streaming] || false
+    num_proc = opts[:num_proc] || 1
 
     with {:ok, repo_files} <- get_repo_files(repository),
          {:ok, filtered_files} <- filter_files_by_config_and_split(repo_files, name, split),
@@ -307,7 +341,7 @@ defmodule ElixirDatasets do
       if streaming do
         {:ok, paths_with_extensions}
       else
-        ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions)
+        ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions, num_proc)
       end
     end
   end
@@ -374,8 +408,10 @@ defmodule ElixirDatasets do
     |> Map.new()
   end
 
-  defp maybe_load_model_spec(_opts, repository, repo_files) do
-    with {:ok, spec} <- do_load_spec(repository, repo_files) do
+  defp maybe_load_model_spec(opts, repository, repo_files) do
+    num_proc = opts[:num_proc] || 1
+
+    with {:ok, spec} <- do_load_spec(repository, repo_files, num_proc) do
       {:ok, spec}
     end
   end
@@ -408,8 +444,7 @@ defmodule ElixirDatasets do
       :auth_token,
       :etag,
       :download_mode,
-      :verification_mode,
-      :storage_options
+      :verification_mode
     ]
 
     result =
@@ -466,8 +501,7 @@ defmodule ElixirDatasets do
       :offline,
       :auth_token,
       :download_mode,
-      :verification_mode,
-      :storage_options
+      :verification_mode
     ]
 
     HuggingFace.Hub.cached_download(

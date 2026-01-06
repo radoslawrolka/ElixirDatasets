@@ -19,12 +19,12 @@ defmodule ElixirDatasetsTest do
     @invalid_repo_files %{"invalid.csv" => "\"1234567890asdfgh\""}
 
     test "Loads valid files" do
-      assert {:ok, _paths} = ElixirDatasets.do_load_spec(@repository, @valid_repo_files)
+      assert {:ok, _paths} = ElixirDatasets.do_load_spec(@repository, @valid_repo_files, 1)
       File.rm_rf!(@cache_dir)
     end
 
     test "Return error for invalid files" do
-      assert {:error, _reason} = ElixirDatasets.do_load_spec(@repository, @invalid_repo_files)
+      assert {:error, _reason} = ElixirDatasets.do_load_spec(@repository, @invalid_repo_files, 1)
 
       File.rm_rf!(@cache_dir)
     end
@@ -171,9 +171,18 @@ defmodule ElixirDatasetsTest do
       assert is_list(datasets)
     end
 
-    test "loads dataset with storage_options" do
+    test "loads dataset with num_proc for parallel processing" do
       repository = {:local, "resources"}
-      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, storage_options: %{})
+      # Test with parallel processing
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, num_proc: 2)
+      assert is_list(datasets)
+      assert length(datasets) > 0
+    end
+
+    test "loads dataset with num_proc=1 (sequential)" do
+      repository = {:local, "resources"}
+      # Test with sequential processing (default)
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, num_proc: 1)
       assert is_list(datasets)
     end
 

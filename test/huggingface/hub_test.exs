@@ -126,18 +126,6 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
       File.rm_rf!(@cache_dir)
     end
-
-    test "with storage_options" do
-      File.mkdir_p!(@cache_dir)
-
-      assert {:ok, _path} =
-               ElixirDatasets.HuggingFace.Hub.cached_download(
-                 @url,
-                 @opts ++ [storage_options: %{"key" => "value"}]
-               )
-
-      File.rm_rf!(@cache_dir)
-    end
   end
 
   describe "cached_path_for_etag/3" do

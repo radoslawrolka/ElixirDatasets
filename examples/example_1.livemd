@@ -696,6 +696,37 @@ case ElixirDatasets.load_dataset(
 end
 ```
 
+### Example 12: Parallel processing with num_proc
+
+Use `num_proc` to speed up dataset loading with parallel processing:
+
+```elixir
+{:ok, [parallel_data]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train",
+  num_proc: 4
+)
+
+IO.puts("Loaded #{Explorer.DataFrame.n_rows(parallel_data)} rows using 4 parallel processes")
+```
+
+The `num_proc` option controls how many processes are used for:
+
+* Downloading multiple dataset files in parallel
+* Loading multiple files into DataFrames in parallel
+
+Benefits:
+
+* **Faster downloads** - Multiple files downloaded simultaneously
+* **Faster loading** - Multiple files parsed in parallel
+* **Better resource utilization** - Uses multiple CPU cores
+
+Recommended values:
+
+* `num_proc: 1` (default) - Sequential processing, lowest memory usage
+* `num_proc: 2-4` - Good balance for most datasets
+* `num_proc: 8+` - For large datasets with many files on powerful machines
+
 ### Summary of All Available Options
 
 **Data Loading Options:**
@@ -711,4 +742,4 @@ end
 * `:auth_token` - Authentication token for private datasets
 * `:download_mode` - Control caching (`:reuse_dataset_if_exists`, `:force_redownload`)
 * `:verification_mode` - Control validation (`:basic_checks`, `:no_checks`)
-* `:storage_options` - Cloud storage configuration (reserved for future use)
+* `:num_proc` - Number of parallel processes for faster loading (e.g., `num_proc: 4`)
