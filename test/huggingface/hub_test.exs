@@ -95,6 +95,46 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       # Clean up
       File.rm_rf!(@cache_dir)
     end
+
+    test "with download_mode: :force_redownload" do
+      File.mkdir_p!(@cache_dir)
+
+      assert {:ok, path1} = ElixirDatasets.HuggingFace.Hub.cached_download(@url, @opts)
+      assert File.exists?(path1)
+
+      assert {:ok, path2} = ElixirDatasets.HuggingFace.Hub.cached_download(
+        @url,
+        @opts ++ [download_mode: :force_redownload]
+      )
+
+      assert File.exists?(path2)
+      assert String.contains?(path1, @cache_dir)
+      assert String.contains?(path2, @cache_dir)
+
+      File.rm_rf!(@cache_dir)
+    end
+
+    test "with verification_mode: :no_checks" do
+      File.mkdir_p!(@cache_dir)
+
+      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(
+        @url,
+        @opts ++ [verification_mode: :no_checks]
+      )
+
+      File.rm_rf!(@cache_dir)
+    end
+
+    test "with storage_options" do
+      File.mkdir_p!(@cache_dir)
+
+      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(
+        @url,
+        @opts ++ [storage_options: %{"key" => "value"}]
+      )
+
+      File.rm_rf!(@cache_dir)
+    end
   end
 
   describe "cached_path_for_etag/3" do

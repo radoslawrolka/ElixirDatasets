@@ -149,6 +149,24 @@ defmodule ElixirDatasetsTest do
       assert is_list(datasets)
     end
 
+    test "loads dataset with download_mode option" do
+      repository = {:local, "resources"}
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, download_mode: :reuse_dataset_if_exists)
+      assert is_list(datasets)
+    end
+
+    test "loads dataset with verification_mode option" do
+      repository = {:local, "resources"}
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, verification_mode: :no_checks)
+      assert is_list(datasets)
+    end
+
+    test "loads dataset with storage_options" do
+      repository = {:local, "resources"}
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, storage_options: %{})
+      assert is_list(datasets)
+    end
+
     # todo more tests for load_dataset/2
   end
 

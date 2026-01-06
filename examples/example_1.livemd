@@ -599,3 +599,124 @@ Validation examples: 1066
 ```
 :ok
 ```
+
+## Advanced HuggingFace Hub Options
+
+These options control how files are downloaded and cached from HuggingFace Hub.
+
+### Example 7: Force redownload with download_mode
+
+Use `download_mode` to control caching behavior:
+
+```elixir
+# Force redownload even if the file is already cached
+# Useful when you suspect cached data is corrupted or outdated
+{:ok, [fresh_data]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train",
+  download_mode: :force_redownload
+)
+
+IO.puts("Freshly downloaded dataset has #{Explorer.DataFrame.n_rows(fresh_data)} rows")
+```
+
+Available `download_mode` options:
+
+* `:reuse_dataset_if_exists` (default) - Use cached data if available
+* `:force_redownload` - Always download fresh, even if cached
+
+### Example 8: Skip verification with verification_mode
+
+Use `verification_mode` to control validation checks:
+
+```elixir
+# Skip file verification checks for faster loading
+# Useful when you trust your cache and want maximum speed
+{:ok, [quick_data]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "validation",
+  verification_mode: :no_checks
+)
+
+IO.puts("Loaded #{Explorer.DataFrame.n_rows(quick_data)} rows (skipping verification)")
+```
+
+Available `verification_mode` options:
+
+* `:basic_checks` (default) - Basic validation including file existence
+* `:no_checks` - Skip all validation for faster loading
+
+### Example 9: Combining multiple advanced options
+
+Combine data loading options with Hub options for maximum control:
+
+```elixir
+# Complex example: streaming mode with forced redownload and no verification
+{:ok, file_paths} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "test",
+  streaming: true,
+  download_mode: :force_redownload,
+  verification_mode: :no_checks
+)
+
+IO.puts("Got #{length(file_paths)} file path(s) in streaming mode")
+Enum.each(file_paths, fn {path, ext} ->
+  IO.puts("  - #{Path.basename(path)} (#{ext})")
+end)
+```
+
+### Example 10: Using custom cache directory
+
+Control where downloaded files are stored:
+
+```elixir
+# Use a custom cache directory
+custom_cache = "/tmp/my_datasets_cache"
+
+{:ok, [cached_data]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train",
+  cache_dir: custom_cache
+)
+
+IO.puts("Dataset cached in: #{custom_cache}")
+IO.puts("Loaded #{Explorer.DataFrame.n_rows(cached_data)} rows")
+```
+
+### Example 11: Offline mode
+
+Work with cached datasets without network access:
+
+```elixir
+# Only use cached files, don't make any network requests
+# This will fail if the dataset is not already cached
+case ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train",
+  offline: true
+) do
+  {:ok, [offline_data]} ->
+    IO.puts("✓ Loaded from cache: #{Explorer.DataFrame.n_rows(offline_data)} rows")
+
+  {:error, reason} ->
+    IO.puts("✗ Not in cache: #{reason}")
+end
+```
+
+### Summary of All Available Options
+
+**Data Loading Options:**
+
+* `:split` - Load specific split (train/test/validation)
+* `:name` - Filter files by name pattern
+* `:streaming` - Return file paths instead of loading data
+
+**HuggingFace Hub Options:**
+
+* `:cache_dir` - Custom cache directory location
+* `:offline` - Only use cached files, no network requests
+* `:auth_token` - Authentication token for private datasets
+* `:download_mode` - Control caching (`:reuse_dataset_if_exists`, `:force_redownload`)
+* `:verification_mode` - Control validation (`:basic_checks`, `:no_checks`)
+* `:storage_options` - Cloud storage configuration (reserved for future use)

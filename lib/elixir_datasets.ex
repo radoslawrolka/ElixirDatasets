@@ -235,9 +235,7 @@ defmodule ElixirDatasets do
 
   ## Options
 
-    * `:auth_token` - the token to use as HTTP bearer authorization
-      for remote files. If not provided, the token from the
-      `ELIXIR_DATASETS_HF_TOKEN` environment variable is used.
+  ### Data Loading Options
 
     * `:split` - which split of the data to load (e.g., "train", "test", "validation").
       If not specified, all splits are loaded. Files are matched by name patterns
@@ -249,6 +247,34 @@ defmodule ElixirDatasets do
 
     * `:streaming` - if `true`, returns file paths for streaming instead of loading
       all data into memory. Useful for large datasets. Default is `false`.
+
+  ### HuggingFace Hub Options
+
+    * `:auth_token` - the token to use as HTTP bearer authorization
+      for remote files. If not provided, the token from the
+      `ELIXIR_DATASETS_HF_TOKEN` environment variable is used.
+
+    * `:cache_dir` - the directory to store downloaded files in.
+      Defaults to the standard cache location for the operating system.
+
+    * `:offline` - if `true`, only cached files are used and no network
+      requests are made. Returns an error if the file is not cached.
+
+    * `:etag` - if provided, skips the HEAD request to fetch the latest
+      ETag value and uses this value instead.
+
+    * `:download_mode` - controls download/cache behavior. Can be:
+      - `:reuse_dataset_if_exists` (default) - reuse cached data if available
+      - `:force_redownload` - always download, even if cached
+      - `:force_redownload_and_prepare` - redownload and reprocess
+
+    * `:verification_mode` - controls verification checks. Can be:
+      - `:basic_checks` (default) - basic validation
+      - `:all_checks` - comprehensive validation
+      - `:no_checks` - skip all validation
+
+    * `:storage_options` - key/value pairs for cloud storage backends
+      (e.g., AWS S3, Google Cloud Storage).
 
   ## Returns
 
@@ -376,10 +402,20 @@ defmodule ElixirDatasets do
     url = HuggingFace.Hub.file_listing_url(repository_id, subdir, opts[:revision])
     cache_scope = repository_id_to_cache_scope(repository_id)
 
+    passthrough_opts = [
+      :cache_dir,
+      :offline,
+      :auth_token,
+      :etag,
+      :download_mode,
+      :verification_mode,
+      :storage_options
+    ]
+
     result =
       HuggingFace.Hub.cached_download(
         url,
-        [cache_scope: cache_scope] ++ Keyword.take(opts, [:cache_dir, :offline, :auth_token])
+        [cache_scope: cache_scope] ++ Keyword.take(opts, passthrough_opts)
       )
 
     with {:ok, path} <- result,
@@ -425,10 +461,19 @@ defmodule ElixirDatasets do
     url = HuggingFace.Hub.file_url(repository_id, filename, opts[:revision])
     cache_scope = repository_id_to_cache_scope(repository_id)
 
+    passthrough_opts = [
+      :cache_dir,
+      :offline,
+      :auth_token,
+      :download_mode,
+      :verification_mode,
+      :storage_options
+    ]
+
     HuggingFace.Hub.cached_download(
       url,
       [etag: etag, cache_scope: cache_scope] ++
-        Keyword.take(opts, [:cache_dir, :offline, :auth_token])
+        Keyword.take(opts, passthrough_opts)
     )
   end
 
