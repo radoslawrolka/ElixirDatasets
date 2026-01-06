@@ -66,11 +66,12 @@ defmodule ElixirDatasets.HuggingFace.Hub do
       - `:reuse_dataset_if_exists` (default) - reuse cached data if available
       - `:force_redownload` - always download, even if cached
 
-    * `:verification_mode` - controls verification checks. Can be:
-      - `:basic_checks` (default) - basic validation
-      - `:all_checks` - comprehensive validation
-      - `:no_checks` - skip all validation
-      Note: Currently only `:no_checks` is implemented to skip file existence checks.
+    * `:verification_mode` - controls whether basic verification checks
+      are applied. Can be:
+      - `:basic_checks` (default) - perform basic validation
+      - `:no_checks` - skip validation (for example, file existence checks)
+      Note: Currently, `:verification_mode` only distinguishes between
+      performing the default basic checks and skipping them via `:no_checks`.
 
   """
   @spec cached_download(String.t(), keyword()) :: {:ok, String.t()} | {:error, String.t()}
