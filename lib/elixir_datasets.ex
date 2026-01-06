@@ -24,7 +24,7 @@ defmodule ElixirDatasets do
   """
   @type t_repository :: {:hf, String.t()} | {:hf, String.t(), keyword()} | {:local, Path.t()}
 
-  defp do_load_spec(repository, repo_files, num_proc \\ 1) do
+  defp do_load_spec(repository, repo_files, num_proc) do
     files_to_download =
       Enum.filter(repo_files, fn {file_name, _etag} ->
         extension = file_name |> Path.extname() |> String.trim_leading(".")
