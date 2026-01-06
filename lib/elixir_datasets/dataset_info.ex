@@ -99,4 +99,96 @@ defmodule ElixirDatasets.DatasetInfo do
       "citation" => dataset_info.citation
     }
   end
+
+  @doc """
+  Writes DatasetInfo to a directory as a JSON file.
+
+  Creates a directory if it doesn't exist and saves the dataset information
+  as 'dataset_info.json' in that directory.
+
+  ## Parameters
+
+    * `dataset_info` - The DatasetInfo struct to write
+    * `directory` - The directory path where the file will be saved
+
+  ## Returns
+
+    * `{:ok, filepath}` - Success with the path to the saved file
+    * `{:error, reason}` - If directory creation or file writing fails
+
+  ## Examples
+
+      iex> dataset_info = %ElixirDatasets.DatasetInfo{
+      ...>   config_name: "csv",
+      ...>   features: [%{"name" => "id", "dtype" => "int64"}],
+      ...>   splits: [%{"name" => "train", "num_examples" => 10}]
+      ...> }
+      iex> ElixirDatasets.DatasetInfo.write_to_directory(dataset_info, "/tmp/my_dataset")
+      {:ok, "/tmp/my_dataset/dataset_info.json"}
+  """
+  @spec write_to_directory([t()], String.t()) :: {:ok, String.t()} | {:error, any()}
+  def write_to_directory(dataset_info, directory) when is_binary(directory) do
+    with :ok <- File.mkdir_p(directory) do
+      filepath = Path.join(directory, "dataset_info.json")
+
+      json_data =
+        dataset_info
+        |> case do
+          list when is_list(list) -> Enum.map(list, &to_map/1)
+          single -> to_map(single)
+        end
+        |> Jason.encode!()
+
+      case File.write(filepath, json_data) do
+        :ok -> {:ok, filepath}
+        {:error, reason} -> {:error, reason}
+      end
+    end
+  end
+
+  @doc """
+  Reads DatasetInfo from a directory JSON file.
+
+  Reads the 'dataset_info.json' file from the specified directory and
+  returns a DatasetInfo struct.
+
+  ## Parameters
+
+    * `directory` - The directory path containing the 'dataset_info.json' file
+
+  ## Returns
+
+    * `{:ok, dataset_info}` - Success with the parsed DatasetInfo struct
+    * `{:error, reason}` - If the file doesn't exist or parsing fails
+
+  ## Examples
+
+      iex> ElixirDatasets.DatasetInfo.from_directory("/tmp/my_dataset")
+      {:ok, %ElixirDatasets.DatasetInfo{
+        config_name: "csv",
+        features: [%{"name" => "id", "dtype" => "int64"}],
+        splits: [%{"name" => "train", "num_examples" => 10}],
+        description: nil,
+        homepage: nil,
+        license: nil,
+        citation: nil
+      }}
+  """
+  @spec from_directory(String.t()) :: {:ok, t()} | {:error, any()}
+  def from_directory(directory, filename \\ "dataset_info.json") when is_binary(directory) do
+    filepath = Path.join(directory, filename)
+
+    with {:ok, content} <- File.read(filepath),
+         {:ok, data} <- Jason.decode(content) do
+      dataset_info =
+        case data do
+          list when is_list(list) -> Enum.map(list, &from_map/1)
+          single -> from_map(single)
+        end
+
+      {:ok, dataset_info}
+    else
+      {:error, reason} -> {:error, reason}
+    end
+  end
 end

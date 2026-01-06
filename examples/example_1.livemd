@@ -206,6 +206,38 @@ ElixirDatasets.get_dataset_config_names("aaaaa32r/elixirDatasets")
 {:ok, ["csv", "default"]}
 ```
 
+```elixir
+{:ok, dataset_info} = ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
+ElixirDatasets.DatasetInfo.write_to_directory(dataset_info, "my-dir")
+ElixirDatasets.DatasetInfo.from_directory("my-dir")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: "csv",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   },
+   %ElixirDatasets.DatasetInfo{
+     config_name: "default",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
+```
+
 ## Load dataset
 
 ```elixir
