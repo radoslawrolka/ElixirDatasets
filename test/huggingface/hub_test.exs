@@ -322,14 +322,14 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
                {:ok, options_token}
     end
 
-    test "returns nil when no token provided and env var not set" do
+    test "returns error when no token provided and env var not set" do
       System.delete_env("HF_TOKEN")
 
       assert ElixirDatasets.HuggingFace.Hub.get_auth_token([]) ==
                {:error, "No Hugging Face authentication token provided."}
     end
 
-    test "returns nil when empty options and env var not set" do
+    test "returns error when empty options and env var not set" do
       System.delete_env("HF_TOKEN")
 
       assert ElixirDatasets.HuggingFace.Hub.get_auth_token() ==
