@@ -315,14 +315,6 @@ ElixirDatasets.load_dataset(
 <!-- livebook:{"output":true} -->
 
 ```
-|==============================================================| 100% (20.47 MB)
-|==============================================================| 100% (20.97 MB)
-|==============================================================| 100% (41.99 MB)
-```
-
-<!-- livebook:{"output":true} -->
-
-```
 {:ok,
  [
    #Explorer.DataFrame<
@@ -407,6 +399,199 @@ Dataset: aaaaa32r/elixirDatasets
 Config: csv
 Features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}]
 Training examples: 10
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## New Features: split, name, and streaming parameters
+
+The `load_dataset` function now supports three new parameters for more flexible data loading:
+
+* **`split`**: Load only a specific split (e.g., "train", "validation", "test")
+* **`name`**: Filter files by matching a pattern in the filename/path
+* **`streaming`**: Return file paths instead of loading data into memory
+
+**Note**: For datasets with subdirectories (like GLUE), use the existing `subdir` option in the repository tuple: `{:hf, "dataset-name", subdir: "config-name"}`. The `name` parameter is for filtering files within a directory by matching patterns in filenames.
+
+### Example 1: Load only a specific split
+
+Load only the training split from a dataset:
+
+```elixir
+# Load only the train split from rotten_tomatoes
+{:ok, train_data} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train"
+)
+
+IO.puts("Loaded #{length(train_data)} dataset(s) from 'train' split")
+[train_df] = train_data
+IO.puts("Number of training examples: #{Explorer.DataFrame.n_rows(train_df)}")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Loaded 1 dataset(s) from 'train' split
+Number of training examples: 8530
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+### Example 2: Load a specific dataset configuration
+
+For datasets with multiple configurations (like GLUE), use the `subdir` option:
+
+```elixir
+# Load the SST-2 configuration from GLUE dataset using subdir
+{:ok, sst2_data} = ElixirDatasets.load_dataset(
+  {:hf, "nyu-mll/glue", subdir: "sst2"}
+)
+
+IO.puts("Loaded #{length(sst2_data)} dataset(s) from 'sst2' configuration")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Loaded 3 dataset(s) from 'sst2' configuration
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+### Example 3: Combine split and subdir parameters
+
+Load a specific split from a specific configuration:
+
+```elixir
+# Load only the training split of SST-2 configuration
+{:ok, sst2_train} = ElixirDatasets.load_dataset(
+  {:hf, "nyu-mll/glue", subdir: "sst2"},
+  split: "train"
+)
+
+IO.puts("Loaded #{length(sst2_train)} dataset(s) from 'sst2' configuration, 'train' split")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Loaded 1 dataset(s) from 'sst2' configuration, 'train' split
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+### Example 4: Streaming mode for large datasets
+
+Use streaming mode to get file paths without loading data into memory:
+
+```elixir
+# Get file paths instead of loading data
+{:ok, file_paths} = ElixirDatasets.load_dataset(
+  {:local, "#{__DIR__}/../resources"},
+  streaming: true
+)
+
+IO.puts("Streaming mode returned #{length(file_paths)} file path(s):")
+Enum.each(file_paths, fn {path, ext} ->
+  IO.puts("  - #{path} (#{ext})")
+end)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Streaming mode returned 3 file path(s):
+  - /Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/csv-test.csv (csv)
+  - /Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/jsonl-test.jsonl (jsonl)
+  - /Users/weronikawojtas/studies/ElixirDatasets/examples/../resources/parquet-test.parquet (parquet)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+### Example 5: Filter datasets by name pattern
+
+The `name` parameter filters files by matching the name in the file path:
+
+```elixir
+# Load only files containing "csv" in their filename
+{:ok, csv_only} = ElixirDatasets.load_dataset(
+  {:local, "#{__DIR__}/../resources"},
+  name: "csv"
+)
+
+IO.puts("Loaded #{length(csv_only)} dataset(s) matching 'csv'")
+[csv_df] = csv_only
+IO.inspect(csv_df)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Loaded 1 dataset(s) matching 'csv'
+#Explorer.DataFrame<
+  Polars[11 x 2]
+  id s64 [0, 1, 2, 3, 4, ...]
+  number string ["csv", "one", "two", "three", "four", ...]
+>
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[11 x 2]
+  id s64 [0, 1, 2, 3, 4, ...]
+  number string ["csv", "one", "two", "three", "four", ...]
+>
+```
+
+### Example 6: Real-world use case - Training/Validation split
+
+A typical ML workflow loading separate train and validation sets:
+
+```elixir
+# Load training data
+{:ok, [train_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train"
+)
+
+# Load validation data
+{:ok, [val_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "validation"
+)
+
+IO.puts("Training examples: #{Explorer.DataFrame.n_rows(train_df)}")
+IO.puts("Validation examples: #{Explorer.DataFrame.n_rows(val_df)}")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Training examples: 8530
+Validation examples: 1066
 ```
 
 <!-- livebook:{"output":true} -->

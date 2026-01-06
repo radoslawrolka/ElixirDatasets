@@ -122,6 +122,33 @@ defmodule ElixirDatasetsTest do
       end
     end
 
+    test "loads dataset with split parameter from local directory" do
+      repository = {:local, "resources"}
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, split: "train")
+      assert is_list(datasets)
+    end
+
+    test "loads dataset with name parameter filters files" do
+      repository = {:local, "resources"}
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, name: "csv")
+      assert is_list(datasets)
+    end
+
+    test "loads dataset with streaming parameter returns paths" do
+      repository = {:local, "resources"}
+      assert {:ok, paths} = ElixirDatasets.load_dataset(repository, streaming: true)
+      assert is_list(paths)
+      assert Enum.all?(paths, fn item ->
+        is_tuple(item) and tuple_size(item) == 2
+      end)
+    end
+
+    test "loads dataset with split and name parameters combined" do
+      repository = {:local, "resources"}
+      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, split: "train", name: "csv")
+      assert is_list(datasets)
+    end
+
     # todo more tests for load_dataset/2
   end
 

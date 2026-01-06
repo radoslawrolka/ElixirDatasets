@@ -239,37 +239,73 @@ defmodule ElixirDatasets do
       for remote files. If not provided, the token from the
       `ELIXIR_DATASETS_HF_TOKEN` environment variable is used.
 
+    * `:split` - which split of the data to load (e.g., "train", "test", "validation").
+      If not specified, all splits are loaded. Files are matched by name patterns
+      (e.g., "train.csv", "test-00000.parquet", "validation.jsonl").
+
+    * `:name` - the name of the dataset configuration to load. For datasets with
+      multiple configurations, this specifies which one to use. Files are matched
+      by looking for the config name in the file path (e.g., "sst2/train.parquet").
+
+    * `:streaming` - if `true`, returns file paths for streaming instead of loading
+      all data into memory. Useful for large datasets. Default is `false`.
+
   ## Returns
 
-  An `{:ok, %{dataset: paths}}` tuple, where `paths` is a list of
-  paths to the downloaded dataset files. If the dataset cannot be
-  loaded, an `{:error, reason}` tuple is returned.
-  If the dataset is not found, an error is raised.
+  An `{:ok, datasets}` tuple, where `datasets` is a list of Explorer.DataFrame.t().
+  If the dataset cannot be loaded, an `{:error, reason}` tuple is returned.
 
   ## Examples
 
-      todo
+      # Load only the training split
+      ElixirDatasets.load_dataset({:hf, "dataset_name"}, split: "train")
+
+      # Load a specific configuration
+      ElixirDatasets.load_dataset({:hf, "glue"}, name: "sst2")
+
+      # Load a specific split of a specific configuration
+      ElixirDatasets.load_dataset({:hf, "glue"}, name: "sst2", split: "train")
+
   """
   @spec load_dataset(t_repository(), keyword()) ::
           {:ok, [Explorer.DataFrame.t()]} | {:error, Exception.t()}
   def load_dataset(repository, opts \\ []) do
     repository = normalize_repository!(repository)
+    split = opts[:split]
+    name = opts[:name]
+    streaming = opts[:streaming] || false
 
     with {:ok, repo_files} <- get_repo_files(repository),
-         {:ok, paths_with_extensions} <- maybe_load_model_spec(opts, repository, repo_files) do
-      ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions)
+         {:ok, filtered_files} <- filter_files_by_config_and_split(repo_files, name, split),
+         {:ok, paths_with_extensions} <- maybe_load_model_spec(opts, repository, filtered_files) do
+      if streaming do
+        {:ok, paths_with_extensions}
+      else
+        ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions)
+      end
     end
   end
 
   @doc """
   Similar to `load_dataset/2` but raises an error if loading fails.
 
+  Accepts the same options as `load_dataset/2`:
+    * `:split` - which split to load (e.g., "train", "test", "validation")
+    * `:name` - dataset configuration name
+    * `:streaming` - if `true`, returns file paths instead of loaded data
+
   ## Returns
 
-    * a list of loaded datasets
+    * a list of loaded datasets (or file paths if streaming is enabled)
     * raises an error if loading fails
+
+  ## Examples
+
+      # Load only training data
+      datasets = ElixirDatasets.load_dataset!({:hf, "dataset_name"}, split: "train")
+
   """
-  @spec load_dataset!(t_repository(), keyword()) :: [Explorer.DataFrame.t()]
+  @spec load_dataset!(t_repository(), keyword()) :: [Explorer.DataFrame.t()] | [{Path.t(), String.t()}]
   def load_dataset!(repository, opts \\ []) do
     case load_dataset(repository, opts) do
       {:ok, datasets} -> datasets
@@ -281,6 +317,38 @@ defmodule ElixirDatasets do
           {:error, String.t()} | {:ok, binary()}
   def upload_dataset(df, repository, file_extension) do
     ElixirDatasets.Utils.Uploader.upload_dataset(df, repository, file_extension)
+  end
+
+  defp filter_files_by_config_and_split(repo_files, name, split) do
+    filtered =
+      repo_files
+      |> filter_by_config_name(name)
+      |> filter_by_split(split)
+
+    {:ok, filtered}
+  end
+
+  defp filter_by_config_name(repo_files, nil), do: repo_files
+
+  defp filter_by_config_name(repo_files, config_name) do
+    Enum.filter(repo_files, fn {file_name, _etag} ->
+      # Match files that contain the config name in their path
+      # e.g., "sst2/train.parquet" or "sst2-train.parquet"
+      String.contains?(file_name, config_name)
+    end)
+    |> Map.new()
+  end
+
+  defp filter_by_split(repo_files, nil), do: repo_files
+
+  defp filter_by_split(repo_files, split) when is_binary(split) do
+    Enum.filter(repo_files, fn {file_name, _etag} ->
+      # Match files that contain the split name
+      # Common patterns: "train.csv", "train-00000.parquet", "data/train.jsonl"
+      base_name = Path.basename(file_name, Path.extname(file_name))
+      String.contains?(base_name, split)
+    end)
+    |> Map.new()
   end
 
   defp maybe_load_model_spec(_opts, repository, repo_files) do
