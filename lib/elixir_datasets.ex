@@ -147,7 +147,85 @@ defmodule ElixirDatasets do
     data
     |> Map.get("cardData", %{})
     |> Map.get("dataset_info", [])
-    |> DatasetInfo.from_map()
+    |> case do
+      list when is_list(list) -> Enum.map(list, &DatasetInfo.from_map/1)
+      single -> [DatasetInfo.from_map(single)]
+    end
+  end
+
+  @doc """
+  Gets the split names (e.g., 'train', 'test', 'validation') for a dataset.
+
+  ## Parameters
+
+    * `repository_id` - the Hugging Face dataset repository ID (e.g., "cornell-movie-review-data/rotten_tomatoes")
+    * `opts` - optional keyword list with the following options:
+      * `:auth_token` - the token to use as HTTP bearer authorization
+
+  ## Returns
+
+  Returns `{:ok, split_names}` where `split_names` is a list of strings representing
+  the available splits, or `{:error, reason}` if the request fails.
+
+  ## Examples
+
+      iex> {:ok, splits} = ElixirDatasets.get_dataset_split_names("cornell-movie-review-data/rotten_tomatoes")
+      iex> splits
+      ["train", "validation", "test"]
+  """
+  @spec get_dataset_split_names(String.t(), keyword()) ::
+          {:ok, [String.t()]} | {:error, String.t()}
+  def get_dataset_split_names(repository_id, opts \\ []) when is_binary(repository_id) do
+    case get_dataset_infos(repository_id, opts) do
+      {:ok, infos} ->
+        split_names =
+          infos
+          |> Enum.flat_map(fn info ->
+            case info.splits do
+              nil -> []
+              splits -> Enum.map(splits, fn split -> split["name"] end)
+            end
+          end)
+          |> Enum.uniq()
+
+        {:ok, split_names}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @doc """
+  Gets the configuration names available for a dataset.
+
+  ## Parameters
+
+    * `repository_id` - the Hugging Face dataset repository ID (e.g., "glue")
+    * `opts` - optional keyword list with the following options:
+      * `:auth_token` - the token to use as HTTP bearer authorization
+
+  ## Returns
+
+  Returns `{:ok, config_names}` where `config_names` is a list of configuration names,
+  or `{:error, reason}` if the request fails.
+
+  ## Examples
+
+      iex> {:ok, configs} = ElixirDatasets.get_dataset_config_names("glue")
+      iex> Enum.member?(configs, "cola")
+      true
+  """
+  @spec get_dataset_config_names(String.t(), keyword()) ::
+          {:ok, [String.t()]} | {:error, String.t()}
+  def get_dataset_config_names(repository_id, opts \\ []) when is_binary(repository_id) do
+    case get_dataset_infos(repository_id, opts) do
+      {:ok, infos} ->
+        config_names = Enum.map(infos, fn info -> info.config_name end)
+        {:ok, config_names}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   @doc """

@@ -84,21 +84,6 @@ defmodule ElixirDatasets.DatasetInfo do
     }
   end
 
-  def from_map(data) when is_binary(data) do
-    case Jason.decode(data) do
-      {:ok, map} when is_map(map) -> from_map(map)
-      _ -> %__MODULE__{}
-    end
-  end
-
-  def from_map(data) when is_list(data) do
-    Enum.map(data, &from_map/1)
-  end
-
-  def from_map(data) do
-    raise ArgumentError, "Expected a map or JSON string, got: #{inspect(data)}"
-  end
-
   @doc """
   Converts a DatasetInfo struct to a map.
   """

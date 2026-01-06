@@ -229,4 +229,23 @@ defmodule ElixirDatasetsTest do
       assert infos == []
     end
   end
+
+  describe "get_dataset_split_names/2" do
+    test "fetches split names from dataset" do
+      assert {:ok, splits} = ElixirDatasets.get_dataset_split_names("aaaaa32r/elixirDatasets")
+      assert is_list(splits)
+      assert Enum.count(splits) > 0
+      assert Enum.all?(splits, &is_binary/1)
+    end
+  end
+
+  describe "get_dataset_config_names/2" do
+    test "fetches config names from dataset" do
+      assert {:ok, configs} = ElixirDatasets.get_dataset_config_names("aaaaa32r/elixirDatasets")
+      assert is_list(configs)
+      assert Enum.count(configs) > 0
+      assert Enum.all?(configs, &is_binary/1)
+      assert Enum.member?(configs, "csv")
+    end
+  end
 end

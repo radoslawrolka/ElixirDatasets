@@ -113,25 +113,27 @@ ElixirDatasets.get_dataset_infos("cornell-movie-review-data/rotten_tomatoes")
 
 ```
 {:ok,
- %ElixirDatasets.DatasetInfo{
-   config_name: nil,
-   features: [
-     %{"dtype" => "string", "name" => "text"},
-     %{
-       "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
-       "name" => "label"
-     }
-   ],
-   splits: [
-     %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
-     %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
-     %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
-   ],
-   description: nil,
-   homepage: nil,
-   license: nil,
-   citation: nil
- }}
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: nil,
+     features: [
+       %{"dtype" => "string", "name" => "text"},
+       %{
+         "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
+         "name" => "label"
+       }
+     ],
+     splits: [
+       %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
+       %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
+       %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
+     ],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
 ```
 
 ```elixir
@@ -162,6 +164,46 @@ ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
      citation: nil
    }
  ]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_split_names("cornell-movie-review-data/rotten_tomatoes")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["train", "validation", "test"]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_split_names("aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["train"]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_config_names("cornell-movie-review-data/rotten_tomatoes")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, [nil]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_config_names("aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["csv", "default"]}
 ```
 
 ## Load dataset
