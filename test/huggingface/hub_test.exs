@@ -283,4 +283,57 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       System.delete_env("ELIXIR_DATASETS_OFFLINE")
     end
   end
+
+  describe "get_auth_token/1" do
+    setup do
+      # Save the current HF_TOKEN env var if it exists
+      original_token = System.get_env("HF_TOKEN")
+      System.delete_env("HF_TOKEN")
+
+      on_exit(fn ->
+        if original_token do
+          System.put_env("HF_TOKEN", original_token)
+        else
+          System.delete_env("HF_TOKEN")
+        end
+      end)
+
+      :ok
+    end
+
+    test "returns token from options when provided" do
+      System.delete_env("HF_TOKEN")
+      token = "hf_test_token_from_options"
+      assert ElixirDatasets.HuggingFace.Hub.get_auth_token(auth_token: token) == {:ok, token}
+    end
+
+    test "returns token from environment variable when not in options" do
+      env_token = "hf_test_token_from_env"
+      System.put_env("HF_TOKEN", env_token)
+      assert ElixirDatasets.HuggingFace.Hub.get_auth_token([]) == {:ok, env_token}
+    end
+
+    test "prioritizes options token over environment variable" do
+      options_token = "hf_token_from_options"
+      env_token = "hf_token_from_env"
+      System.put_env("HF_TOKEN", env_token)
+
+      assert ElixirDatasets.HuggingFace.Hub.get_auth_token(auth_token: options_token) ==
+               {:ok, options_token}
+    end
+
+    test "returns error when no token provided and env var not set" do
+      System.delete_env("HF_TOKEN")
+
+      assert ElixirDatasets.HuggingFace.Hub.get_auth_token([]) ==
+               {:error, "No Hugging Face authentication token provided."}
+    end
+
+    test "returns error when empty options and env var not set" do
+      System.delete_env("HF_TOKEN")
+
+      assert ElixirDatasets.HuggingFace.Hub.get_auth_token() ==
+               {:error, "No Hugging Face authentication token provided."}
+    end
+  end
 end

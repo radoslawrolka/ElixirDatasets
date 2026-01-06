@@ -10,14 +10,11 @@
 # ])
 ##### Local dev-testing version
 Mix.install([
-  {:elixir_datasets, path: "#{__DIR__}/.."},
-  {:explorer, "0.10.0"}
-],
-config: Config.Reader.read!("#{__DIR__}/../config/config.exs")
-)
+  {:elixir_datasets, path: "#{__DIR__}/.."}
+])
 
-# get auth_token for downloading from HuggingFace 
-auth_token = Application.get_env(:elixir_datasets, :hf_token)
+# get auth_token explicitly for downloading from HuggingFace 
+auth_token = System.get_env("HF_TOKEN")
 :ok
 ```
 
@@ -94,25 +91,148 @@ nil
 ```
 
 ```elixir
-ElixirDatasets.Utils.Uploader.upload_file_via_lfs(
-  "/Users/radoslawrolka/Downloads/companies-2023-q4-sm.csv.zip",
-  "aaaaa32r/elixirDatasets")
+# ElixirDatasets.Utils.Uploader.upload_file_via_lfs(
+#   "/Users/radoslawrolka/Downloads/companies-2023-q4-sm.csv.zip",
+#   "aaaaa32r/elixirDatasets")
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
-LFS URLs: {:upload_url,
- "https://hf-hub-lfs-us-east-1.s3-accelerate.amazonaws.com/repos/8d/e8/8de800873e186c50ef2351c880045c4372b1cdf42fca0147c2095d0fbe6a3245/024d8bfa9162444abd3032d827c732d37db202ea6ef1eb88f1ee2428736e0593?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2JU7TKAQLC2QXPN7%2F20260104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260104T122048Z&X-Amz-Expires=900&X-Amz-Signature=aa5c8a7eccecc32f343132309d42ee5514d96add680c5bae615c56b2db242110&X-Amz-SignedHeaders=host&x-amz-storage-class=INTELLIGENT_TIERING&x-id=PutObject",
- :verify_url,
- "https://huggingface.co/datasets/aaaaa32r/elixirDatasets.git/info/lfs/objects/verify"}
+nil
+```
+
+```elixir
+ElixirDatasets.get_dataset_infos("cornell-movie-review-data/rotten_tomatoes")
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
 {:ok,
- ~c"{\"success\":true,\"commitOid\":\"1c0732aec7c45ef597e66d29e408f3898bec28f2\",\"commitUrl\":\"https://huggingface.co/datasets/aaaaa32r/elixirDatasets/commit/1c0732aec7c45ef597e66d29e408f3898bec28f2\",\"hookOutput\":\"\"}"}
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: nil,
+     features: [
+       %{"dtype" => "string", "name" => "text"},
+       %{
+         "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
+         "name" => "label"
+       }
+     ],
+     splits: [
+       %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
+       %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
+       %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
+     ],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: "csv",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   },
+   %ElixirDatasets.DatasetInfo{
+     config_name: "default",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_split_names("cornell-movie-review-data/rotten_tomatoes")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["train", "validation", "test"]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_split_names("aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["train"]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_config_names("cornell-movie-review-data/rotten_tomatoes")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, [nil]}
+```
+
+```elixir
+ElixirDatasets.get_dataset_config_names("aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["csv", "default"]}
+```
+
+```elixir
+{:ok, dataset_info} = ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
+ElixirDatasets.DatasetInfo.write_to_directory(dataset_info, "my-dir")
+ElixirDatasets.DatasetInfo.from_directory("my-dir")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: "csv",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   },
+   %ElixirDatasets.DatasetInfo{
+     config_name: "default",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
 ```
 
 ## Load dataset
@@ -129,7 +249,7 @@ ElixirDatasets.load_dataset(
 {:ok,
  [
    #Explorer.DataFrame<
-     Polars[854 x 5]
+     Polars[945 x 5]
      act string ["Ethereum Developer", "Linux Terminal", "English Translator and Improver",
       "Job Interviewer", "JavaScript Console", ...]
      prompt string ["Imagine you are an experienced Ethereum developer tasked with creating a smart contract for a blockchain messenger. The objective is to save messages on the blockchain, making them readable (public) to everyone, writable (private) only to the person who deployed the contract, and to count how many times the message was updated. Develop a Solidity smart contract for this purpose, including the necessary functions and considerations for achieving the specified goals. Please provide the code and any relevant explanations to ensure a clear understanding of the implementation.",
@@ -248,19 +368,19 @@ ElixirDatasets.load_dataset({:local, "#{__DIR__}/../resources"})
 {:ok,
  [
    #Explorer.DataFrame<
-     Polars[10 x 2]
-     id s64 [1, 2, 3, 4, 5, ...]
-     number string ["one", "two", "three", "four", "five", ...]
+     Polars[11 x 2]
+     id s64 [0, 1, 2, 3, 4, ...]
+     number string ["csv", "one", "two", "three", "four", ...]
    >,
    #Explorer.DataFrame<
-     Polars[10 x 2]
-     id s64 [1, 2, 3, 4, 5, ...]
-     number string ["one", "two", "three", "four", "five", ...]
+     Polars[11 x 2]
+     id s64 [0, 1, 2, 3, 4, ...]
+     number string ["jsonl", "one", "two", "three", "four", ...]
    >,
    #Explorer.DataFrame<
-     Polars[10 x 2]
-     id s32 [1, 2, 3, 4, 5, ...]
-     number string ["one", "two", "three", "four", "five", ...]
+     Polars[11 x 2]
+     id s64 [0, 1, 2, 3, 4, ...]
+     number string ["parquet", "one", "two", "three", "four", ...]
    >
  ]}
 ```

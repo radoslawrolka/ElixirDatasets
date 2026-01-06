@@ -218,6 +218,53 @@ defmodule ElixirDatasets.HuggingFace.Hub do
     end
   end
 
+  @doc """
+  Gets the HuggingFace authentication token. Requires that it starts with "hf_".
+
+  Looks for the token in the following order:
+  1. From options (`:auth_token` key)
+  2. From system environment variable (`HF_TOKEN`)
+  3. Returns error if not found
+
+  ## Parameters
+
+    * `opts` - keyword list with optional `:auth_token` key
+
+  ## Returns
+
+    * `{:ok, String.t()}` - the authentication token
+    * `{:error, String.t()}` - if no token is found or invalid
+
+  ## Examples
+
+      iex> ElixirDatasets.HuggingFace.Hub.get_auth_token(auth_token: "hf_my_token")
+      {:ok, "hf_my_token"}
+
+      iex> ElixirDatasets.HuggingFace.Hub.get_auth_token(auth_token: "my_invalid_token")
+      {:error, "The provided Hugging Face authentication token does not start with 'hf_'."}
+
+      # iex> ElixirDatasets.HuggingFace.Hub.get_auth_token([])
+      # the value of HF_TOKEN environment variable if valid else error
+  """
+  @spec get_auth_token(keyword()) :: {:ok, String.t()} | {:error, String.t()}
+  def get_auth_token(opts \\ []) do
+    token = opts[:auth_token] || System.get_env("HF_TOKEN")
+    validate_auth_token(token)
+  end
+
+  @spec validate_auth_token(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  defp validate_auth_token(token) when is_binary(token) do
+    cond do
+      String.starts_with?(token, "hf_") ->
+        {:ok, token}
+
+      true ->
+        {:error, "The provided Hugging Face authentication token does not start with 'hf_'."}
+    end
+  end
+
+  defp validate_auth_token(_), do: {:error, "No Hugging Face authentication token provided."}
+
   defp metadata_filename(url) do
     encode_url(url) <> ".json"
   end
