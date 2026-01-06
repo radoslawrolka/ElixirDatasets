@@ -30,217 +30,12 @@ import ElixirDatasets
 ElixirDatasets
 ```
 
-```elixir
-[ df_head | df_tail ] = ElixirDatasets.load_dataset!({:local, "#{__DIR__}/../resources"})
-IO.inspect(df_head)
-IO.inspect(df_tail)
-nil
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-#Explorer.DataFrame<
-  Polars[11 x 2]
-  id s64 [0, 1, 2, 3, 4, ...]
-  number string ["csv", "one", "two", "three", "four", ...]
->
-[
-  #Explorer.DataFrame<
-    Polars[11 x 2]
-    id s64 [0, 1, 2, 3, 4, ...]
-    number string ["jsonl", "one", "two", "three", "four", ...]
-  >,
-  #Explorer.DataFrame<
-    Polars[11 x 2]
-    id s64 [0, 1, 2, 3, 4, ...]
-    number string ["parquet", "one", "two", "three", "four", ...]
-  >
-]
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-nil
-```
-
-```elixir
-# ElixirDatasets.upload_dataset(
-#   df_head,
-#   "aaaaa32r/elixirDatasets",
-#   [file_extension: "csv"])
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-nil
-```
-
-```elixir
-# ElixirDatasets.Utils.Uploader.delete_file_from_dataset(
-#   "aaaaa32r/elixirDatasets", 
-#   "briefly-576460442698708888-7FDZDhwtp6dOsH5dAT")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-nil
-```
-
-```elixir
-# ElixirDatasets.Utils.Uploader.upload_file_via_lfs(
-#   "/Users/radoslawrolka/Downloads/companies-2023-q4-sm.csv.zip",
-#   "aaaaa32r/elixirDatasets")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-nil
-```
-
-```elixir
-ElixirDatasets.get_dataset_infos("cornell-movie-review-data/rotten_tomatoes")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok,
- [
-   %ElixirDatasets.DatasetInfo{
-     config_name: nil,
-     features: [
-       %{"dtype" => "string", "name" => "text"},
-       %{
-         "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
-         "name" => "label"
-       }
-     ],
-     splits: [
-       %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
-       %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
-       %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
-     ],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   }
- ]}
-```
-
-```elixir
-ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok,
- [
-   %ElixirDatasets.DatasetInfo{
-     config_name: "csv",
-     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
-     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   },
-   %ElixirDatasets.DatasetInfo{
-     config_name: "default",
-     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
-     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   }
- ]}
-```
-
-```elixir
-ElixirDatasets.get_dataset_split_names("cornell-movie-review-data/rotten_tomatoes")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok, ["train", "validation", "test"]}
-```
-
-```elixir
-ElixirDatasets.get_dataset_split_names("aaaaa32r/elixirDatasets")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok, ["train"]}
-```
-
-```elixir
-ElixirDatasets.get_dataset_config_names("cornell-movie-review-data/rotten_tomatoes")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok, [nil]}
-```
-
-```elixir
-ElixirDatasets.get_dataset_config_names("aaaaa32r/elixirDatasets")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok, ["csv", "default"]}
-```
-
-```elixir
-{:ok, dataset_info} = ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
-ElixirDatasets.DatasetInfo.write_to_directory(dataset_info, "my-dir")
-ElixirDatasets.DatasetInfo.from_directory("my-dir")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok,
- [
-   %ElixirDatasets.DatasetInfo{
-     config_name: "csv",
-     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
-     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   },
-   %ElixirDatasets.DatasetInfo{
-     config_name: "default",
-     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
-     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   }
- ]}
-```
-
 ## Load dataset
 
+### Load dataset from Huggingface
+
 ```elixir
-ElixirDatasets.load_dataset(
-  {:hf, "fka/awesome-chatgpt-prompts"}, 
-  %{auth_token: auth_token})
+ElixirDatasets.load_dataset({:hf, "fka/awesome-chatgpt-prompts"})
 ```
 
 <!-- livebook:{"output":true} -->
@@ -264,6 +59,53 @@ ElixirDatasets.load_dataset(
    >
  ]}
 ```
+
+### Load dataset from Huggingface from given subdir
+
+```elixir
+ElixirDatasets.load_dataset(
+  {:hf, "stanfordnlp/imdb", subdir: "plain_text"})
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ [
+   #Explorer.DataFrame<
+     Polars[25000 x 2]
+     text string ["I love sci-fi and am willing to put up with a lot. Sci-fi movies/TV are usually underfunded, under-appreciated and misunderstood. I tried to like this, I really did, but it is to good TV sci-fi as Babylon 5 is to Star Trek (the original). Silly prosthetics, cheap cardboard sets, stilted dialogues, CG that doesn't match the background, and painfully one-dimensional characters cannot be overcome with a 'sci-fi' setting. (I'm sure there are those of you out there who think Babylon 5 is good sci-fi TV. It's not. It's clichéd and uninspiring.) While US viewers might like emotion and character development, sci-fi is a genre that does not take itself seriously (cf. Star Trek). It may treat important issues, yet not as a serious philosophy. It's really difficult to care about the characters here as they are not simply foolish, just missing a spark of life. Their actions and reactions are wooden and predictable, often painful to watch. The makers of Earth KNOW it's rubbish as they have to always say \"Gene Roddenberry's Earth...\" otherwise people would not continue watching. Roddenberry's ashes must be turning in their orbit as this dull, cheap, poorly edited (watching it without advert breaks really brings this home) trudging Trabant of a show lumbers into space. Spoiler. So, kill off a main character. And then bring him back as another actor. Jeeez! Dallas all over again.",
+      "Worth the entertainment value of a rental, especially if you like action movies. This one features the usual car chases, fights with the great Van Damme kick style, shooting battles with the 40 shell load shotgun, and even terrorist style bombs. All of this is entertaining and competently handled but there is nothing that really blows you away if you've seen your share before.<br /><br />The plot is made interesting by the inclusion of a rabbit, which is clever but hardly profound. Many of the characters are heavily stereotyped -- the angry veterans, the terrified illegal aliens, the crooked cops, the indifferent feds, the bitchy tough lady station head, the crooked politician, the fat federale who looks like he was typecast as the Mexican in a Hollywood movie from the 1940s. All passably acted but again nothing special.<br /><br />I thought the main villains were pretty well done and fairly well acted. By the end of the movie you certainly knew who the good guys were and weren't. There was an emotional lift as the really bad ones got their just deserts. Very simplistic, but then you weren't expecting Hamlet, right? The only thing I found really annoying was the constant cuts to VDs daughter during the last fight scene.<br /><br />Not bad. Not good. Passable 4.",
+      "its a totally average film with a few semi-alright action sequences that make the plot seem a little better and remind the viewer of the classic van dam films. parts of the plot don't make sense and seem to be added in to use up time. the end plot is that of a very basic type that doesn't leave the viewer guessing and any twists are obvious from the beginning. the end scene with the flask backs don't make sense as they are added in and seem to have little relevance to the history of van dam's character. not really worth watching again, bit disappointed in the end production, even though it is apparent it was shot on a low budget certain shots and sections in the film are of poor directed quality",
+      "STAR RATING: ***** Saturday Night **** Friday Night *** Friday Morning ** Sunday Night * Monday Morning <br /><br />Former New Orleans homicide cop Jack Robideaux (Jean Claude Van Damme) is re-assigned to Columbus, a small but violent town in Mexico to help the police there with their efforts to stop a major heroin smuggling operation into their town. The culprits turn out to be ex-military, lead by former commander Benjamin Meyers (Stephen Lord, otherwise known as Jase from East Enders) who is using a special method he learned in Afghanistan to fight off his opponents. But Jack has a more personal reason for taking him down, that draws the two men into an explosive final showdown where only one will walk away alive.<br /><br />After Until Death, Van Damme appeared to be on a high, showing he could make the best straight to video films in the action market. While that was a far more drama oriented film, with The Shepherd he has returned to the high-kicking, no brainer action that first made him famous and has sadly produced his worst film since Derailed. It's nowhere near as bad as that film, but what I said still stands.<br /><br />A dull, predictable film, with very little in the way of any exciting action. What little there is mainly consists of some limp fight scenes, trying to look cool and trendy with some cheap slo-mo/sped up effects added to them that sadly instead make them look more desperate. Being a Mexican set film, director Isaac Florentine has tried to give the film a Robert Rodriguez/Desperado sort of feel, but this only adds to the desperation.<br /><br />VD gives a particularly uninspired performance and given he's never been a Robert De Niro sort of actor, that can't be good. As the villain, Lord shouldn't expect to leave the beeb anytime soon. He gets little dialogue at the beginning as he struggles to muster an American accent but gets mysteriously better towards the end. All the supporting cast are equally bland, and do nothing to raise the films spirits at all.<br /><br />This is one shepherd that's strayed right from the flock. *",
+      "First off let me say, If you haven't enjoyed a Van Damme movie since bloodsport, you probably will not like this movie. Most of these movies may not have the best plots or best actors but I enjoy these kinds of movies for what they are. This movie is much better than any of the movies the other action guys (Segal and Dolph) have thought about putting out the past few years. Van Damme is good in the movie, the movie is only worth watching to Van Damme fans. It is not as good as Wake of Death (which i highly recommend to anyone of likes Van Damme) or In hell but, in my opinion it's worth watching. It has the same type of feel to it as Nowhere to Run. Good fun stuff!",
+      ...]
+     label s64 [0, 0, 0, 0, 0, ...]
+   >,
+   #Explorer.DataFrame<
+     Polars[25000 x 2]
+     text string ["I rented I AM CURIOUS-YELLOW from my video store because of all the controversy that surrounded it when it was first released in 1967. I also heard that at first it was seized by U.S. customs if it ever tried to enter this country, therefore being a fan of films considered \"controversial\" I really had to see this for myself.<br /><br />The plot is centered around a young Swedish drama student named Lena who wants to learn everything she can about life. In particular she wants to focus her attentions to making some sort of documentary on what the average Swede thought about certain political issues such as the Vietnam War and race issues in the United States. In between asking politicians and ordinary denizens of Stockholm about their opinions on politics, she has sex with her drama teacher, classmates, and married men.<br /><br />What kills me about I AM CURIOUS-YELLOW is that 40 years ago, this was considered pornographic. Really, the sex and nudity scenes are few and far between, even then it's not shot like some cheaply made porno. While my countrymen mind find it shocking, in reality sex and nudity are a major staple in Swedish cinema. Even Ingmar Bergman, arguably their answer to good old boy John Ford, had sex scenes in his films.<br /><br />I do commend the filmmakers for the fact that any sex shown in the film is shown for artistic purposes rather than just to shock people and make money to be shown in pornographic theaters in America. I AM CURIOUS-YELLOW is a good film for anyone wanting to study the meat and potatoes (no pun intended) of Swedish cinema. But really, this film doesn't have much of a plot.",
+      "\"I Am Curious: Yellow\" is a risible and pretentious steaming pile. It doesn't matter what one's political views are because this film can hardly be taken seriously on any level. As for the claim that frontal male nudity is an automatic NC-17, that isn't true. I've seen R-rated films with male nudity. Granted, they only offer some fleeting views, but where are the R-rated films with gaping vulvas and flapping labia? Nowhere, because they don't exist. The same goes for those crappy cable shows: schlongs swinging in the breeze but not a clitoris in sight. And those pretentious indie movies like The Brown Bunny, in which we're treated to the site of Vincent Gallo's throbbing johnson, but not a trace of pink visible on Chloe Sevigny. Before crying (or implying) \"double-standard\" in matters of nudity, the mentally obtuse should take into account one unavoidably obvious anatomical difference between men and women: there are no genitals on display when actresses appears nude, and the same cannot be said for a man. In fact, you generally won't see female genitals in an American film in anything short of porn or explicit erotica. This alleged double-standard is less a double standard than an admittedly depressing ability to come to terms culturally with the insides of women's bodies.",
+      "If only to avoid making this type of film in the future. This film is interesting as an experiment but tells no cogent story.<br /><br />One might feel virtuous for sitting thru it because it touches on so many IMPORTANT issues but it does so without any discernable motive. The viewer comes away with no new perspectives (unless one comes up with one while one's mind wanders, as it will invariably do during this pointless film).<br /><br />One might better spend one's time staring out a window at a tree growing.<br /><br />",
+      "This film was probably inspired by Godard's Masculin, féminin and I urge you to see that film instead.<br /><br />The film has two strong elements and those are, (1) the realistic acting (2) the impressive, undeservedly good, photo. Apart from that, what strikes me most is the endless stream of silliness. Lena Nyman has to be most annoying actress in the world. She acts so stupid and with all the nudity in this film,...it's unattractive. Comparing to Godard's film, intellectuality has been replaced with stupidity. Without going too far on this subject, I would say that follows from the difference in ideals between the French and the Swedish society.<br /><br />A movie of its time, and place. 2/10.",
+      "Oh, brother...after hearing about this ridiculous film for umpteen years all I can think of is that old Peggy Lee song..<br /><br />\"Is that all there is??\" ...I was just an early teen when this smoked fish hit the U.S. I was too young to get in the theater (although I did manage to sneak into \"Goodbye Columbus\"). Then a screening at a local film museum beckoned - Finally I could see this film, except now I was as old as my parents were when they schlepped to see it!!<br /><br />The ONLY reason this film was not condemned to the anonymous sands of time was because of the obscenity case sparked by its U.S. release. MILLIONS of people flocked to this stinker, thinking they were going to see a sex film...Instead, they got lots of closeups of gnarly, repulsive Swedes, on-street interviews in bland shopping malls, asinie political pretension...and feeble who-cares simulated sex scenes with saggy, pale actors.<br /><br />Cultural icon, holy grail, historic artifact..whatever this thing was, shred it, burn it, then stuff the ashes in a lead box!<br /><br />Elite esthetes still scrape to find value in its boring pseudo revolutionary political spewings..But if it weren't for the censorship scandal, it would have been ignored, then forgotten.<br /><br />Instead, the \"I Am Blank, Blank\" rhythymed title was repeated endlessly for years as a titilation for porno films (I am Curious, Lavender - for gay films, I Am Curious, Black - for blaxploitation films, etc..) and every ten years or so the thing rises from the dead, to be viewed by a new generation of suckers who want to see that \"naughty sex film\" that \"revolutionized the film industry\"...<br /><br />Yeesh, avoid like the plague..Or if you MUST see it - rent the video and fast forward to the \"dirty\" parts, just to get it over with.<br /><br />",
+      ...]
+     label s64 [0, 0, 0, 0, 0, ...]
+   >,
+   #Explorer.DataFrame<
+     Polars[50000 x 2]
+     text string ["This is just a precious little diamond. The play, the script are excellent. I cant compare this movie with anything else, maybe except the movie \"Leon\" wonderfully played by Jean Reno and Natalie Portman. But... What can I say about this one? This is the best movie Anne Parillaud has ever played in (See please \"Frankie Starlight\", she's speaking English there) to see what I mean. The story of young punk girl Nikita, taken into the depraved world of the secret government forces has been exceptionally over used by Americans. Never mind the \"Point of no return\" and especially the \"La femme Nikita\" TV series. They cannot compare the original believe me! Trash these videos. Buy this one, do not rent it, BUY it. BTW beware of the subtitles of the LA company which \"translate\" the US release. What a disgrace! If you cant understand French, get a dubbed version. But you'll regret later :)",
+      "When I say this is my favourite film of all time, that comment is not to be taken lightly. I probably watch far too many films than is healthy for me, and have loved quite a few of them. I first saw \"La Femme Nikita\" nearly ten years ago, and it still manages to be my absolute favourite. Why?<br /><br />This is more than an incredibly stylish and sexy thriller. Luc Besson's great flair for impeccable direction, fashion, and appropriate usage of music makes this a very watchable film. But it is Anne Parillaud's perfect rendering of a complex character who transforms from a heartless killer into a compassionate, vibrant young woman that makes this film beautiful. I can't keep my eyes off of her when she is on screen.<br /><br />I have seen several of Luc Besson's films including \"Subway\", \"The Professional\", and the irritating \"Fifth Element\", and \"Nikita\" is without a doubt, far superior to any of these. Although this film has tragic elements, it is ultimately extremely hopeful. It is the story of a person who is cruel and merciless, who ultimately comes to realize her own humanity and her own personal power. That, to me is extremely inspiring. If there is hope for Nikita, there is hope for all of us.",
+      "I saw this movie because I am a huge fan of the TV series of the same name starring Roy Dupuis and Pet Wilson. The movie was really good and I saw how the TV show is based on the movie. A few episodes of the TV series came directly from the movie and their similarity was amazing. To keep things short, any fan of the movie has to watch the series and any fan of the series must see the original Nikita.",
+      "Being that the only foreign films I usually like star a Japanese person in a rubber suit who crushes little tiny buildings and tanks, I had high hopes for this movie. I thought that this was a movie that wouldn't put me to sleep. WRONG! Starts off with a bang, okay, now she's in training, alright, she's an assassin, I'm still with you, oh, now she's having this moral dilemma and she can't decide if she loves her boyfriend or her controller, zzzzz.... Oh well, back to Gamera!",
+      "After seeing Point of No Return (a great movie) and being told that the original was better, I was certainly thrilled to see that one of the indie film channels was running La Femme Nikita. Then I saw the movie. Ouch! This was a major let-down.<br /><br />Nikita herself reminds me of Jar Jar Binks more than any other character I've seen recently. She comes across entirely as comic relief. The movie simply has nothing to recommend it besides the core concept of an evil, inhuman character paradoxically learning to be human while training as an assassin, and that concept failed miserably in Nikita due to the poor writing of the title role.",
+      ...]
+     label s64 [-1, -1, -1, -1, -1, ...]
+   >
+ ]}
+```
+
+### Load dataset from Huggingface with auth token as option
 
 ```elixir
 ElixirDatasets.load_dataset!(
@@ -306,57 +148,7 @@ ElixirDatasets.load_dataset!(
 ]
 ```
 
-```elixir
-ElixirDatasets.load_dataset(
-  {:hf, "stanfordnlp/imdb", subdir: "plain_text"}, 
-  %{auth_token: auth_token})
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-|==============================================================| 100% (20.47 MB)
-|==============================================================| 100% (20.97 MB)
-|==============================================================| 100% (41.99 MB)
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{:ok,
- [
-   #Explorer.DataFrame<
-     Polars[25000 x 2]
-     text string ["I love sci-fi and am willing to put up with a lot. Sci-fi movies/TV are usually underfunded, under-appreciated and misunderstood. I tried to like this, I really did, but it is to good TV sci-fi as Babylon 5 is to Star Trek (the original). Silly prosthetics, cheap cardboard sets, stilted dialogues, CG that doesn't match the background, and painfully one-dimensional characters cannot be overcome with a 'sci-fi' setting. (I'm sure there are those of you out there who think Babylon 5 is good sci-fi TV. It's not. It's clichéd and uninspiring.) While US viewers might like emotion and character development, sci-fi is a genre that does not take itself seriously (cf. Star Trek). It may treat important issues, yet not as a serious philosophy. It's really difficult to care about the characters here as they are not simply foolish, just missing a spark of life. Their actions and reactions are wooden and predictable, often painful to watch. The makers of Earth KNOW it's rubbish as they have to always say \"Gene Roddenberry's Earth...\" otherwise people would not continue watching. Roddenberry's ashes must be turning in their orbit as this dull, cheap, poorly edited (watching it without advert breaks really brings this home) trudging Trabant of a show lumbers into space. Spoiler. So, kill off a main character. And then bring him back as another actor. Jeeez! Dallas all over again.",
-      "Worth the entertainment value of a rental, especially if you like action movies. This one features the usual car chases, fights with the great Van Damme kick style, shooting battles with the 40 shell load shotgun, and even terrorist style bombs. All of this is entertaining and competently handled but there is nothing that really blows you away if you've seen your share before.<br /><br />The plot is made interesting by the inclusion of a rabbit, which is clever but hardly profound. Many of the characters are heavily stereotyped -- the angry veterans, the terrified illegal aliens, the crooked cops, the indifferent feds, the bitchy tough lady station head, the crooked politician, the fat federale who looks like he was typecast as the Mexican in a Hollywood movie from the 1940s. All passably acted but again nothing special.<br /><br />I thought the main villains were pretty well done and fairly well acted. By the end of the movie you certainly knew who the good guys were and weren't. There was an emotional lift as the really bad ones got their just deserts. Very simplistic, but then you weren't expecting Hamlet, right? The only thing I found really annoying was the constant cuts to VDs daughter during the last fight scene.<br /><br />Not bad. Not good. Passable 4.",
-      "its a totally average film with a few semi-alright action sequences that make the plot seem a little better and remind the viewer of the classic van dam films. parts of the plot don't make sense and seem to be added in to use up time. the end plot is that of a very basic type that doesn't leave the viewer guessing and any twists are obvious from the beginning. the end scene with the flask backs don't make sense as they are added in and seem to have little relevance to the history of van dam's character. not really worth watching again, bit disappointed in the end production, even though it is apparent it was shot on a low budget certain shots and sections in the film are of poor directed quality",
-      "STAR RATING: ***** Saturday Night **** Friday Night *** Friday Morning ** Sunday Night * Monday Morning <br /><br />Former New Orleans homicide cop Jack Robideaux (Jean Claude Van Damme) is re-assigned to Columbus, a small but violent town in Mexico to help the police there with their efforts to stop a major heroin smuggling operation into their town. The culprits turn out to be ex-military, lead by former commander Benjamin Meyers (Stephen Lord, otherwise known as Jase from East Enders) who is using a special method he learned in Afghanistan to fight off his opponents. But Jack has a more personal reason for taking him down, that draws the two men into an explosive final showdown where only one will walk away alive.<br /><br />After Until Death, Van Damme appeared to be on a high, showing he could make the best straight to video films in the action market. While that was a far more drama oriented film, with The Shepherd he has returned to the high-kicking, no brainer action that first made him famous and has sadly produced his worst film since Derailed. It's nowhere near as bad as that film, but what I said still stands.<br /><br />A dull, predictable film, with very little in the way of any exciting action. What little there is mainly consists of some limp fight scenes, trying to look cool and trendy with some cheap slo-mo/sped up effects added to them that sadly instead make them look more desperate. Being a Mexican set film, director Isaac Florentine has tried to give the film a Robert Rodriguez/Desperado sort of feel, but this only adds to the desperation.<br /><br />VD gives a particularly uninspired performance and given he's never been a Robert De Niro sort of actor, that can't be good. As the villain, Lord shouldn't expect to leave the beeb anytime soon. He gets little dialogue at the beginning as he struggles to muster an American accent but gets mysteriously better towards the end. All the supporting cast are equally bland, and do nothing to raise the films spirits at all.<br /><br />This is one shepherd that's strayed right from the flock. *",
-      "First off let me say, If you haven't enjoyed a Van Damme movie since bloodsport, you probably will not like this movie. Most of these movies may not have the best plots or best actors but I enjoy these kinds of movies for what they are. This movie is much better than any of the movies the other action guys (Segal and Dolph) have thought about putting out the past few years. Van Damme is good in the movie, the movie is only worth watching to Van Damme fans. It is not as good as Wake of Death (which i highly recommend to anyone of likes Van Damme) or In hell but, in my opinion it's worth watching. It has the same type of feel to it as Nowhere to Run. Good fun stuff!",
-      ...]
-     label s64 [0, 0, 0, 0, 0, ...]
-   >,
-   #Explorer.DataFrame<
-     Polars[25000 x 2]
-     text string ["I rented I AM CURIOUS-YELLOW from my video store because of all the controversy that surrounded it when it was first released in 1967. I also heard that at first it was seized by U.S. customs if it ever tried to enter this country, therefore being a fan of films considered \"controversial\" I really had to see this for myself.<br /><br />The plot is centered around a young Swedish drama student named Lena who wants to learn everything she can about life. In particular she wants to focus her attentions to making some sort of documentary on what the average Swede thought about certain political issues such as the Vietnam War and race issues in the United States. In between asking politicians and ordinary denizens of Stockholm about their opinions on politics, she has sex with her drama teacher, classmates, and married men.<br /><br />What kills me about I AM CURIOUS-YELLOW is that 40 years ago, this was considered pornographic. Really, the sex and nudity scenes are few and far between, even then it's not shot like some cheaply made porno. While my countrymen mind find it shocking, in reality sex and nudity are a major staple in Swedish cinema. Even Ingmar Bergman, arguably their answer to good old boy John Ford, had sex scenes in his films.<br /><br />I do commend the filmmakers for the fact that any sex shown in the film is shown for artistic purposes rather than just to shock people and make money to be shown in pornographic theaters in America. I AM CURIOUS-YELLOW is a good film for anyone wanting to study the meat and potatoes (no pun intended) of Swedish cinema. But really, this film doesn't have much of a plot.",
-      "\"I Am Curious: Yellow\" is a risible and pretentious steaming pile. It doesn't matter what one's political views are because this film can hardly be taken seriously on any level. As for the claim that frontal male nudity is an automatic NC-17, that isn't true. I've seen R-rated films with male nudity. Granted, they only offer some fleeting views, but where are the R-rated films with gaping vulvas and flapping labia? Nowhere, because they don't exist. The same goes for those crappy cable shows: schlongs swinging in the breeze but not a clitoris in sight. And those pretentious indie movies like The Brown Bunny, in which we're treated to the site of Vincent Gallo's throbbing johnson, but not a trace of pink visible on Chloe Sevigny. Before crying (or implying) \"double-standard\" in matters of nudity, the mentally obtuse should take into account one unavoidably obvious anatomical difference between men and women: there are no genitals on display when actresses appears nude, and the same cannot be said for a man. In fact, you generally won't see female genitals in an American film in anything short of porn or explicit erotica. This alleged double-standard is less a double standard than an admittedly depressing ability to come to terms culturally with the insides of women's bodies.",
-      "If only to avoid making this type of film in the future. This film is interesting as an experiment but tells no cogent story.<br /><br />One might feel virtuous for sitting thru it because it touches on so many IMPORTANT issues but it does so without any discernable motive. The viewer comes away with no new perspectives (unless one comes up with one while one's mind wanders, as it will invariably do during this pointless film).<br /><br />One might better spend one's time staring out a window at a tree growing.<br /><br />",
-      "This film was probably inspired by Godard's Masculin, féminin and I urge you to see that film instead.<br /><br />The film has two strong elements and those are, (1) the realistic acting (2) the impressive, undeservedly good, photo. Apart from that, what strikes me most is the endless stream of silliness. Lena Nyman has to be most annoying actress in the world. She acts so stupid and with all the nudity in this film,...it's unattractive. Comparing to Godard's film, intellectuality has been replaced with stupidity. Without going too far on this subject, I would say that follows from the difference in ideals between the French and the Swedish society.<br /><br />A movie of its time, and place. 2/10.",
-      "Oh, brother...after hearing about this ridiculous film for umpteen years all I can think of is that old Peggy Lee song..<br /><br />\"Is that all there is??\" ...I was just an early teen when this smoked fish hit the U.S. I was too young to get in the theater (although I did manage to sneak into \"Goodbye Columbus\"). Then a screening at a local film museum beckoned - Finally I could see this film, except now I was as old as my parents were when they schlepped to see it!!<br /><br />The ONLY reason this film was not condemned to the anonymous sands of time was because of the obscenity case sparked by its U.S. release. MILLIONS of people flocked to this stinker, thinking they were going to see a sex film...Instead, they got lots of closeups of gnarly, repulsive Swedes, on-street interviews in bland shopping malls, asinie political pretension...and feeble who-cares simulated sex scenes with saggy, pale actors.<br /><br />Cultural icon, holy grail, historic artifact..whatever this thing was, shred it, burn it, then stuff the ashes in a lead box!<br /><br />Elite esthetes still scrape to find value in its boring pseudo revolutionary political spewings..But if it weren't for the censorship scandal, it would have been ignored, then forgotten.<br /><br />Instead, the \"I Am Blank, Blank\" rhythymed title was repeated endlessly for years as a titilation for porno films (I am Curious, Lavender - for gay films, I Am Curious, Black - for blaxploitation films, etc..) and every ten years or so the thing rises from the dead, to be viewed by a new generation of suckers who want to see that \"naughty sex film\" that \"revolutionized the film industry\"...<br /><br />Yeesh, avoid like the plague..Or if you MUST see it - rent the video and fast forward to the \"dirty\" parts, just to get it over with.<br /><br />",
-      ...]
-     label s64 [0, 0, 0, 0, 0, ...]
-   >,
-   #Explorer.DataFrame<
-     Polars[50000 x 2]
-     text string ["This is just a precious little diamond. The play, the script are excellent. I cant compare this movie with anything else, maybe except the movie \"Leon\" wonderfully played by Jean Reno and Natalie Portman. But... What can I say about this one? This is the best movie Anne Parillaud has ever played in (See please \"Frankie Starlight\", she's speaking English there) to see what I mean. The story of young punk girl Nikita, taken into the depraved world of the secret government forces has been exceptionally over used by Americans. Never mind the \"Point of no return\" and especially the \"La femme Nikita\" TV series. They cannot compare the original believe me! Trash these videos. Buy this one, do not rent it, BUY it. BTW beware of the subtitles of the LA company which \"translate\" the US release. What a disgrace! If you cant understand French, get a dubbed version. But you'll regret later :)",
-      "When I say this is my favourite film of all time, that comment is not to be taken lightly. I probably watch far too many films than is healthy for me, and have loved quite a few of them. I first saw \"La Femme Nikita\" nearly ten years ago, and it still manages to be my absolute favourite. Why?<br /><br />This is more than an incredibly stylish and sexy thriller. Luc Besson's great flair for impeccable direction, fashion, and appropriate usage of music makes this a very watchable film. But it is Anne Parillaud's perfect rendering of a complex character who transforms from a heartless killer into a compassionate, vibrant young woman that makes this film beautiful. I can't keep my eyes off of her when she is on screen.<br /><br />I have seen several of Luc Besson's films including \"Subway\", \"The Professional\", and the irritating \"Fifth Element\", and \"Nikita\" is without a doubt, far superior to any of these. Although this film has tragic elements, it is ultimately extremely hopeful. It is the story of a person who is cruel and merciless, who ultimately comes to realize her own humanity and her own personal power. That, to me is extremely inspiring. If there is hope for Nikita, there is hope for all of us.",
-      "I saw this movie because I am a huge fan of the TV series of the same name starring Roy Dupuis and Pet Wilson. The movie was really good and I saw how the TV show is based on the movie. A few episodes of the TV series came directly from the movie and their similarity was amazing. To keep things short, any fan of the movie has to watch the series and any fan of the series must see the original Nikita.",
-      "Being that the only foreign films I usually like star a Japanese person in a rubber suit who crushes little tiny buildings and tanks, I had high hopes for this movie. I thought that this was a movie that wouldn't put me to sleep. WRONG! Starts off with a bang, okay, now she's in training, alright, she's an assassin, I'm still with you, oh, now she's having this moral dilemma and she can't decide if she loves her boyfriend or her controller, zzzzz.... Oh well, back to Gamera!",
-      "After seeing Point of No Return (a great movie) and being told that the original was better, I was certainly thrilled to see that one of the indie film channels was running La Femme Nikita. Then I saw the movie. Ouch! This was a major let-down.<br /><br />Nikita herself reminds me of Jar Jar Binks more than any other character I've seen recently. She comes across entirely as comic relief. The movie simply has nothing to recommend it besides the core concept of an evil, inhuman character paradoxically learning to be human while training as an assassin, and that concept failed miserably in Nikita due to the poor writing of the title role.",
-      ...]
-     label s64 [-1, -1, -1, -1, -1, ...]
-   >
- ]}
-```
+### Load dataset from local resources
 
 ```elixir
 ElixirDatasets.load_dataset({:local, "#{__DIR__}/../resources"})
@@ -385,32 +177,158 @@ ElixirDatasets.load_dataset({:local, "#{__DIR__}/../resources"})
  ]}
 ```
 
-## Get Dataset Info
+## Upload dataset
 
-Fetch dataset metadata from Hugging Face API:
+### Prepare datasets to upload
 
 ```elixir
-{:ok, info} = ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets")
-
-IO.puts("Dataset: #{info["id"]}")
-
-dataset_info = info["cardData"]["dataset_info"] |> Enum.at(0)
-IO.puts("Config: #{dataset_info["config_name"]}")
-IO.puts("Features: #{inspect(dataset_info["features"])}")
-IO.puts("Training examples: #{dataset_info["splits"] |> Enum.at(0) |> Map.get("num_examples")}")
+[ df_head | df_tail ] = ElixirDatasets.load_dataset!({:local, "#{__DIR__}/../resources"})
+nil
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
-Dataset: aaaaa32r/elixirDatasets
-Config: csv
-Features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}]
-Training examples: 10
+nil
+```
+
+### Upload dataset to huggingface hub
+
+```elixir
+# Commented out to avoid cluttering the repository
+# ElixirDatasets.upload_dataset(
+#   df_head,
+#   "aaaaa32r/elixirDatasets",
+#   [file_extension: "csv"])
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
-:ok
+nil
 ```
+
+### Delete dataset file from huggingface hub
+
+```elixir
+# Commented out to avoid cluttering the repository
+# ElixirDatasets.Utils.Uploader.delete_file_from_dataset(
+#   "aaaaa32r/elixirDatasets", 
+#   "briefly-576460442698708888-7FDZDhwtp6dOsH5dAT")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+nil
+```
+
+### Upload dataset to huggingface hub via lfs
+
+```elixir
+# Commented out to avoid cluttering the repository
+# ElixirDatasets.Utils.Uploader.upload_file_via_lfs(
+#   "/Users/radoslawrolka/Downloads/companies-2023-q4-sm.csv.zip",
+#   "aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+nil
+```
+
+## Other loading methods
+
+### Get dataset infos
+
+```elixir
+ElixirDatasets.get_dataset_infos("cornell-movie-review-data/rotten_tomatoes")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: nil,
+     features: [
+       %{"dtype" => "string", "name" => "text"},
+       %{
+         "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
+         "name" => "label"
+       }
+     ],
+     splits: [
+       %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
+       %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
+       %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
+     ],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
+```
+
+### Get dataset split names
+
+```elixir
+ElixirDatasets.get_dataset_split_names("cornell-movie-review-data/rotten_tomatoes")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["train", "validation", "test"]}
+```
+
+### Get dataset config names
+
+```elixir
+ElixirDatasets.get_dataset_config_names("aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok, ["csv", "default"]}
+```
+
+### Write-to-file & read-from-file datasetInfo
+
+```elixir
+{:ok, dataset_info} = ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
+ElixirDatasets.DatasetInfo.write_to_directory(dataset_info, "my-dir")
+ElixirDatasets.DatasetInfo.from_directory("my-dir")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: "csv",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   },
+   %ElixirDatasets.DatasetInfo{
+     config_name: "default",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
+```
+
+---

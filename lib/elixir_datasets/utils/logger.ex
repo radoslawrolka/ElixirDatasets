@@ -13,9 +13,10 @@ defmodule ElixirDatasets.Utils.Logger do
     iex> ElixirDatasets.Utils.Logger.debug("Starting dataset download")
     :ok
   """
+  @spec debug(String.t()) :: :ok
   def debug(message) do
     if debug_enabled?() do
-      IO.puts("[HF_DEBUG] #{message}")
+      IO.puts("[HF_DEBUG #{Time.utc_now() |> Time.to_string()}] #{message}")
     end
 
     :ok
@@ -33,6 +34,7 @@ defmodule ElixirDatasets.Utils.Logger do
     iex> ElixirDatasets.Utils.Logger.debug_enabled?()
     false
   """
+  @spec debug_enabled?() :: boolean()
   def debug_enabled? do
     System.get_env("HF_DEBUG", "false")
     |> String.downcase()
