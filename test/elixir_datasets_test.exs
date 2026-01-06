@@ -138,26 +138,36 @@ defmodule ElixirDatasetsTest do
       repository = {:local, "resources"}
       assert {:ok, paths} = ElixirDatasets.load_dataset(repository, streaming: true)
       assert is_list(paths)
+
       assert Enum.all?(paths, fn item ->
-        is_tuple(item) and tuple_size(item) == 2
-      end)
+               is_tuple(item) and tuple_size(item) == 2
+             end)
     end
 
     test "loads dataset with split and name parameters combined" do
       repository = {:local, "resources"}
-      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, split: "train", name: "csv")
+
+      assert {:ok, datasets} =
+               ElixirDatasets.load_dataset(repository, split: "train", name: "csv")
+
       assert is_list(datasets)
     end
 
     test "loads dataset with download_mode option" do
       repository = {:local, "resources"}
-      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, download_mode: :reuse_dataset_if_exists)
+
+      assert {:ok, datasets} =
+               ElixirDatasets.load_dataset(repository, download_mode: :reuse_dataset_if_exists)
+
       assert is_list(datasets)
     end
 
     test "loads dataset with verification_mode option" do
       repository = {:local, "resources"}
-      assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, verification_mode: :no_checks)
+
+      assert {:ok, datasets} =
+               ElixirDatasets.load_dataset(repository, verification_mode: :no_checks)
+
       assert is_list(datasets)
     end
 

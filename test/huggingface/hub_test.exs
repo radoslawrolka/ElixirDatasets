@@ -102,10 +102,11 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       assert {:ok, path1} = ElixirDatasets.HuggingFace.Hub.cached_download(@url, @opts)
       assert File.exists?(path1)
 
-      assert {:ok, path2} = ElixirDatasets.HuggingFace.Hub.cached_download(
-        @url,
-        @opts ++ [download_mode: :force_redownload]
-      )
+      assert {:ok, path2} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(
+                 @url,
+                 @opts ++ [download_mode: :force_redownload]
+               )
 
       assert File.exists?(path2)
       assert String.contains?(path1, @cache_dir)
@@ -117,10 +118,11 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     test "with verification_mode: :no_checks" do
       File.mkdir_p!(@cache_dir)
 
-      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(
-        @url,
-        @opts ++ [verification_mode: :no_checks]
-      )
+      assert {:ok, _path} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(
+                 @url,
+                 @opts ++ [verification_mode: :no_checks]
+               )
 
       File.rm_rf!(@cache_dir)
     end
@@ -128,10 +130,11 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     test "with storage_options" do
       File.mkdir_p!(@cache_dir)
 
-      assert {:ok, _path} = ElixirDatasets.HuggingFace.Hub.cached_download(
-        @url,
-        @opts ++ [storage_options: %{"key" => "value"}]
-      )
+      assert {:ok, _path} =
+               ElixirDatasets.HuggingFace.Hub.cached_download(
+                 @url,
+                 @opts ++ [storage_options: %{"key" => "value"}]
+               )
 
       File.rm_rf!(@cache_dir)
     end

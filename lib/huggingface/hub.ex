@@ -132,7 +132,8 @@ defmodule ElixirDatasets.HuggingFace.Hub do
       true ->
         with {:ok, etag, download_url, redirect?} <- head_download(url, headers) do
           # Check if we should reuse cached file (unless force_redownload)
-          cached_entry = if download_mode != :force_redownload, do: cached_path_for_etag(dir, url, etag)
+          cached_entry =
+            if download_mode != :force_redownload, do: cached_path_for_etag(dir, url, etag)
 
           if cached_entry do
             {:ok, cached_entry}
