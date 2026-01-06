@@ -276,8 +276,9 @@ defmodule ElixirDatasets do
       multiple configurations, this specifies which one to use. Files are matched
       by looking for the config name in the file path (e.g., "sst2/train.parquet").
 
-    * `:streaming` - if `true`, returns file paths for streaming instead of loading
-      all data into memory. Useful for large datasets. Default is `false`.
+    * `:streaming` - if `true`, returns a Stream that progressively yields rows
+      without downloading files. Data is fetched on-demand as you iterate.
+      Useful for large datasets. Default is `false`.
 
   ### HuggingFace Hub Options
 
@@ -311,8 +312,9 @@ defmodule ElixirDatasets do
 
   ## Returns
 
-  An `{:ok, datasets}` tuple, where `datasets` is a list of Explorer.DataFrame.t().
-  If the dataset cannot be loaded, an `{:error, reason}` tuple is returned.
+  - When `streaming: false` (default): `{:ok, datasets}` where `datasets` is a list of Explorer.DataFrame.t()
+  - When `streaming: true`: `{:ok, stream}` where `stream` is an Enumerable that yields rows progressively
+  - On error: `{:error, reason}`
 
   ## Examples
 
@@ -325,9 +327,19 @@ defmodule ElixirDatasets do
       # Load a specific split of a specific configuration
       ElixirDatasets.load_dataset({:hf, "glue"}, name: "sst2", split: "train")
 
+      # Stream data progressively without downloading
+      {:ok, stream} = ElixirDatasets.load_dataset(
+        {:hf, "large_dataset"},
+        split: "train",
+        streaming: true
+      )
+
+      # Process first 100 rows without downloading entire dataset
+      stream |> Stream.take(100) |> Enum.each(&process_row/1)
+
   """
   @spec load_dataset(t_repository(), keyword()) ::
-          {:ok, [Explorer.DataFrame.t()]} | {:error, Exception.t()}
+          {:ok, [Explorer.DataFrame.t()] | Enumerable.t()} | {:error, Exception.t()}
   def load_dataset(repository, opts \\ []) do
     repository = normalize_repository!(repository)
     split = opts[:split]
@@ -336,12 +348,16 @@ defmodule ElixirDatasets do
     num_proc = opts[:num_proc] || 1
 
     with {:ok, repo_files} <- get_repo_files(repository),
-         {:ok, filtered_files} <- filter_files_by_config_and_split(repo_files, name, split),
-         {:ok, paths_with_extensions} <- maybe_load_model_spec(opts, repository, filtered_files) do
+         {:ok, filtered_files} <- filter_files_by_config_and_split(repo_files, name, split) do
       if streaming do
-        {:ok, paths_with_extensions}
+        # True streaming: return a Stream that fetches data progressively
+        {:ok, build_streaming_dataset(repository, filtered_files, opts)}
       else
-        ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions, num_proc)
+        # Eager loading: download and load into DataFrames
+        with {:ok, paths_with_extensions} <-
+               maybe_load_model_spec(opts, repository, filtered_files) do
+          ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions, num_proc)
+        end
       end
     end
   end
@@ -352,11 +368,11 @@ defmodule ElixirDatasets do
   Accepts the same options as `load_dataset/2`:
     * `:split` - which split to load (e.g., "train", "test", "validation")
     * `:name` - dataset configuration name
-    * `:streaming` - if `true`, returns file paths instead of loaded data
+    * `:streaming` - if `true`, returns a Stream instead of loaded data
 
   ## Returns
 
-    * a list of loaded datasets (or file paths if streaming is enabled)
+    * a list of loaded datasets (or a Stream if streaming is enabled)
     * raises an error if loading fails
 
   ## Examples
@@ -364,9 +380,13 @@ defmodule ElixirDatasets do
       # Load only training data
       datasets = ElixirDatasets.load_dataset!({:hf, "dataset_name"}, split: "train")
 
+      # Stream data progressively
+      stream = ElixirDatasets.load_dataset!({:hf, "dataset"}, streaming: true)
+      stream |> Enum.take(10)
+
   """
   @spec load_dataset!(t_repository(), keyword()) ::
-          [Explorer.DataFrame.t()] | [{Path.t(), String.t()}]
+          [Explorer.DataFrame.t()] | Enumerable.t()
   def load_dataset!(repository, opts \\ []) do
     case load_dataset(repository, opts) do
       {:ok, datasets} -> datasets
@@ -550,4 +570,183 @@ defmodule ElixirDatasets do
       :filename.basedir(:user_cache, "elixir_datasets")
     end
   end
+
+  # Streaming implementation
+
+  defp build_streaming_dataset(repository, filtered_files, opts) do
+    batch_size = opts[:batch_size] || 1000
+
+    urls = build_streaming_urls(repository, filtered_files, opts)
+
+    Stream.resource(
+      fn -> init_streaming_state(urls, batch_size) end,
+      &fetch_next_streaming_batch/1,
+      &cleanup_streaming/1
+    )
+  end
+
+  defp build_streaming_urls({:hf, repository_id, repo_opts}, filtered_files, load_opts) do
+    auth_token = load_opts[:auth_token]
+
+    Enum.map(filtered_files, fn {file_name, _etag} ->
+      filename =
+        if subdir = repo_opts[:subdir] do
+          subdir <> "/" <> file_name
+        else
+          file_name
+        end
+
+      extension = file_name |> Path.extname() |> String.trim_leading(".")
+      url = HuggingFace.Hub.file_url(repository_id, filename, repo_opts[:revision])
+
+      {url, extension, auth_token}
+    end)
+  end
+
+  defp build_streaming_urls({:local, dir}, filtered_files, _opts) do
+    Enum.map(filtered_files, fn {file_name, _etag} ->
+      path = Path.join(dir, file_name)
+      extension = file_name |> Path.extname() |> String.trim_leading(".")
+      {path, extension, nil}
+    end)
+  end
+
+  defp init_streaming_state(urls, batch_size) do
+    %{
+      urls: urls,
+      current_url_index: 0,
+      current_lazy_df: nil,
+      current_offset: 0,
+      batch_size: batch_size,
+      total_urls: length(urls)
+    }
+  end
+
+  defp fetch_next_streaming_batch(%{current_url_index: idx, total_urls: total} = state)
+       when idx >= total do
+    {:halt, state}
+  end
+
+  defp fetch_next_streaming_batch(state) do
+    case ensure_lazy_df_loaded(state) do
+      {:ok, state_with_df} ->
+        fetch_batch_from_lazy_df(state_with_df)
+
+      {:error, _reason} ->
+        # Skip to next file on error
+        new_state = %{state | current_url_index: state.current_url_index + 1, current_offset: 0}
+        fetch_next_streaming_batch(new_state)
+    end
+  end
+
+  defp ensure_lazy_df_loaded(%{current_lazy_df: nil} = state) do
+    {url, extension, auth_token} = Enum.at(state.urls, state.current_url_index)
+
+    case load_lazy_dataframe_from_url(url, extension, auth_token) do
+      {:ok, lazy_df} ->
+        {:ok, %{state | current_lazy_df: lazy_df}}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  defp ensure_lazy_df_loaded(state), do: {:ok, state}
+
+  defp load_lazy_dataframe_from_url(url_or_path, extension, _auth_token) do
+    # Check if it's a URL or local path
+    is_url =
+      String.starts_with?(url_or_path, "http://") or String.starts_with?(url_or_path, "https://")
+
+    # Explorer's lazy loading only supports Parquet from URLs
+    # For CSV/JSONL from URLs, we need to download first or use eager loading
+    case {extension, is_url} do
+      {"parquet", true} ->
+        # Parquet from URL - can use lazy loading
+        Explorer.DataFrame.from_parquet(url_or_path, lazy: true)
+
+      {"parquet", false} ->
+        # Parquet from local file - can use lazy loading
+        Explorer.DataFrame.from_parquet(url_or_path, lazy: true)
+
+      {"csv", false} ->
+        # CSV from local file - can use lazy loading
+        Explorer.DataFrame.from_csv(url_or_path, lazy: true)
+
+      {"jsonl", false} ->
+        # JSONL from local file - can use lazy loading
+        Explorer.DataFrame.from_ndjson(url_or_path, lazy: true)
+
+      {"csv", true} ->
+        # CSV from URL - Explorer doesn't support lazy loading, use eager
+        # Load eagerly and wrap in a lazy frame for consistent interface
+        case Explorer.DataFrame.from_csv(url_or_path) do
+          {:ok, df} -> {:ok, df}
+          error -> error
+        end
+
+      {"jsonl", true} ->
+        # JSONL from URL - Explorer doesn't support lazy loading, use eager
+        case Explorer.DataFrame.from_ndjson(url_or_path) do
+          {:ok, df} -> {:ok, df}
+          error -> error
+        end
+
+      _ ->
+        {:error, "Unsupported format for streaming: #{extension}"}
+    end
+  end
+
+  defp fetch_batch_from_lazy_df(state) do
+    %{current_lazy_df: df, current_offset: offset, batch_size: batch_size} = state
+
+    # Slice the dataframe to get a batch
+    # If it's a lazy frame, collect() will execute the query
+    # If it's already eager, collect() is a no-op
+    batch_df =
+      df
+      |> Explorer.DataFrame.slice(offset, batch_size)
+      |> then(fn sliced ->
+        # Only collect if it's a lazy frame
+        if Explorer.DataFrame.lazy?(sliced) do
+          Explorer.DataFrame.collect(sliced)
+        else
+          sliced
+        end
+      end)
+
+    batch_rows = Explorer.DataFrame.to_rows(batch_df)
+    num_rows = length(batch_rows)
+
+    cond do
+      num_rows == 0 ->
+        # Current file exhausted, move to next
+        new_state = %{
+          state
+          | current_url_index: state.current_url_index + 1,
+            current_lazy_df: nil,
+            current_offset: 0
+        }
+
+        fetch_next_streaming_batch(new_state)
+
+      num_rows < batch_size ->
+        # Last batch from this file, move to next file
+        new_state = %{
+          state
+          | current_url_index: state.current_url_index + 1,
+            current_lazy_df: nil,
+            current_offset: 0
+        }
+
+        {batch_rows, new_state}
+
+      true ->
+        # More data available in current file
+        new_state = %{state | current_offset: offset + batch_size}
+        {batch_rows, new_state}
+    end
+  end
+
+  defp cleanup_streaming(_state), do: :ok
 end

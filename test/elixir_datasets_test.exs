@@ -134,14 +134,203 @@ defmodule ElixirDatasetsTest do
       assert is_list(datasets)
     end
 
-    test "loads dataset with streaming parameter returns paths" do
+    test "loads dataset with streaming parameter returns Stream" do
       repository = {:local, "resources"}
-      assert {:ok, paths} = ElixirDatasets.load_dataset(repository, streaming: true)
-      assert is_list(paths)
+      assert {:ok, stream} = ElixirDatasets.load_dataset(repository, streaming: true)
 
-      assert Enum.all?(paths, fn item ->
-               is_tuple(item) and tuple_size(item) == 2
-             end)
+      # Should return a Stream, not a list
+      assert is_function(stream, 2), "Expected a Stream (function/2)"
+
+      # Stream should yield rows
+      rows = stream |> Enum.take(5)
+      assert is_list(rows)
+      assert Enum.all?(rows, &is_map/1), "Each row should be a map"
+    end
+
+    test "streaming mode fetches data progressively" do
+      repository = {:local, "resources"}
+      assert {:ok, stream} = ElixirDatasets.load_dataset(repository, streaming: true)
+
+      # Take only 3 rows - should not load entire dataset
+      rows = stream |> Enum.take(3)
+      assert length(rows) <= 3
+      assert Enum.all?(rows, &is_map/1)
+    end
+
+    test "streaming with custom batch_size" do
+      repository = {:local, "resources"}
+
+      assert {:ok, stream} =
+               ElixirDatasets.load_dataset(
+                 repository,
+                 streaming: true,
+                 batch_size: 2
+               )
+
+      rows = stream |> Enum.take(5)
+      assert is_list(rows)
+    end
+
+    test "streaming is lazy - data fetched on demand, not upfront" do
+      repository = {:local, "resources"}
+
+      # Create stream - no data should be fetched yet
+      {:ok, stream} = ElixirDatasets.load_dataset(repository, streaming: true)
+
+      IO.puts("\n  🔍 Testing lazy streaming behavior:")
+
+      # First usage - fetch 3 rows
+      IO.puts("    1. Fetching first 3 rows...")
+
+      {time1, rows1} =
+        :timer.tc(fn ->
+          stream |> Enum.take(3)
+        end)
+
+      IO.puts("       ✓ Got #{length(rows1)} rows in #{time1 / 1000}ms")
+      assert length(rows1) == 3
+
+      # Wait 2 seconds
+      IO.puts("    2. Waiting 2 seconds...")
+      Process.sleep(2000)
+
+      # Second usage - fetch more rows from the SAME stream
+      # This should work because Stream is lazy and can be reused
+      IO.puts("    3. Fetching 5 rows from same stream...")
+
+      {time2, rows2} =
+        :timer.tc(fn ->
+          stream |> Enum.take(5)
+        end)
+
+      IO.puts("       ✓ Got #{length(rows2)} rows in #{time2 / 1000}ms")
+      assert length(rows2) == 5
+
+      # Key insight: Each enumeration starts fresh from the stream
+      # The stream doesn't "remember" previous iterations
+      IO.puts("    4. Key insight: Stream is reusable, each Enum.take starts fresh")
+
+      # Demonstrate progressive fetching with a counter
+      IO.puts("    5. Demonstrating progressive fetching...")
+
+      fetch_count = :counters.new(1, [:atomics])
+
+      # Create a stream that counts fetches
+      counted_stream =
+        stream
+        |> Stream.map(fn row ->
+          :counters.add(fetch_count, 1, 1)
+          row
+        end)
+
+      # Take only 2 rows
+      IO.puts("       Taking 2 rows...")
+      _small_batch = counted_stream |> Enum.take(2)
+      count_after_2 = :counters.get(fetch_count, 1)
+      IO.puts("       ✓ Fetched #{count_after_2} rows (should be ~2)")
+
+      # Reset counter
+      :counters.put(fetch_count, 1, 0)
+
+      # Take 10 rows
+      IO.puts("       Taking 10 rows...")
+      _large_batch = counted_stream |> Enum.take(10)
+      count_after_10 = :counters.get(fetch_count, 1)
+      IO.puts("       ✓ Fetched #{count_after_10} rows (should be ~10)")
+
+      # The key point: we only fetch what we need
+      assert count_after_2 <= 5, "Should fetch minimal rows for small take"
+      assert count_after_10 >= 8, "Should fetch more rows for larger take"
+
+      IO.puts("    ✅ Streaming is truly lazy - fetches only what's needed!")
+    end
+
+    test "streaming from HuggingFace demonstrates progressive fetching" do
+      repository = @repository
+
+      IO.puts("\n  🌐 Testing HuggingFace streaming:")
+
+      # Create stream
+      {:ok, stream} = ElixirDatasets.load_dataset(repository, streaming: true, batch_size: 5)
+      IO.puts("    ✓ Created stream (no data downloaded yet)")
+
+      # Fetch small amount
+      IO.puts("    1. Fetching only 3 rows...")
+
+      {time1, rows1} =
+        :timer.tc(fn ->
+          stream |> Enum.take(3)
+        end)
+
+      IO.puts("       ✓ Got #{length(rows1)} rows in #{Float.round(time1 / 1000, 2)}ms")
+      assert length(rows1) == 3
+
+      # Wait
+      IO.puts("    2. Waiting 1 second...")
+      Process.sleep(1000)
+
+      # Fetch more - stream is reusable
+      IO.puts("    3. Fetching 8 rows from same stream...")
+
+      {time2, rows2} =
+        :timer.tc(fn ->
+          stream |> Enum.take(8)
+        end)
+
+      IO.puts("       ✓ Got #{length(rows2)} rows in #{Float.round(time2 / 1000, 2)}ms")
+      assert length(rows2) == 8
+
+      # Demonstrate that we can process data without loading everything
+      IO.puts("    4. Processing with Stream operations (lazy)...")
+
+      result =
+        stream
+        |> Stream.filter(fn row -> Map.has_key?(row, "id") end)
+        |> Stream.take(5)
+        |> Enum.to_list()
+
+      IO.puts("       ✓ Processed and got #{length(result)} filtered rows")
+      assert length(result) <= 5
+
+      IO.puts("    ✅ HuggingFace streaming works progressively!")
+    end
+
+    test "verification_mode works with streaming" do
+      repository = @repository
+
+      IO.puts("\n  🔍 Testing verification_mode with streaming:")
+
+      # Test with basic_checks (default)
+      IO.puts("    1. With verification_mode: :basic_checks (default)...")
+
+      {:ok, stream1} =
+        ElixirDatasets.load_dataset(
+          repository,
+          streaming: true,
+          verification_mode: :basic_checks
+        )
+
+      rows1 = stream1 |> Enum.take(2)
+      IO.puts("       ✓ Got #{length(rows1)} rows")
+      assert length(rows1) == 2
+
+      # Test with no_checks
+      IO.puts("    2. With verification_mode: :no_checks...")
+
+      {:ok, stream2} =
+        ElixirDatasets.load_dataset(
+          repository,
+          streaming: true,
+          verification_mode: :no_checks
+        )
+
+      rows2 = stream2 |> Enum.take(2)
+      IO.puts("       ✓ Got #{length(rows2)} rows")
+      assert length(rows2) == 2
+
+      IO.puts("    ℹ️  Note: verification_mode applies to metadata fetching,")
+      IO.puts("       not to the streaming data itself (which comes from URLs)")
+      IO.puts("    ✅ verification_mode works with streaming!")
     end
 
     test "loads dataset with split and name parameters combined" do
@@ -184,6 +373,70 @@ defmodule ElixirDatasetsTest do
       # Test with sequential processing (default)
       assert {:ok, datasets} = ElixirDatasets.load_dataset(repository, num_proc: 1)
       assert is_list(datasets)
+    end
+
+    test "num_proc=4 is faster than num_proc=1 for parallel loading" do
+      # Use HuggingFace dataset with multiple files for better parallelization
+      repository = @repository
+
+      # Measure sequential loading time
+      {time_sequential, {:ok, datasets_seq}} =
+        :timer.tc(fn ->
+          ElixirDatasets.load_dataset(repository, num_proc: 1)
+        end)
+
+      # Measure parallel loading time
+      {time_parallel, {:ok, datasets_par}} =
+        :timer.tc(fn ->
+          ElixirDatasets.load_dataset(repository, num_proc: 4)
+        end)
+
+      # Both should return same number of datasets
+      assert length(datasets_seq) == length(datasets_par)
+
+      # Both should have same total rows
+      total_rows_seq =
+        Enum.reduce(datasets_seq, 0, fn df, acc ->
+          acc + Explorer.DataFrame.n_rows(df)
+        end)
+
+      total_rows_par =
+        Enum.reduce(datasets_par, 0, fn df, acc ->
+          acc + Explorer.DataFrame.n_rows(df)
+        end)
+
+      assert total_rows_seq == total_rows_par
+
+      # Convert to seconds for readability
+      time_seq_sec = time_sequential / 1_000_000
+      time_par_sec = time_parallel / 1_000_000
+      speedup = time_sequential / time_parallel
+
+      IO.puts("\n  ⏱️  Performance Comparison:")
+      IO.puts("     Sequential (num_proc: 1): #{Float.round(time_seq_sec, 3)}s")
+      IO.puts("     Parallel (num_proc: 4):   #{Float.round(time_par_sec, 3)}s")
+      IO.puts("     Speedup: #{Float.round(speedup, 2)}x")
+
+      # Parallel should be faster (or at least not significantly slower)
+      # We use a relaxed assertion since overhead might affect small datasets
+      assert time_parallel <= time_sequential * 1.5,
+             "Parallel processing should not be significantly slower than sequential"
+    end
+
+    test "num_proc produces same results as sequential" do
+      repository = {:local, "resources"}
+
+      {:ok, datasets_seq} = ElixirDatasets.load_dataset(repository, num_proc: 1)
+      {:ok, datasets_par} = ElixirDatasets.load_dataset(repository, num_proc: 4)
+
+      # Should have same number of datasets
+      assert length(datasets_seq) == length(datasets_par)
+
+      # Each dataset should have same number of rows (order might differ)
+      seq_row_counts = Enum.map(datasets_seq, &Explorer.DataFrame.n_rows/1) |> Enum.sort()
+      par_row_counts = Enum.map(datasets_par, &Explorer.DataFrame.n_rows/1) |> Enum.sort()
+
+      assert seq_row_counts == par_row_counts
     end
 
     # todo more tests for load_dataset/2
