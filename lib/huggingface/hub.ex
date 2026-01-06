@@ -113,10 +113,21 @@ defmodule ElixirDatasets.HuggingFace.Hub do
           {:ok, %{"etag" => etag}} ->
             entry_path = Path.join(dir, entry_filename(url, etag))
 
-            if verification_mode == :no_checks or File.exists?(entry_path) do
-              {:ok, entry_path}
-            else
-              {:error, "cached file not found: #{entry_path}"}
+            cond do
+              File.exists?(entry_path) ->
+                {:ok, entry_path}
+
+              verification_mode == :no_checks ->
+                IO.warn(
+                  "ElixirDatasets.HuggingFace.Hub.cached_download/2: " <>
+                    "returning path to non-existent cached file in offline mode with " <>
+                    ":no_checks verification_mode: #{entry_path}"
+                )
+
+                {:ok, entry_path}
+
+              true ->
+                {:error, "cached file not found: #{entry_path}"}
             end
 
           _ ->
