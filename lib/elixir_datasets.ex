@@ -80,12 +80,7 @@ defmodule ElixirDatasets do
   @spec get_dataset_info(String.t(), keyword()) :: {:ok, map()} | {:error, String.t()}
   def get_dataset_info(repository_id, opts \\ []) when is_binary(repository_id) do
     url = HuggingFace.Hub.dataset_info_url(repository_id)
-
-    headers =
-      case HuggingFace.Hub.get_auth_token(opts) do
-        {:ok, auth_token} -> [{"Authorization", "Bearer #{auth_token}"}]
-        {:error, _} -> []
-      end
+    headers = ElixirDatasets.Utils.HTTP.get_headers(opts)
 
     with {:ok, response} <- ElixirDatasets.Utils.HTTP.request(:get, url, headers: headers),
          {:ok, data} <- Jason.decode(response.body) do

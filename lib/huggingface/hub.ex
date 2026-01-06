@@ -67,7 +67,6 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   def cached_download(url, opts \\ []) do
     cache_dir = opts[:cache_dir] || ElixirDatasets.cache_dir()
     offline = Keyword.get(opts, :offline, elixir_datasets_offline?())
-    auth_token = opts[:auth_token]
 
     dir = Path.join(cache_dir, "huggingface")
 
@@ -80,13 +79,7 @@ defmodule ElixirDatasets.HuggingFace.Hub do
 
     File.mkdir_p!(dir)
 
-    headers =
-      if auth_token do
-        [{"Authorization", "Bearer " <> auth_token}]
-      else
-        []
-      end
-
+    headers = ElixirDatasets.Utils.HTTP.get_headers(opts)
     metadata_path = Path.join(dir, metadata_filename(url))
 
     cond do

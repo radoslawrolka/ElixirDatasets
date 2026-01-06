@@ -135,7 +135,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
     @url "https://huggingface.co/datasets/aaaaa32r/elixirDatasets"
     @url_redirect "https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT/resolve/main/medical_o1_sft_Chinese.json"
     # @urlNilHost "http://localhost:32123/sessions/7xre6dqd37a6olsi4dmdddndzz6te5cdimmshjblbbsot2cg" # This URL is not valid for testing, as it does not exist outside of my local environment
-    @headers [{"Content-Type", "application/json"}]
+    @headers [{~c"Content-Type", ~c"application/json"}]
 
     test "returns :ok with valid response, without redirection" do
       assert {:ok, _etag, @url, false} =
