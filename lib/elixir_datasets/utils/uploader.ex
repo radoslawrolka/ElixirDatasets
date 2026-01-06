@@ -16,7 +16,7 @@ defmodule ElixirDatasets.Utils.Uploader do
     temp_file = ElixirDatasets.Utils.Saver.save_dataset_to_file(df, options)
 
     try do
-      with {:ok, token} <- get_hf_token(),
+      with {:ok, token} <- ElixirDatasets.HuggingFace.Hub.get_auth_token(options),
            {:ok, file_content} <- File.read(temp_file),
            encoded_content <- Base.encode64(file_content),
            {:ok, filename} <- get_filename(temp_file, options),
@@ -67,7 +67,7 @@ defmodule ElixirDatasets.Utils.Uploader do
     commit_msg = Keyword.get(options, :commit_message, "Delete file from ElixirDatasets")
     description = Keyword.get(options, :description, "")
 
-    with {:ok, token} <- get_hf_token(),
+    with {:ok, token} <- ElixirDatasets.HuggingFace.Hub.get_auth_token(options),
          {:ok, response} <-
            delete_from_huggingface(repository, token, filename, commit_msg, description) do
       {:ok, response}
@@ -112,7 +112,7 @@ defmodule ElixirDatasets.Utils.Uploader do
     description = Keyword.get(options, :description, "")
     repo_filename = Keyword.get(options, :repo_filename, Path.basename(file_path))
 
-    with {:ok, token} <- get_hf_token(),
+    with {:ok, token} <- ElixirDatasets.HuggingFace.Hub.get_auth_token(options),
          {:ok, file_content} <- File.read(file_path),
          oid <- calculate_sha256(file_content),
          size <- byte_size(file_content),
@@ -230,7 +230,8 @@ defmodule ElixirDatasets.Utils.Uploader do
       })
 
     headers = [
-      {~c"Authorization", ~c"Bearer #{get_hf_token() |> elem(1)}"},
+      {~c"Authorization",
+       ~c"Bearer #{ElixirDatasets.HuggingFace.Hub.get_auth_token([]) |> elem(1)}"},
       {~c"Content-Type", ~c"application/json"}
     ]
 
@@ -321,14 +322,6 @@ defmodule ElixirDatasets.Utils.Uploader do
       ext ->
         raise ArgumentError,
               "Invalid file extension: #{ext}. Supported extensions are: #{@valid_extensions |> Enum.join(", ")}"
-    end
-  end
-
-  @doc false
-  defp get_hf_token do
-    case System.get_env("HF_TOKEN") do
-      nil -> {:error, "HF_TOKEN environment variable not set"}
-      token -> {:ok, token}
     end
   end
 

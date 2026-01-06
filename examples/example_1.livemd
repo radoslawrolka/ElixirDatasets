@@ -10,14 +10,11 @@
 # ])
 ##### Local dev-testing version
 Mix.install([
-  {:elixir_datasets, path: "#{__DIR__}/.."},
-  {:explorer, "0.10.0"}
-],
-config: Config.Reader.read!("#{__DIR__}/../config/config.exs")
-)
+  {:elixir_datasets, path: "#{__DIR__}/.."}
+])
 
-# get auth_token for downloading from HuggingFace 
-auth_token = Application.get_env(:elixir_datasets, :hf_token)
+# get auth_token explicite for downloading from HuggingFace 
+auth_token = System.get_env("HF_TOKEN")
 :ok
 ```
 
@@ -252,7 +249,7 @@ ElixirDatasets.load_dataset(
 {:ok,
  [
    #Explorer.DataFrame<
-     Polars[854 x 5]
+     Polars[945 x 5]
      act string ["Ethereum Developer", "Linux Terminal", "English Translator and Improver",
       "Job Interviewer", "JavaScript Console", ...]
      prompt string ["Imagine you are an experienced Ethereum developer tasked with creating a smart contract for a blockchain messenger. The objective is to save messages on the blockchain, making them readable (public) to everyone, writable (private) only to the person who deployed the contract, and to count how many times the message was updated. Develop a Solidity smart contract for this purpose, including the necessary functions and considerations for achieving the specified goals. Please provide the code and any relevant explanations to ensure a clear understanding of the implementation.",
@@ -371,19 +368,19 @@ ElixirDatasets.load_dataset({:local, "#{__DIR__}/../resources"})
 {:ok,
  [
    #Explorer.DataFrame<
-     Polars[10 x 2]
-     id s64 [1, 2, 3, 4, 5, ...]
-     number string ["one", "two", "three", "four", "five", ...]
+     Polars[11 x 2]
+     id s64 [0, 1, 2, 3, 4, ...]
+     number string ["csv", "one", "two", "three", "four", ...]
    >,
    #Explorer.DataFrame<
-     Polars[10 x 2]
-     id s64 [1, 2, 3, 4, 5, ...]
-     number string ["one", "two", "three", "four", "five", ...]
+     Polars[11 x 2]
+     id s64 [0, 1, 2, 3, 4, ...]
+     number string ["jsonl", "one", "two", "three", "four", ...]
    >,
    #Explorer.DataFrame<
-     Polars[10 x 2]
-     id s32 [1, 2, 3, 4, 5, ...]
-     number string ["one", "two", "three", "four", "five", ...]
+     Polars[11 x 2]
+     id s64 [0, 1, 2, 3, 4, ...]
+     number string ["parquet", "one", "two", "three", "four", ...]
    >
  ]}
 ```

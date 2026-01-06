@@ -82,9 +82,9 @@ defmodule ElixirDatasets do
     url = HuggingFace.Hub.dataset_info_url(repository_id)
 
     headers =
-      case opts[:auth_token] || System.get_env("HF_TOKEN") do
-        nil -> []
-        auth_token -> [{"Authorization", "Bearer #{auth_token}"}]
+      case HuggingFace.Hub.get_auth_token(opts) do
+        {:ok, auth_token} -> [{"Authorization", "Bearer #{auth_token}"}]
+        {:error, _} -> []
       end
 
     with {:ok, response} <- ElixirDatasets.Utils.HTTP.request(:get, url, headers: headers),
