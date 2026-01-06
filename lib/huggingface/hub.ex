@@ -66,11 +66,12 @@ defmodule ElixirDatasets.HuggingFace.Hub do
       - `:reuse_dataset_if_exists` (default) - reuse cached data if available
       - `:force_redownload` - always download, even if cached
 
-    * `:verification_mode` - controls verification checks. Can be:
-      - `:basic_checks` (default) - basic validation
-      - `:all_checks` - comprehensive validation
-      - `:no_checks` - skip all validation
-      Note: Currently only `:no_checks` is implemented to skip file existence checks.
+    * `:verification_mode` - controls whether basic verification checks
+      are applied. Can be:
+      - `:basic_checks` (default) - perform basic validation
+      - `:no_checks` - skip validation (for example, file existence checks)
+      Note: Currently, `:verification_mode` only distinguishes between
+      performing the default basic checks and skipping them via `:no_checks`.
 
   """
   @spec cached_download(String.t(), keyword()) :: {:ok, String.t()} | {:error, String.t()}
@@ -112,10 +113,21 @@ defmodule ElixirDatasets.HuggingFace.Hub do
           {:ok, %{"etag" => etag}} ->
             entry_path = Path.join(dir, entry_filename(url, etag))
 
-            if verification_mode == :no_checks or File.exists?(entry_path) do
-              {:ok, entry_path}
-            else
-              {:error, "cached file not found: #{entry_path}"}
+            cond do
+              File.exists?(entry_path) ->
+                {:ok, entry_path}
+
+              verification_mode == :no_checks ->
+                IO.warn(
+                  "ElixirDatasets.HuggingFace.Hub.cached_download/2: " <>
+                    "returning path to non-existent cached file in offline mode with " <>
+                    ":no_checks verification_mode: #{entry_path}"
+                )
+
+                {:ok, entry_path}
+
+              true ->
+                {:error, "cached file not found: #{entry_path}"}
             end
 
           _ ->

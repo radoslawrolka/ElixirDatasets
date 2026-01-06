@@ -746,7 +746,7 @@ Recommended values:
 
 * `:split` - Load specific split (train/test/validation)
 * `:name` - Filter files by name pattern
-* `:streaming` - Return file paths instead of loading data
+* `:streaming` - Return a `Stream` that yields data rows instead of loading all data into memory at once
 
 **HuggingFace Hub Options:**
 
