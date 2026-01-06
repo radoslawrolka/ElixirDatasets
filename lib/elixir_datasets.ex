@@ -8,6 +8,7 @@ defmodule ElixirDatasets do
   """
   @compile if Mix.env() == :test, do: :export_all
   alias ElixirDatasets.HuggingFace
+  alias ElixirDatasets.DatasetInfo
   @valid_extensions_list ["jsonl", "csv", "parquet"]
 
   @typedoc """
@@ -90,6 +91,63 @@ defmodule ElixirDatasets do
          {:ok, data} <- Jason.decode(response.body) do
       {:ok, data}
     end
+  end
+
+  @doc """
+  Fetches dataset information from the Hugging Face API and returns a list of DatasetInfo structs.
+
+  This function retrieves all available dataset configurations for a given repository.
+
+  ## Parameters
+
+    * `repository_id` - the Hugging Face dataset repository ID (e.g., "aaaaa32r/elixirDatasets")
+    * `opts` - optional keyword list with the following options:
+      * `:auth_token` - the token to use as HTTP bearer authorization
+
+  ## Returns
+
+  Returns `{:ok, dataset_infos}` where `dataset_infos` is a list of DatasetInfo structs,
+  or `{:error, reason}` if the request fails.
+
+  ## Examples
+
+      iex> {:ok, infos} = ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
+      iex> Enum.map(infos, & &1.config_name)
+      ["csv", "default"]
+  """
+  @spec get_dataset_infos(String.t(), keyword()) ::
+          {:ok, [DatasetInfo.t()]} | {:error, String.t()}
+  def get_dataset_infos(repository_id, opts \\ []) when is_binary(repository_id) do
+    case get_dataset_info(repository_id, opts) do
+      {:ok, info} ->
+        dataset_infos = parse_dataset_infos(info)
+        {:ok, dataset_infos}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @doc """
+  Parses raw dataset info map into a list of DatasetInfo structs.
+
+  Extracts the dataset_info array from the HuggingFace API response's cardData field
+  and converts each entry into a DatasetInfo struct.
+
+  ## Parameters
+
+    * `data` - the raw response map from the HuggingFace API
+
+  ## Returns
+
+  A list of DatasetInfo structs.
+  """
+  @spec parse_dataset_infos(map()) :: [DatasetInfo.t()]
+  def parse_dataset_infos(data) when is_map(data) do
+    data
+    |> Map.get("cardData", %{})
+    |> Map.get("dataset_info", [])
+    |> DatasetInfo.from_map()
   end
 
   @doc """

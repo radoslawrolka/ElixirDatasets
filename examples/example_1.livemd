@@ -94,25 +94,74 @@ nil
 ```
 
 ```elixir
-ElixirDatasets.Utils.Uploader.upload_file_via_lfs(
-  "/Users/radoslawrolka/Downloads/companies-2023-q4-sm.csv.zip",
-  "aaaaa32r/elixirDatasets")
+# ElixirDatasets.Utils.Uploader.upload_file_via_lfs(
+#   "/Users/radoslawrolka/Downloads/companies-2023-q4-sm.csv.zip",
+#   "aaaaa32r/elixirDatasets")
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
-LFS URLs: {:upload_url,
- "https://hf-hub-lfs-us-east-1.s3-accelerate.amazonaws.com/repos/8d/e8/8de800873e186c50ef2351c880045c4372b1cdf42fca0147c2095d0fbe6a3245/024d8bfa9162444abd3032d827c732d37db202ea6ef1eb88f1ee2428736e0593?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2JU7TKAQLC2QXPN7%2F20260104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260104T122048Z&X-Amz-Expires=900&X-Amz-Signature=aa5c8a7eccecc32f343132309d42ee5514d96add680c5bae615c56b2db242110&X-Amz-SignedHeaders=host&x-amz-storage-class=INTELLIGENT_TIERING&x-id=PutObject",
- :verify_url,
- "https://huggingface.co/datasets/aaaaa32r/elixirDatasets.git/info/lfs/objects/verify"}
+nil
+```
+
+```elixir
+ElixirDatasets.get_dataset_infos("cornell-movie-review-data/rotten_tomatoes")
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
 {:ok,
- ~c"{\"success\":true,\"commitOid\":\"1c0732aec7c45ef597e66d29e408f3898bec28f2\",\"commitUrl\":\"https://huggingface.co/datasets/aaaaa32r/elixirDatasets/commit/1c0732aec7c45ef597e66d29e408f3898bec28f2\",\"hookOutput\":\"\"}"}
+ %ElixirDatasets.DatasetInfo{
+   config_name: nil,
+   features: [
+     %{"dtype" => "string", "name" => "text"},
+     %{
+       "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
+       "name" => "label"
+     }
+   ],
+   splits: [
+     %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
+     %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
+     %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
+   ],
+   description: nil,
+   homepage: nil,
+   license: nil,
+   citation: nil
+ }}
+```
+
+```elixir
+ElixirDatasets.get_dataset_infos("aaaaa32r/elixirDatasets")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ [
+   %ElixirDatasets.DatasetInfo{
+     config_name: "csv",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   },
+   %ElixirDatasets.DatasetInfo{
+     config_name: "default",
+     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+     description: nil,
+     homepage: nil,
+     license: nil,
+     citation: nil
+   }
+ ]}
 ```
 
 ## Load dataset
