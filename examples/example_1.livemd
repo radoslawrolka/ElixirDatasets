@@ -13,7 +13,7 @@ Mix.install([
   {:elixir_datasets, path: "#{__DIR__}/.."}
 ])
 
-# get auth_token explicite for downloading from HuggingFace 
+# get auth_token explicitly for downloading from HuggingFace 
 auth_token = System.get_env("HF_TOKEN")
 :ok
 ```
