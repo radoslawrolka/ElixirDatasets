@@ -276,9 +276,9 @@ defmodule ElixirDatasets do
       multiple configurations, this specifies which one to use. Files are matched
       by looking for the config name in the file path (e.g., "sst2/train.parquet").
 
-    * `:streaming` - if `true`, returns a Stream that progressively yields rows
-      without downloading files. Data is fetched on-demand as you iterate.
-      Useful for large datasets. Default is `false`.
+    * `:streaming` - if `true`, returns an enumerable that progressively yields
+      data rows (maps) without loading the entire dataset into memory. Data is
+      fetched on-demand as you iterate. Useful for large datasets. Default is `false`.
 
   ### HuggingFace Hub Options
 
