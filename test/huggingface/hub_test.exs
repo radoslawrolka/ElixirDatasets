@@ -189,6 +189,7 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       IO.puts("    Cache file deleted: #{cached_path}")
 
       IO.puts("\n    1. With verification_mode: :basic_checks (offline)")
+
       result_basic =
         ElixirDatasets.HuggingFace.Hub.cached_download(
           @url,

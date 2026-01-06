@@ -102,7 +102,6 @@ defmodule ElixirDatasetsTest do
       assert is_list(datasets)
     end
 
-
     test "returns error for non-existent dataset" do
       repository = {:test, "nonexistent/repo", []}
 
