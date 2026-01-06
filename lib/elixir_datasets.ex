@@ -301,7 +301,6 @@ defmodule ElixirDatasets do
 
     * `:verification_mode` - controls verification checks. Can be:
       - `:basic_checks` (default) - basic validation
-      - `:all_checks` - comprehensive validation
       - `:no_checks` - skip all validation
 
     * `:num_proc` - number of processes to use for parallel dataset processing.
