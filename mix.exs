@@ -1,17 +1,22 @@
 defmodule ElixirDatasets.MixProject do
   use Mix.Project
 
+  @description "A library for loading datasets from the Hugging Face Hub and local paths."
+  @github_url "https://github.com/radoslawrolka/elixirDatasets"
+
   def project do
     [
       app: :elixir_datasets,
       name: "ElixirDatasets",
-      description: "A library for loading datasets from the Hugging Face Hub and local paths.",
+      description: @description,
       package: package(),
       version: "0.0.1",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+      source_url: @github_url,
+      homepage_url: @github_url
     ]
   end
 
@@ -41,9 +46,10 @@ defmodule ElixirDatasets.MixProject do
   defp package do
     [
       maintainers: ["Radoslaw Rolka", "Weronika Wojtas"],
+      description: @description,
       licenses: ["MIT"],
       links: %{
-        "GitHub" => "https://github.com/radoslawrolka/elixirDatasets",
+        "GitHub" => @github_url,
         "Documentation" => "https://radoslawrolka.github.io/ElixirDatasets"
       }
     ]
