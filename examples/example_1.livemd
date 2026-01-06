@@ -618,6 +618,18 @@ Use `download_mode` to control caching behavior:
 IO.puts("Freshly downloaded dataset has #{Explorer.DataFrame.n_rows(fresh_data)} rows")
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+Freshly downloaded dataset has 8530 rows
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
 Available `download_mode` options:
 
 * `:reuse_dataset_if_exists` (default) - Use cached data if available
@@ -635,6 +647,18 @@ Use `verification_mode` to control validation checks:
 )
 
 IO.puts("Loaded #{Explorer.DataFrame.n_rows(quick_data)} rows (skipping verification)")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Loaded 1066 rows (skipping verification)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```
 
 Available `verification_mode` options:
@@ -661,6 +685,19 @@ Enum.each(file_paths, fn {path, ext} ->
 end)
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+Got 1 file path(s) in streaming mode
+  - 6czff2wi7db3bfzuqy5kh4m66m.ei2timrxmezgenjzmqyweolcmvsdczlbgvrwgm3ghe3dgobugnrgimjtmvqtonbugntdgmtegi3wknzume4tkn3bgnsdcobrmnrtknbvei (parquet)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
 ### Example 10: Using custom cache directory
 
 Control where downloaded files are stored:
@@ -676,6 +713,19 @@ custom_cache = "/tmp/my_datasets_cache"
 
 IO.puts("Dataset cached in: #{custom_cache}")
 IO.puts("Loaded #{Explorer.DataFrame.n_rows(cached_data)} rows")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Dataset cached in: /tmp/my_datasets_cache
+Loaded 8530 rows
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```
 
 ### Example 11: Offline mode
@@ -696,6 +746,18 @@ case ElixirDatasets.load_dataset(
 end
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+✓ Loaded from cache: 8530 rows
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
 ### Example 12: Parallel processing with num_proc
 
 Use `num_proc` to speed up dataset loading with parallel processing:
@@ -708,6 +770,18 @@ Use `num_proc` to speed up dataset loading with parallel processing:
 )
 
 IO.puts("Loaded #{Explorer.DataFrame.n_rows(parallel_data)} rows using 4 parallel processes")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Loaded 8530 rows using 4 parallel processes
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```
 
 The `num_proc` option controls how many processes are used for:
