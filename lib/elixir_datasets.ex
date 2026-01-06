@@ -298,7 +298,6 @@ defmodule ElixirDatasets do
     * `:download_mode` - controls download/cache behavior. Can be:
       - `:reuse_dataset_if_exists` (default) - reuse cached data if available
       - `:force_redownload` - always download, even if cached
-      - `:force_redownload_and_prepare` - redownload and reprocess
 
     * `:verification_mode` - controls verification checks. Can be:
       - `:basic_checks` (default) - basic validation
