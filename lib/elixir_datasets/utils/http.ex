@@ -20,6 +20,76 @@ defmodule ElixirDatasets.Utils.HTTP do
   end
 
   @doc """
+  Builds authorization and JSON content-type headers.
+
+  ## Parameters
+
+    * `opts` - keyword list of options, may contain `:auth_token`
+    * `content_type` - the content type to set in the headers, defaults to `application/json`
+
+  ## Returns
+
+    * `headers`
+  """
+  @spec get_headers(keyword(), String.t(), String.t() | nil) :: [{charlist(), charlist()}]
+  def get_headers(opts \\ [], content_type \\ "application/json", accept \\ nil) do
+    headers = [
+      {~c"user-agent", ~c"elixirDatasets"},
+      {~c"Content-Type", String.to_charlist(content_type)}
+    ]
+
+    add_accept_header(headers, accept)
+    add_auth_header(headers, ElixirDatasets.HuggingFace.Hub.get_auth_token(opts))
+  end
+
+  @doc """
+  Builds authorization and JSON content-type headers.
+
+  Same as `get_headers/2` but raises on error if auth token retrieval fails.
+
+  ## Parameters
+
+    * `opts` - keyword list of options, may contain `:auth_token`
+    * `content_type` - the content type to set in the headers, defaults to `application/json`
+
+  ## Returns
+
+    * `headers` - a list of headers including authorization if available
+
+  ## Raises
+
+    * `RuntimeError` - if auth token retrieval fails: "Failed to get Hugging Face auth token when building headers, reason: <reason>"
+  """
+  @spec get_headers!(keyword(), String.t(), String.t() | nil) :: [{charlist(), charlist()}]
+  def get_headers!(opts \\ [], content_type \\ "application/json", accept \\ nil) do
+    headers = [
+      {~c"user-agent", ~c"elixirDatasets"},
+      {~c"Content-Type", String.to_charlist(content_type)}
+    ]
+
+    add_accept_header(headers, accept)
+    add_auth_header!(headers, ElixirDatasets.HuggingFace.Hub.get_auth_token(opts))
+  end
+
+  defp add_accept_header(headers, nil), do: headers
+
+  defp add_accept_header(headers, accept),
+    do: [{~c"Accept", String.to_charlist(accept)} | headers]
+
+  defp add_auth_header(headers, {:ok, token}),
+    do: [{~c"Authorization", ~c"Bearer #{token}"} | headers]
+
+  defp add_auth_header(headers, _), do: headers
+  defp add_auth_header!(headers, {:ok, token}), do: add_auth_header(headers, {:ok, token})
+
+  defp add_auth_header!(_headers, {:error, msg}),
+    do:
+      raise(
+        RuntimeError,
+        "Failed to get Hugging Face auth token when building headers, reason: #{msg}"
+      )
+
+  @doc """
   Downloads resource at the given URL to a file.
 
   ## Options
@@ -30,7 +100,7 @@ defmodule ElixirDatasets.Utils.HTTP do
   @spec download(String.t(), Path.t(), keyword()) :: :ok | {:error, String.t()}
   def download(url, path, opts \\ []) do
     path = IO.chardata_to_string(path)
-    headers = build_headers(opts[:headers] || [])
+    headers = opts[:headers] || []
 
     case File.open(path, [:write]) do
       {:ok, file} ->
@@ -147,7 +217,7 @@ defmodule ElixirDatasets.Utils.HTTP do
   """
   @spec request(atom(), String.t(), keyword()) :: {:ok, response()} | {:error, String.t()}
   def request(method, url, opts \\ []) do
-    headers = build_headers(opts[:headers] || [])
+    headers = opts[:headers] || []
     follow_redirects = Keyword.get(opts, :follow_redirects, true)
 
     request =
@@ -175,15 +245,6 @@ defmodule ElixirDatasets.Utils.HTTP do
       {:error, error} ->
         {:error, "HTTP request failed, reason: #{inspect(error)}"}
     end
-  end
-
-  defp build_headers(entries) do
-    headers =
-      Enum.map(entries, fn {key, value} ->
-        {to_charlist(key), to_charlist(value)}
-      end)
-
-    [{~c"user-agent", ~c"elixirDatasets"} | headers]
   end
 
   defp parse_headers(headers) do

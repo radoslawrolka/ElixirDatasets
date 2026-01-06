@@ -16,8 +16,7 @@ defmodule ElixirDatasets.Utils.Uploader do
     temp_file = ElixirDatasets.Utils.Saver.save_dataset_to_file(df, options)
 
     try do
-      with {:ok, token} <- ElixirDatasets.HuggingFace.Hub.get_auth_token(options),
-           {:ok, file_content} <- File.read(temp_file),
+      with {:ok, file_content} <- File.read(temp_file),
            encoded_content <- Base.encode64(file_content),
            {:ok, filename} <- get_filename(temp_file, options),
            commit_msg <- Keyword.get(options, :commit_message, "Commit from ElixirDatasets"),
@@ -25,7 +24,6 @@ defmodule ElixirDatasets.Utils.Uploader do
            {:ok, response} <-
              commit_to_huggingface(
                repository,
-               token,
                filename,
                encoded_content,
                commit_msg,
@@ -67,9 +65,8 @@ defmodule ElixirDatasets.Utils.Uploader do
     commit_msg = Keyword.get(options, :commit_message, "Delete file from ElixirDatasets")
     description = Keyword.get(options, :description, "")
 
-    with {:ok, token} <- ElixirDatasets.HuggingFace.Hub.get_auth_token(options),
-         {:ok, response} <-
-           delete_from_huggingface(repository, token, filename, commit_msg, description) do
+    with {:ok, response} <-
+           delete_from_huggingface(repository, filename, commit_msg, description) do
       {:ok, response}
     else
       {:error, reason} -> {:error, reason}
@@ -117,7 +114,7 @@ defmodule ElixirDatasets.Utils.Uploader do
          oid <- calculate_sha256(file_content),
          size <- byte_size(file_content),
          {:ok, upload_url, verify_url, verify_token} <-
-           initiate_lfs_batch(repository, token, oid, size),
+           initiate_lfs_batch(repository, oid, size),
          :ok <- upload_to_s3(upload_url, file_content),
          :ok <- verify_lfs_upload(verify_url, verify_token, oid, size),
          {:ok, response} <-
@@ -135,7 +132,7 @@ defmodule ElixirDatasets.Utils.Uploader do
   end
 
   @doc false
-  defp initiate_lfs_batch(repository, token, oid, size) do
+  defp initiate_lfs_batch(repository, oid, size) do
     url = "#{@huggingface_endpoint}/datasets/#{repository}.git/info/lfs/objects/batch"
 
     payload =
@@ -151,11 +148,12 @@ defmodule ElixirDatasets.Utils.Uploader do
         "hash_algo" => "sha256"
       })
 
-    headers = [
-      {~c"Content-Type", ~c"application/vnd.git-lfs+json"},
-      {~c"Accept", ~c"application/vnd.git-lfs+json"},
-      {~c"Authorization", ~c"Bearer #{token}"}
-    ]
+    headers =
+      ElixirDatasets.Utils.HTTP.get_headers!(
+        [],
+        "application/vnd.git-lfs+json",
+        "application/vnd.git-lfs+json"
+      )
 
     case :httpc.request(
            :post,
@@ -229,11 +227,7 @@ defmodule ElixirDatasets.Utils.Uploader do
         "size" => size
       })
 
-    headers = [
-      {~c"Authorization",
-       ~c"Bearer #{ElixirDatasets.HuggingFace.Hub.get_auth_token([]) |> elem(1)}"},
-      {~c"Content-Type", ~c"application/json"}
-    ]
+    headers = ElixirDatasets.Utils.HTTP.get_headers!()
 
     case :httpc.request(
            :post,
@@ -279,11 +273,7 @@ defmodule ElixirDatasets.Utils.Uploader do
       })
 
     body = "#{header_line}\n#{lfs_file_line}"
-
-    headers = [
-      {~c"Authorization", ~c"Bearer #{token}"},
-      {~c"Content-Type", ~c"application/x-ndjson"}
-    ]
+    headers = ElixirDatasets.Utils.HTTP.get_headers!([auth_token: token], "application/x-ndjson")
 
     case :httpc.request(
            :post,
@@ -336,7 +326,6 @@ defmodule ElixirDatasets.Utils.Uploader do
   @doc false
   defp commit_to_huggingface(
          repository,
-         token,
          filename,
          encoded_content,
          commit_msg,
@@ -366,10 +355,7 @@ defmodule ElixirDatasets.Utils.Uploader do
 
     body = "#{header_line}\n#{file_line}"
 
-    headers = [
-      {~c"Authorization", ~c"Bearer #{token}"},
-      {~c"Content-Type", ~c"application/x-ndjson"}
-    ]
+    headers = ElixirDatasets.Utils.HTTP.get_headers!([], "application/x-ndjson")
 
     case :httpc.request(
            :post,
@@ -390,7 +376,7 @@ defmodule ElixirDatasets.Utils.Uploader do
   end
 
   @doc false
-  defp delete_from_huggingface(repository, token, filename, commit_msg, description) do
+  defp delete_from_huggingface(repository, filename, commit_msg, description) do
     url = "#{@huggingface_endpoint}/api/datasets/#{repository}/commit/main"
 
     # Prepare NDJSON payload
@@ -413,10 +399,7 @@ defmodule ElixirDatasets.Utils.Uploader do
 
     body = "#{header_line}\n#{deleted_file_line}"
 
-    headers = [
-      {~c"Authorization", ~c"Bearer #{token}"},
-      {~c"Content-Type", ~c"application/x-ndjson"}
-    ]
+    headers = ElixirDatasets.Utils.HTTP.get_headers!([], "application/x-ndjson")
 
     case :httpc.request(
            :post,

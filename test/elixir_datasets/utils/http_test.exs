@@ -12,7 +12,7 @@ defmodule ElixirDatasets.Utils.HTTPTest do
 
       opts = [
         follow_redirects: false,
-        headers: [{"Content-Type", "application/json"}],
+        headers: [{~c"Content-Type", ~c"application/json"}],
         body: {"application/json", ~s({"key": "value"})}
       ]
 
