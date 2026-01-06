@@ -43,7 +43,7 @@ defmodule ElixirDatasets do
           end
         end,
         max_concurrency: num_proc,
-        ordered: false
+        ordered: true
       )
       |> Enum.reduce_while({:ok, []}, fn
         {:ok, {:ok, path_ext}}, {:ok, acc} ->
@@ -60,7 +60,6 @@ defmodule ElixirDatasets do
         error -> error
       end
     else
-      # Sequential processing (original behavior)
       Enum.reduce_while(files_to_download, [], fn {file_name, etag}, acc ->
         extension = file_name |> Path.extname() |> String.trim_leading(".")
 
@@ -350,10 +349,8 @@ defmodule ElixirDatasets do
     with {:ok, repo_files} <- get_repo_files(repository),
          {:ok, filtered_files} <- filter_files_by_config_and_split(repo_files, name, split) do
       if streaming do
-        # True streaming: return a Stream that fetches data progressively
         {:ok, build_streaming_dataset(repository, filtered_files, opts)}
       else
-        # Eager loading: download and load into DataFrames
         with {:ok, paths_with_extensions} <-
                maybe_load_model_spec(opts, repository, filtered_files) do
           ElixirDatasets.Utils.Loader.load_datasets_from_paths(paths_with_extensions, num_proc)
@@ -571,8 +568,6 @@ defmodule ElixirDatasets do
     end
   end
 
-  # Streaming implementation
-
   defp build_streaming_dataset(repository, filtered_files, opts) do
     batch_size = opts[:batch_size] || 1000
 
@@ -633,7 +628,6 @@ defmodule ElixirDatasets do
         fetch_batch_from_lazy_df(state_with_df)
 
       {:error, _reason} ->
-        # Skip to next file on error
         new_state = %{state | current_url_index: state.current_url_index + 1, current_offset: 0}
         fetch_next_streaming_batch(new_state)
     end
@@ -654,39 +648,29 @@ defmodule ElixirDatasets do
   defp ensure_lazy_df_loaded(state), do: {:ok, state}
 
   defp load_lazy_dataframe_from_url(url_or_path, extension, _auth_token) do
-    # Check if it's a URL or local path
     is_url =
       String.starts_with?(url_or_path, "http://") or String.starts_with?(url_or_path, "https://")
 
-    # Explorer's lazy loading only supports Parquet from URLs
-    # For CSV/JSONL from URLs, we need to download first or use eager loading
     case {extension, is_url} do
       {"parquet", true} ->
-        # Parquet from URL - can use lazy loading
         Explorer.DataFrame.from_parquet(url_or_path, lazy: true)
 
       {"parquet", false} ->
-        # Parquet from local file - can use lazy loading
         Explorer.DataFrame.from_parquet(url_or_path, lazy: true)
 
       {"csv", false} ->
-        # CSV from local file - can use lazy loading
         Explorer.DataFrame.from_csv(url_or_path, lazy: true)
 
       {"jsonl", false} ->
-        # JSONL from local file - can use lazy loading
         Explorer.DataFrame.from_ndjson(url_or_path, lazy: true)
 
       {"csv", true} ->
-        # CSV from URL - Explorer doesn't support lazy loading, use eager
-        # Load eagerly and wrap in a lazy frame for consistent interface
         case Explorer.DataFrame.from_csv(url_or_path) do
           {:ok, df} -> {:ok, df}
           error -> error
         end
 
       {"jsonl", true} ->
-        # JSONL from URL - Explorer doesn't support lazy loading, use eager
         case Explorer.DataFrame.from_ndjson(url_or_path) do
           {:ok, df} -> {:ok, df}
           error -> error
@@ -700,14 +684,10 @@ defmodule ElixirDatasets do
   defp fetch_batch_from_lazy_df(state) do
     %{current_lazy_df: df, current_offset: offset, batch_size: batch_size} = state
 
-    # Slice the dataframe to get a batch
-    # If it's a lazy frame, collect() will execute the query
-    # If it's already eager, collect() is a no-op
     batch_df =
       df
       |> Explorer.DataFrame.slice(offset, batch_size)
       |> then(fn sliced ->
-        # Only collect if it's a lazy frame
         if Explorer.DataFrame.lazy?(sliced) do
           Explorer.DataFrame.collect(sliced)
         else
@@ -720,7 +700,6 @@ defmodule ElixirDatasets do
 
     cond do
       num_rows == 0 ->
-        # Current file exhausted, move to next
         new_state = %{
           state
           | current_url_index: state.current_url_index + 1,
@@ -731,7 +710,6 @@ defmodule ElixirDatasets do
         fetch_next_streaming_batch(new_state)
 
       num_rows < batch_size ->
-        # Last batch from this file, move to next file
         new_state = %{
           state
           | current_url_index: state.current_url_index + 1,
@@ -742,7 +720,6 @@ defmodule ElixirDatasets do
         {batch_rows, new_state}
 
       true ->
-        # More data available in current file
         new_state = %{state | current_offset: offset + batch_size}
         {batch_rows, new_state}
     end
