@@ -609,8 +609,6 @@ These options control how files are downloaded and cached from HuggingFace Hub.
 Use `download_mode` to control caching behavior:
 
 ```elixir
-# Force redownload even if the file is already cached
-# Useful when you suspect cached data is corrupted or outdated
 {:ok, [fresh_data]} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train",
@@ -630,8 +628,6 @@ Available `download_mode` options:
 Use `verification_mode` to control validation checks:
 
 ```elixir
-# Skip file verification checks for faster loading
-# Useful when you trust your cache and want maximum speed
 {:ok, [quick_data]} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "validation",
@@ -651,7 +647,6 @@ Available `verification_mode` options:
 Combine data loading options with Hub options for maximum control:
 
 ```elixir
-# Complex example: streaming mode with forced redownload and no verification
 {:ok, file_paths} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "test",
@@ -671,7 +666,6 @@ end)
 Control where downloaded files are stored:
 
 ```elixir
-# Use a custom cache directory
 custom_cache = "/tmp/my_datasets_cache"
 
 {:ok, [cached_data]} = ElixirDatasets.load_dataset(
@@ -689,8 +683,6 @@ IO.puts("Loaded #{Explorer.DataFrame.n_rows(cached_data)} rows")
 Work with cached datasets without network access:
 
 ```elixir
-# Only use cached files, don't make any network requests
-# This will fail if the dataset is not already cached
 case ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train",
