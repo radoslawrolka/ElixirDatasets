@@ -410,20 +410,32 @@ defmodule ElixirDatasets do
   defp filter_by_config_name(repo_files, nil), do: repo_files
 
   defp filter_by_config_name(repo_files, config_name) do
-    Enum.filter(repo_files, fn {file_name, _etag} ->
-      String.contains?(file_name, config_name)
-    end)
-    |> Map.new()
+    filtered =
+      Enum.filter(repo_files, fn {file_name, _etag} ->
+        String.contains?(file_name, config_name)
+      end)
+
+    if is_map(repo_files) do
+      Map.new(filtered)
+    else
+      filtered
+    end
   end
 
   defp filter_by_split(repo_files, nil), do: repo_files
 
   defp filter_by_split(repo_files, split) when is_binary(split) do
-    Enum.filter(repo_files, fn {file_name, _etag} ->
-      base_name = Path.basename(file_name, Path.extname(file_name))
-      String.contains?(base_name, split)
-    end)
-    |> Map.new()
+    filtered =
+      Enum.filter(repo_files, fn {file_name, _etag} ->
+        base_name = Path.basename(file_name, Path.extname(file_name))
+        String.contains?(base_name, split)
+      end)
+
+    if is_map(repo_files) do
+      Map.new(filtered)
+    else
+      filtered
+    end
   end
 
   defp maybe_load_model_spec(opts, repository, repo_files) do
