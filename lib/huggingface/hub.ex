@@ -62,12 +62,25 @@ defmodule ElixirDatasets.HuggingFace.Hub do
     * `:cache_scope` - a namespace to put the cached files under in
       the cache directory
 
+    * `:download_mode` - controls download/cache behavior. Can be:
+      - `:reuse_dataset_if_exists` (default) - reuse cached data if available
+      - `:force_redownload` - always download, even if cached
+
+    * `:verification_mode` - controls whether basic verification checks
+      are applied. Can be:
+      - `:basic_checks` (default) - perform basic validation
+      - `:no_checks` - skip validation (for example, file existence checks)
+      Note: Currently, `:verification_mode` only distinguishes between
+      performing the default basic checks and skipping them via `:no_checks`.
+
   """
   @spec cached_download(String.t(), keyword()) :: {:ok, String.t()} | {:error, String.t()}
   def cached_download(url, opts \\ []) do
     cache_dir = opts[:cache_dir] || ElixirDatasets.cache_dir()
     offline = Keyword.get(opts, :offline, elixir_datasets_offline?())
     auth_token = opts[:auth_token]
+    download_mode = opts[:download_mode] || :reuse_dataset_if_exists
+    verification_mode = opts[:verification_mode] || :basic_checks
 
     dir = Path.join(cache_dir, "huggingface")
 
@@ -89,12 +102,33 @@ defmodule ElixirDatasets.HuggingFace.Hub do
 
     metadata_path = Path.join(dir, metadata_filename(url))
 
+    # Handle force_redownload mode - delete cached files
+    if download_mode == :force_redownload do
+      File.rm(metadata_path)
+    end
+
     cond do
       offline ->
         case load_json(metadata_path) do
           {:ok, %{"etag" => etag}} ->
             entry_path = Path.join(dir, entry_filename(url, etag))
-            {:ok, entry_path}
+
+            cond do
+              File.exists?(entry_path) ->
+                {:ok, entry_path}
+
+              verification_mode == :no_checks ->
+                IO.warn(
+                  "ElixirDatasets.HuggingFace.Hub.cached_download/2: " <>
+                    "returning path to non-existent cached file in offline mode with " <>
+                    ":no_checks verification_mode: #{entry_path}"
+                )
+
+                {:ok, entry_path}
+
+              true ->
+                {:error, "cached file not found: #{entry_path}"}
+            end
 
           _ ->
             {:error,
@@ -106,8 +140,11 @@ defmodule ElixirDatasets.HuggingFace.Hub do
 
       true ->
         with {:ok, etag, download_url, redirect?} <- head_download(url, headers) do
-          if entry_path = cached_path_for_etag(dir, url, etag) do
-            {:ok, entry_path}
+          cached_entry =
+            if download_mode != :force_redownload, do: cached_path_for_etag(dir, url, etag)
+
+          if cached_entry do
+            {:ok, cached_entry}
           else
             entry_path = Path.join(dir, entry_filename(url, etag))
 
