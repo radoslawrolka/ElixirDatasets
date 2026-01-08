@@ -48,7 +48,7 @@ ElixirDatasets.load_dataset({:hf, "fka/awesome-chatgpt-prompts"})
 {:ok,
  [
    #Explorer.DataFrame<
-     Polars[945 x 5]
+     Polars[948 x 5]
      act string ["Ethereum Developer", "Linux Terminal", "English Translator and Improver",
       "Job Interviewer", "JavaScript Console", ...]
      prompt string ["Imagine you are an experienced Ethereum developer tasked with creating a smart contract for a blockchain messenger. The objective is to save messages on the blockchain, making them readable (public) to everyone, writable (private) only to the person who deployed the contract, and to count how many times the message was updated. Develop a Solidity smart contract for this purpose, including the necessary functions and considerations for achieving the specified goals. Please provide the code and any relevant explanations to ensure a clear understanding of the implementation.",
@@ -201,7 +201,6 @@ The `load_dataset` function supports several parameters for flexible data loadin
 Load only the training split from a dataset:
 
 ```elixir
-# Load only the train split from rotten_tomatoes
 {:ok, train_data} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train"
@@ -230,7 +229,6 @@ Number of training examples: 8530
 For datasets with multiple configurations (like GLUE), use the `subdir` option:
 
 ```elixir
-# Load the SST-2 configuration from GLUE dataset using subdir
 {:ok, sst2_data} = ElixirDatasets.load_dataset(
   {:hf, "nyu-mll/glue", subdir: "sst2"}
 )
@@ -255,7 +253,6 @@ Loaded 3 dataset(s) from 'sst2' configuration
 Load a specific split from a specific configuration:
 
 ```elixir
-# Load only the training split of SST-2 configuration
 {:ok, sst2_train} = ElixirDatasets.load_dataset(
   {:hf, "nyu-mll/glue", subdir: "sst2"},
   split: "train"
@@ -278,12 +275,9 @@ Loaded 1 dataset(s) from 'sst2' configuration, 'train' split
 
 #### Streaming mode for large datasets
 
-**NEW**: Streaming mode now progressively fetches data without downloading files!
-
 When `streaming: true`, you get a Stream that yields rows on-demand:
 
 ```elixir
-# Get a streaming dataset (no download!)
 {:ok, stream} = ElixirDatasets.load_dataset(
   {:local, "#{__DIR__}/../resources"},
   streaming: true
@@ -292,7 +286,6 @@ When `streaming: true`, you get a Stream that yields rows on-demand:
 IO.puts("✓ Created stream (no data loaded yet!)")
 IO.puts("  Stream type: #{inspect(is_function(stream, 2))}")
 
-# Process only first 5 rows - only this data is fetched!
 IO.puts("\nFetching first 5 rows progressively...")
 rows = stream
 |> Stream.take(5)
@@ -326,23 +319,15 @@ Fetching first 5 rows progressively...
 :ok
 ```
 
-**Key Benefits:**
-
-* ✅ **No file download** - Data is streamed directly from source
-* ✅ **Memory efficient** - Only fetches what you need
-* ✅ **Lazy evaluation** - Process data as it arrives
-* ✅ **Works with large datasets** - Handle datasets that don't fit in memory
-
 You can also control batch size and use Stream operations:
 
 ```elixir
 {:ok, stream} = ElixirDatasets.load_dataset(
   {:local, "#{__DIR__}/../resources"},
   streaming: true,
-  batch_size: 2  # Fetch 2 rows at a time
+  batch_size: 2
 )
 
-# Use Stream operations for lazy processing
 result = stream
 |> Stream.filter(fn row -> Map.has_key?(row, "id") end)
 |> Stream.map(fn row -> "ID: #{row["id"]}" end)
@@ -371,7 +356,6 @@ Filtered and mapped results:
 **Streaming from HuggingFace:**
 
 ```elixir
-# Stream from HuggingFace without downloading
 {:ok, hf_stream} = ElixirDatasets.load_dataset(
   {:hf, "aaaaa32r/elixirDatasets"},
   streaming: true,
@@ -398,12 +382,9 @@ Streaming from HuggingFace...
 
 #### Parallel processing with num_proc
 
-**NEW**: Load datasets faster with parallel processing!
-
 Use `num_proc` to load multiple files in parallel:
 
 ```elixir
-# Load with parallel processing
 IO.puts("Loading with num_proc: 1 (sequential)...")
 {time_seq, {:ok, datasets_seq}} = :timer.tc(fn ->
   ElixirDatasets.load_dataset(
@@ -424,7 +405,7 @@ time_seq_sec = time_seq / 1_000_000
 time_par_sec = time_par / 1_000_000
 speedup = time_seq / time_par
 
-IO.puts("\n📊 Performance Comparison:")
+IO.puts("  Performance Comparison:")
 IO.puts("  Sequential (num_proc: 1): #{Float.round(time_seq_sec, 3)}s")
 IO.puts("  Parallel (num_proc: 4):   #{Float.round(time_par_sec, 3)}s")
 IO.puts("  Speedup:                  #{Float.round(speedup, 2)}x")
@@ -436,11 +417,10 @@ IO.puts("  Datasets loaded:          #{length(datasets_par)}")
 ```
 Loading with num_proc: 1 (sequential)...
 Loading with num_proc: 4 (parallel)...
-
-📊 Performance Comparison:
-  Sequential (num_proc: 1): 0.931s
-  Parallel (num_proc: 4):   0.436s
-  Speedup:                  2.14x
+  Performance Comparison:
+  Sequential (num_proc: 1): 0.282s
+  Parallel (num_proc: 4):   0.284s
+  Speedup:                  0.99x
   Datasets loaded:          4
 ```
 
@@ -449,13 +429,6 @@ Loading with num_proc: 4 (parallel)...
 ```
 :ok
 ```
-
-**Key Benefits:**
-
-* ⚡ **6-10x faster** - Significant speedup with multiple files
-* 🔄 **Automatic parallelization** - Just set `num_proc`
-* ✅ **Same results** - Produces identical data as sequential
-* 🎯 **Configurable** - Choose worker count based on your needs
 
 #### Filter datasets by name pattern
 
@@ -494,19 +467,19 @@ Loaded 1 dataset(s) matching 'csv'
 >
 ```
 
-## Get Dataset Info
+<!-- livebook:{"output":true} -->
 
-Fetch dataset metadata from Hugging Face API:
+```
+Dataset: aaaaa32r/elixirDatasets
+Config: csv
+Features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}]
+Training examples: 10
+```
 
-```elixir
-{:ok, info} = ElixirDatasets.get_dataset_info("aaaaa32r/elixirDatasets")
+<!-- livebook:{"output":true} -->
 
-IO.puts("Dataset: #{info["id"]}")
-
-dataset_info = info["cardData"]["dataset_info"] |> Enum.at(0)
-IO.puts("Config: #{dataset_info["config_name"]}")
-IO.puts("Features: #{inspect(dataset_info["features"])}")
-IO.puts("Training examples: #{dataset_info["splits"] |> Enum.at(0) |> Map.get("num_examples")}")
+```
+:ok
 ```
 
 #### Real-world use case - Training/Validation split
@@ -514,13 +487,11 @@ IO.puts("Training examples: #{dataset_info["splits"] |> Enum.at(0) |> Map.get("n
 A typical ML workflow loading separate train and validation sets:
 
 ```elixir
-# Load training data
 {:ok, [train_df]} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train"
 )
 
-# Load validation data
 {:ok, [val_df]} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "validation"
@@ -627,14 +598,12 @@ end)
 <!-- livebook:{"output":true} -->
 
 ```
-Got 1 file path(s) in streaming mode
-  - 6czff2wi7db3bfzuqy5kh4m66m.ei2timrxmezgenjzmqyweolcmvsdczlbgvrwgm3ghe3dgobugnrgimjtmvqtonbugntdgmtegi3wknzume4tkn3bgnsdcobrmnrtknbvei (parquet)
-```
+** (ArgumentError) errors were found at the given arguments:
 
-<!-- livebook:{"output":true} -->
+  * 1st argument: not a list
 
-```
-:ok
+    (erts 15.2.7) :erlang.length(#Function<53.117496853/2 in Stream.resource/3>)
+    #cell:o36uvndfgwkvdreh:9: (file)
 ```
 
 #### Using custom cache directory
@@ -696,66 +665,6 @@ end
 ```
 :ok
 ```
-
-#### Parallel processing with num_proc
-
-Use `num_proc` to speed up dataset loading with parallel processing:
-
-```elixir
-{:ok, [parallel_data]} = ElixirDatasets.load_dataset(
-  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
-  split: "train",
-  num_proc: 4
-)
-
-IO.puts("Loaded #{Explorer.DataFrame.n_rows(parallel_data)} rows using 4 parallel processes")
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-Loaded 8530 rows using 4 parallel processes
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-:ok
-```
-
-The `num_proc` option controls how many processes are used for:
-
-* Downloading multiple dataset files in parallel
-* Loading multiple files into DataFrames in parallel
-
-Benefits:
-
-* **Faster downloads** - Multiple files downloaded simultaneously
-* **Faster loading** - Multiple files parsed in parallel
-* **Better resource utilization** - Uses multiple CPU cores
-
-Recommended values:
-
-* `num_proc: 1` (default) - Sequential processing, lowest memory usage
-* `num_proc: 2-4` - Good balance for most datasets
-* `num_proc: 8+` - For large datasets with many files on powerful machines
-
-### Summary of All Available Options
-
-**Data Loading Options:**
-
-* `:split` - Load specific split (train/test/validation)
-* `:name` - Filter files by name pattern
-* `:streaming` - Return a `Stream` that yields data rows instead of loading all data into memory at once
-
-**HuggingFace Hub Options:**
-
-* `:cache_dir` - Custom cache directory location
-* `:offline` - Only use cached files, no network requests
-* `:auth_token` - Authentication token for private datasets
-* `:download_mode` - Control caching (`:reuse_dataset_if_exists`, `:force_redownload`)
-* `:verification_mode` - Control validation (`:basic_checks`, `:no_checks`)
-* `:num_proc` - Number of parallel processes for faster loading (e.g., `num_proc: 4`)
 
 ## Upload dataset
 
