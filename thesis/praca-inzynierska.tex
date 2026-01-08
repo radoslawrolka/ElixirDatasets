@@ -9,6 +9,7 @@
 \usepackage{url}
 \usepackage{subfigure}
 \usepackage{tabularx}
+\usepackage{placeins}
 \usepackage{ragged2e}
 \usepackage{booktabs}
 \usepackage{multirow}
@@ -18,6 +19,7 @@
 \usepackage{listings}
 \usepackage[ruled,linesnumbered,lined]{algorithm2e}
 \usepackage[bookmarks=false]{hyperref}
+\usepackage{float}
 
 \hypersetup{colorlinks,
   linkcolor=blue,
@@ -134,8 +136,18 @@ Celem pracy jest stworzenie biblioteki w języku Elixir, która umożliwi łatwe
 \section{Opis dziedziny problemu}
 \label{sec:opis-dziedziny-problemu}
 
-Praca z modelami uczenia maszynowego jest ściśle związana z wykorzystaniem danych, które stanowią fundament dla procesów trenowania i walidacji algorytmów. Dostęp do dobrze przygotowanych i różnorodnych zbiorów danych jest kluczowy dla efektywnego rozwoju i nauki modeli. Zbiory danych muszą być nie tylko obszerne i reprezentatywne, ale również odpowiednio przetworzone i znormalizowane, co często stanowi wyzwanie ze względu na duży nakład czasu i zasobów wymaganych w procesie przygotowania.
-Nieodłącznym elementem pracy z danymi jest ich czyszczenie, skalowanie, oraz odpowiednie formatowanie, które umożliwia integrację danych wejściowych z modelami. Ponadto, same dane często pochodzą z różnorodnych źródeł i są zapisane w różnych formatach, co dodatkowo komplikuje ich użyteczność bezpośrednio po pozyskaniu.
+Praca z modelami uczenia maszynowego jest ściśle związana z wykorzystaniem danych, które stanowią podstawę procesów trenowania oraz walidacji algorytmów. Dostęp do odpowiednio przygotowanych i zróżnicowanych zbiorów danych ma kluczowe znaczenie dla jakości i skuteczności uczenia modeli. Dane muszą być nie tylko obszerne i reprezentatywne, lecz także poddane procesom czyszczenia, normalizacji oraz formatowania, co często wiąże się z dużym nakładem czasu i zasobów.
+Dodatkowym wyzwaniem jest różnorodność źródeł oraz formatów danych, która utrudnia ich bezpośrednie wykorzystanie w systemach uczenia maszynowego bez wcześniejszego przetwarzania.
+W odpowiedzi na te problemy coraz większe znaczenie zyskują publiczne repozytoria danych, takie jak Hugging Face Datasets. Platforma ta udostępnia bardzo dużą liczbę otwartych zbiorów danych obejmujących m.in. dane tekstowe, obrazy, nagrania dźwiękowe oraz zbiory multimodalne. Dane te są zazwyczaj ujednolicone strukturalnie i opisane metadanymi, co umożliwia ich szybkie wykorzystanie w procesie trenowania modeli. Integracja repozytorium z popularnymi bibliotekami uczenia maszynowego znacząco upraszcza pracę z danymi i redukuje czas potrzebny na ich przygotowanie.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/zbiory.png}
+  \caption[Zrzut strony HuggingFace Datasets]{Zrzut strony HuggingFace Datasets}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Motywacja}
@@ -388,10 +400,12 @@ Interfejs biblioteki ElixirDatasets to komponent, z którym bezpośrednio wchodz
 
 \begin{figure}[!htbp]
   \centering
-\includegraphics[width=.9\textwidth]{schemat-systemu.png}
-\caption[Schemat systemu]{Schemat systemu}
-\label{fig:schemat-systemu}
+  \includegraphics[width=.9\textwidth]{schemat-systemu.png}
+  \caption[Schemat systemu]{Schemat systemu}
+  \label{fig:schemat-systemu}
 \end{figure}
+
+\FloatBarrier
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Stos technologiczny}
@@ -596,14 +610,18 @@ Projekt realizowany był przez zespół dwuosobowy, w którym każdy z członkó
     \item \textbf{Moduł networkingowy} – implementacja funkcji odpowiedzialnych za pobieranie danych z zewnętrznych źródeł poprzez protokół HTTP/HTTPS.
     \item \textbf{Moduł HuggingFace} – integracja z API platformy Hugging Face Hub, obsługa autoryzacji oraz zarządzanie dostępem do zbiorów danych.
     \item \textbf{System cacheowania} – implementacja mechanizmu cacheowania danych bazującego na etagach i OId, optymalizacja wydajności pobierania.
+    \item \textbf{Transformacja danych} – implementacja funkcji do wczytywania i przetwarzania danych z różnych formatów (TXT, CSV, JSON, Parquet).
     \item \textbf{Główny interfejs biblioteki} – tworzenie publicznego API biblioteki.
     \item \textbf{Ciągła integracja (CI/CD)} – konfiguracja GitHub Actions, automatyzacja testów i kontrola jakości kodu.
 \end{itemize}
 
 \noindent\textbf{Weronika Wojtas} odpowiadała za następujące obszary projektu:
 \begin{itemize}
-    \item \textbf{Transformacja danych} – implementacja funkcji do wczytywania i przetwarzania danych z różnych formatów (TXT, CSV, JSON, Parquet).
+    \item \textbf{Architektura systemu} – projektowanie ogólnej struktury biblioteki oraz definiowanie interakcji między poszczególnymi modułami.
     \item \textbf{Integracja z Explorer} – zapewnienie kompatybilności biblioteki z narzędziem Explorer do pracy z dataframe'ami i seriami.
+    \item \textbf{Przetwarzanie strumieniowe} – dodanie możliwości ładowania zbiorów strumieniowo
+    \item \textbf{Wielowątkowe pobieranie zbiorów danych} – dodanie obsługi wielu wątków przy równoległym pobieraniu zbiorów
+    \item \textbf{Rozszerzone funkcjonalności ładowania zbiorów danych} – dodanie dodatkowych opcji ładowania, takich jak filtrowanie zbiorów danych na podstawie nazwy, pobieranie wybranych podzbiorów danych oraz weryfikacja integralności i kompletności pobranych zbiorów
     \item \textbf{Testy jednostkowe} – pisanie kompleksowych testów jednostkowych dla wszystkich modułów biblioteki z użyciem frameworka ExUnit.
     \item \textbf{Dokumentacja} – tworzenie dokumentacji technicznej i przykładów użycia kodu w formie LiveBook.
     \item \textbf{Pokrycie testami} – monitorowanie i utrzymanie wysokiego poziomu pokrycia kodu testami (target: 80\%) z wykorzystaniem ExCoveralls.
@@ -772,37 +790,192 @@ Prace nad projektem były starannie zaplanowane i zorganizowane, co pozwoliło n
 \chapter{\ChapterTitleResults}
 \label{sec:wyniki-projektu}
 
-todo
+Rozdział ten podsumowuje prace wykonane w ramach realizacji systemu oraz prezentuje osiągnięte rezultaty. Ponadto zawiera ocenę uzyskanych wyników dokonaną przez członków zespołu, a także wskazuje możliwe kierunki dalszego rozwoju opracowanego rozwiązania.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Zrealizowane funkcjonalnosci}
 \label{sec:zrealizowane-funkcjonalnosci}
 
-todo
+Zgodnie z przyjętą metodyką realizacji projektu, w pierwszej kolejności zaimplementowano funkcjonalności o najwyższym priorytecie, stanowiące podstawę działania tworzonej biblioteki. Obejmują one możliwość ładowania zbiorów danych zarówno z repozytorium Hugging Face Hub, jak i z lokalnego systemu plików, z automatycznym wykrywaniem obsługiwanych formatów danych oraz wsparciem dla różnych konfiguracji i podziałów zbiorów danych.
+
+Istotnym elementem systemu jest mechanizm cache’owania, który umożliwia lokalne przechowywanie pobranych danych i ogranicza konieczność ich ponownego pobierania. Zaimplementowano różne tryby pracy z cache oraz możliwość konfiguracji katalogu przechowywania danych, a uzupełnieniem tej funkcjonalności jest tryb pracy offline.
+
+Biblioteka oferuje również wsparcie dla strumieniowego przetwarzania danych, umożliwiającego efektywną pracę z dużymi zbiorami bez konieczności ładowania ich w całości do pamięci operacyjnej. W celu zwiększenia wydajności zaimplementowano mechanizmy przetwarzania równoległego, pozwalające na szybsze ładowanie zbiorów danych składających się z wielu plików.
+
+System zapewnia integrację z interfejsem programistycznym Hugging Face Hub, umożliwiając pobieranie informacji i metadanych dotyczących zbiorów danych, a także obsługę autoryzacji, w tym dostęp do prywatnych zasobów. Rozszerzeniem funkcjonalności biblioteki jest możliwość wysyłania zbiorów danych do repozytorium Hugging Face, co pozwala na ich publikowanie i zarządzanie bezpośrednio z poziomu języka Elixir.
+
+Dane mogą być automatycznie konwertowane do struktury DataFrame z wykorzystaniem biblioteki Explorer. Całość została uzupełniona o mechanizmy walidacji parametrów, obsługę błędów oraz zestaw testów i dokumentację API. Szczegółowe scenariusze użycia biblioteki zostały opisane w kolejnych rozdziałach pracy.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Główne scenariusze uzytkowania}
 \label{sec:glowne-scenariusze-uzytkowania}
 
-todo
+Poniższa sekcja przedstawia najważniejsze scenariusze użycia biblioteki ElixirDatasets z perspektywy programisty korzystającego z niej w środowisku języka Elixir. Opisane scenariusze ilustrują typowe sposoby pracy ze zbiorami danych pochodzącymi z repozytorium Hugging Face oraz z lokalnego systemu plików, a także prezentują mechanizmy optymalizacji wydajności, takie jak cache’owanie, przetwarzanie strumieniowe oraz równoległe ładowanie danych. Dla wybranych scenariuszy dołączono fragmenty kodu demonstrujące sposób wykorzystania interfejsu API biblioteki.
+
+\subsection{Ładowanie zbioru danych z repozytorium Hugging Face}
+
+Podstawowym scenariuszem użycia biblioteki jest pobranie zbioru danych bezpośrednio z repozytorium Hugging Face Hub. Użytkownik inicjuje ten proces poprzez wywołanie funkcji load dataset, przekazując jako parametr nazwę zbioru danych. Biblioteka automatycznie pobiera wymagane pliki, wykrywa obsługiwany format danych oraz zapisuje je w lokalnym cache. Użytkownik może dodatkowo określić konfigurację zbioru danych oraz wybrany podział, na przykład zbiór treningowy lub testowy. Po zakończeniu operacji dane zwracane są w postaci struktury DataFrame, gotowej do dalszego przetwarzania.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie1.png}
+  \caption[Przykład z livebook]{Przykład z livebook - ładowanie z Hugging Face}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie3.png}
+  \caption[Przykład z livebook]{Przykład z livebook - ładowanie z podanego folderu}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie4.png}
+  \caption[Przykład z livebook]{Przykład z livebook - ładowanie z tokenem autoryzacyjnym}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Ładowanie zbiorów danych z lokalnego systemu plików}
+
+Możliwa jest też praca z danymi zapisanymi lokalnie. W tym przypadku użytkownik wskazuje ścieżkę do katalogu zawierającego pliki danych, a biblioteka automatycznie rozpoznaje ich format oraz filtruje je zgodnie z wybraną konfiguracją i podziałem. Rozwiązanie to umożliwia jednolity sposób pracy z danymi niezależnie od ich źródła pochodzenia.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie2.png}
+  \caption[Przykład z livebook]{Przykład z livebook}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Wykorzystanie mechanizmu cache’owania i trybu offline}
+
+W celu zwiększenia wydajności oraz ograniczenia liczby operacji sieciowych biblioteka automatycznie wykorzystuje mechanizm cache’owania pobranych zbiorów danych. Użytkownik może skonfigurować katalog cache za pomocą zmiennej środowiskowej oraz wybrać tryb pobierania danych, w tym ponowne użycie istniejącego cache lub wymuszenie ponownego pobrania plików. Dodatkowo możliwe jest uruchomienie trybu offline, w którym biblioteka korzysta wyłącznie z lokalnie zapisanych danych, co pozwala na pracę bez aktywnego połączenia z Internetem.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/offline.png}
+  \caption[Przykład z livebook]{Przykład z livebook - offline mode}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/cache.png}
+  \caption[Przykład z livebook]{Przykład z livebook - używanie podanego folderu jako cache}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Strumieniowe przetwarzanie dużych zbiorów danych}
+
+W przypadku pracy z bardzo dużymi zbiorami danych użytkownik może skorzystać z trybu strumieniowego. Po włączeniu tej opcji biblioteka zwraca strumień danych zamiast pełnego zbioru w pamięci operacyjnej. Dane są pobierane i przetwarzane progresywnie w konfigurowalnych paczkach, co umożliwia efektywną pracę z danymi przekraczającymi rozmiar dostępnej pamięci RAM. Strumień może być dalej przetwarzany przy użyciu standardowych mechanizmów języka Elixir, takich jak moduły Stream i Enum.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/streaming.png}
+  \caption[Przykład z livebook]{Przykład z livebook - wykorzystanie streamingu}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Równoległe ładowanie i przetwarzanie danych}
+
+Biblioteka umożliwia również wykorzystanie przetwarzania równoległego podczas ładowania zbiorów danych składających się z wielu plików. Użytkownik może określić liczbę procesów wykorzystywanych do tego celu, co pozwala na znaczące skrócenie czasu ładowania danych na systemach wielordzeniowych. Mechanizm ten jest w pełni transparentny dla użytkownika i zachowuje kolejność przetwarzanych danych.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/threads.png}
+  \caption[Przykład z livebook]{Przykład z livebook - ładowanie wielowątkowe}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Publikowanie zbiorów danych w repozytorium Hugging Face}
+
+Biblioteka ElixirDatasets umożliwia publikowanie zbiorów danych w repozytorium Hugging Face bezpośrednio z poziomu języka Elixir. Użytkownik przygotowuje dane w postaci struktury DataFrame, a następnie inicjuje proces ich wysyłania do wskazanego repozytorium. Biblioteka automatycznie obsługuje zapis danych w wybranym formacie oraz komunikację z interfejsem API Hugging Face, w tym proces autoryzacji i tworzenie commitów.
+
+Dla większych zbiorów danych dostępne jest wsparcie dla przesyłania plików z wykorzystaniem technologii Git LFS, co umożliwia wydajny upload danych przekraczających limity standardowego API. Dostępna jest również możliwość zarządzania zawartością repozytorium, w tym usuwania nieaktualnych plików. Funkcjonalność ta pozwala traktować Hugging Face Hub nie tylko jako źródło danych, ale także jako platformę do ich publikowania i współdzielenia.
+
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/upload1.png}
+  \caption[Przykład z livebook]{Przykład z livebook - publikowanie zbioru danych}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/upload2.png}
+  \caption[Przykład z livebook]{Przykład z livebook - publikowanie zbioru danych}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Pobieranie informacji i metadanych o zbiorach danych}
+
+Biblioteka zapewnia dostęp do szczegółowych informacji i metadanych dotyczących zbiorów danych przechowywanych w repozytorium Hugging Face. Użytkownik może pobrać informacje o dostępnych konfiguracjach, podziałach zbiorów, liczbie przykładów oraz podstawowe dane opisowe.
+
+Pozyskane metadane mogą być wykorzystywane do analizy struktury zbioru danych przed jego załadowaniem lub do automatycznego doboru konfiguracji i podziałów w dalszych etapach przetwarzania. Informacje te mogą być również zapisywane lokalnie i ponownie wykorzystywane bez konieczności każdorazowej komunikacji z interfejsem API, co zwiększa przejrzystość i efektywność pracy z danymi.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.9\textwidth]{zdjęcia/info.png}
+  \caption[Przykład z livebook]{Przykład z livebook - używanie podanego folderu jako cache}
+  \label{fig:schemat-systemu}
+\end{figure}
+
+\FloatBarrier
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Dalszy rozwój projektu}
 \label{sec:dalszy-rozwoj-projektu}
 
-todo
+Potencjalny dalszy rozwój biblioteki ElixirDatasets może obejmować rozszerzenia zwiększające jej funkcjonalność oraz użyteczność w zastosowaniach związanych z analizą danych i uczeniem maszynowym. Jednym z istotnych kierunków rozwoju jest wprowadzenie mechanizmów wstępnego przetwarzania danych, takich jak normalizacja i standaryzacja, obejmujących m.in. ujednolicanie danych tekstowych oraz skalowanie danych numerycznych. Naturalnym uzupełnieniem tych funkcjonalności byłaby implementacja tokenizacji danych tekstowych, stanowiącej podstawowy etap przygotowania danych w zadaniach przetwarzania języka naturalnego.
 
+Dalsze prace mogłyby również dotyczyć rozszerzenia wsparcia dla danych multimodalnych, takich jak obrazy czy nagrania dźwiękowe, a także pogłębionej integracji z bibliotekami uczenia maszynowego dostępnymi w ekosystemie języka Elixir. W obszarze wydajności możliwe jest dalsze rozwijanie mechanizmów przetwarzania strumieniowego i równoległego oraz rozbudowa systemu cache’owania, w tym automatyczne zarządzanie przechowywanymi danymi. Realizacja tych kierunków rozwoju mogłaby znacząco zwiększyć skalowalność biblioteki oraz jej przydatność w środowiskach produkcyjnych i badawczych.
+
+\begin{itemize}
+  \item \textbf{Rozszerzenie obsługi formatów danych} – dodanie wsparcia dla kolejnych popularnych formatów, takich jak Avro, ORC czy formaty binarne wykorzystywane w zadaniach uczenia głębokiego, co zwiększyłoby uniwersalność biblioteki.
+
+  \item \textbf{Zaawansowana walidacja i analiza jakości danych} – implementacja mechanizmów sprawdzania spójności schematów, wykrywania brakujących lub niepoprawnych wartości oraz podstawowej analizy statystycznej zbiorów danych przed ich dalszym przetwarzaniem.
+
+  \item \textbf{Integracja z pipeline’ami uczenia maszynowego} – umożliwienie bezpośredniego łączenia procesów ładowania i przetwarzania danych z etapami trenowania modeli, np. poprzez integrację z bibliotekami opartymi na Nx i Axon.
+
+  \item \textbf{Interfejs wiersza poleceń (CLI)} – stworzenie narzędzia CLI pozwalającego na pobieranie, publikowanie i zarządzanie zbiorami danych bez konieczności pisania kodu, co ułatwiłoby wykorzystanie biblioteki w procesach automatyzacji.
+
+  \item \textbf{Rozbudowa mechanizmów zarządzania cache} – wprowadzenie limitów rozmiaru cache, automatycznego usuwania nieużywanych danych oraz możliwości współdzielenia cache pomiędzy różnymi projektami.
+
+  \item \textbf{Obsługa wersjonowania zbiorów danych} – umożliwienie łatwego przełączania się pomiędzy różnymi wersjami zbiorów danych oraz śledzenia zmian, co jest szczególnie istotne w projektach badawczych i produkcyjnych.
+
+  \item \textbf{Rozszerzenie dokumentacji i przykładów użycia} – dodanie bardziej rozbudowanych przykładów, scenariuszy zastosowań oraz integracji z popularnymi narzędziami do analizy danych.
+\end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subiektywna ocena projektu}
 \label{sec:subiektywna-ocena-projektu}
 
-todo
+większość kluczowych funkcjonalności, dzięki czemu powstała biblioteka umożliwiająca sprawną i wydajną obsługę zbiorów danych z repozytorium Hugging Face w języku Elixir. Zaimplementowane rozwiązania spełniają założone wymagania funkcjonalne i pozwalają na wygodną pracę zarówno z małymi, jak i dużymi zbiorami danych.
+
+Przeprowadzone testy jednostkowe i integracyjne przyczyniły się do zapewnienia stabilności oraz wysokiej jakości implementacji. Zastosowane technologie i narzędzia programistyczne okazały się trafnym wyborem i dobrze sprawdziły się w kontekście realizowanego projektu.
+
+Podsumowując, projekt spełnił zakładane cele i stanowi solidną podstawę do dalszego rozwoju biblioteki oraz jej wykorzystania w kolejnych projektach związanych z analizą danych i uczeniem maszynowym w języku Elixir.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Podsumowanie}
 \label{sec:podsumowanie}
 
-todo
+Niniejsza praca inżynierska przedstawia projekt i implementację biblioteki ElixirDatasets, której celem jest umożliwienie wygodnej i wydajnej pracy ze zbiorami danych pochodzącymi z repozytorium Hugging Face w języku Elixir. W ramach pracy zaprojektowano i zaimplementowano kluczowe mechanizmy ładowania danych, cache’owania, przetwarzania strumieniowego oraz równoległego, a także integrację z interfejsem API Hugging Face.
+
+Zrealizowane rozwiązanie spełnia założone wymagania funkcjonalne i pozwala na efektywną obsługę zarówno małych, jak i dużych zbiorów danych. Przeprowadzone testy potwierdziły poprawność i stabilność działania biblioteki. Uzyskane rezultaty stanowią solidną podstawę do dalszego rozwoju projektu oraz jego wykorzystania w kolejnych pracach związanych z analizą danych i uczeniem maszynowym w ekosystemie języka Elixir.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -812,7 +985,6 @@ todo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \listoffigures
 \listoftables
-\listofalgorithmes
 \lstlistoflistings
 
 \end{document}
