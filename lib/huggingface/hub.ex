@@ -43,6 +43,7 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   for the same URL validate the ETag and return a file from the cache
   if there is a match.
 
+
   ## Options
 
     * `:cache_dir` - the directory to store the downloaded files in.
