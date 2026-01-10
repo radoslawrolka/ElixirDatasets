@@ -88,6 +88,8 @@ defmodule ElixirDatasets.Loader do
     streaming = opts[:streaming] || false
     num_proc = opts[:num_proc] || 1
 
+    repository = merge_download_opts(repository, opts)
+
     with {:ok, repo_files} <- Repository.get_files(repository),
          {:ok, filtered_files} <- Filter.by_config_and_split(repo_files, name, split) do
       if streaming do
@@ -171,7 +173,8 @@ defmodule ElixirDatasets.Loader do
         end
       end,
       max_concurrency: num_proc,
-      ordered: true
+      ordered: true,
+      timeout: :infinity
     )
     |> Enum.reduce_while({:ok, []}, fn
       {:ok, {:ok, path_ext}}, {:ok, acc} ->
@@ -207,5 +210,13 @@ defmodule ElixirDatasets.Loader do
       paths -> {:ok, Enum.reverse(paths)}
     end
   end
+
+  defp merge_download_opts({:hf, repository_id, repo_opts}, load_opts) do
+    download_opts = [:download_mode, :verification_mode]
+    merged_opts = Keyword.merge(repo_opts, Keyword.take(load_opts, download_opts))
+    {:hf, repository_id, merged_opts}
+  end
+
+  defp merge_download_opts(repository, _load_opts), do: repository
 end
 
