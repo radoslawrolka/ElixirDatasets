@@ -135,7 +135,7 @@ Use an authentication token to access private datasets.
 ```elixir
 datasets = ElixirDatasets.load_dataset!(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
-  %{auth_token: auth_token}
+  auth_token: auth_token
 )
 IO.puts("Loaded #{length(datasets)} dataset(s) with authentication")
 datasets
@@ -144,25 +144,42 @@ datasets
 <!-- livebook:{"output":true} -->
 
 ```
-** (FunctionClauseError) no function clause matching in Keyword.take/2    
-    
-    The following arguments were given to Keyword.take/2:
-    
-        # 1
-        %{auth_token: nil}
-    
-        # 2
-        [:download_mode, :verification_mode]
-    
-    Attempted function clauses (showing 1 out of 1):
-    
-        def take(keywords, keys) when is_list(keywords) and is_list(keys)
-    
-    (elixir 1.18.3) lib/keyword.ex:1279: Keyword.take/2
-    (elixir_datasets 0.0.1) lib/elixir_datasets/dataset_loader.ex:216: ElixirDatasets.Loader.merge_download_opts/2
-    (elixir_datasets 0.0.1) lib/elixir_datasets/dataset_loader.ex:91: ElixirDatasets.Loader.load_dataset/2
-    (elixir_datasets 0.0.1) lib/elixir_datasets/dataset_loader.ex:126: ElixirDatasets.Loader.load_dataset!/2
-    #cell:3fjksspnhlhcid4k:1: (file)
+Loaded 3 dataset(s) with authentication
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  #Explorer.DataFrame<
+    Polars[1066 x 2]
+    text string ["lovingly photographed in the manner of a golden book sprung to life , stuart little 2 manages sweetness largely without stickiness .",
+     "consistently clever and suspenseful .",
+     "it's like a \" big chill \" reunion of the baader-meinhof gang , only these guys are more harmless pranksters than political activists .",
+     "the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .",
+     "red dragon \" never cuts corners .", ...]
+    label s64 [1, 1, 1, 1, 1, ...]
+  >,
+  #Explorer.DataFrame<
+    Polars[8530 x 2]
+    text string ["the rock is destined to be the 21st century's new \" conan \" and that he's going to make a splash even greater than arnold schwarzenegger , jean-claud van damme or steven segal .",
+     "the gorgeously elaborate continuation of \" the lord of the rings \" trilogy is so huge that a column of words cannot adequately describe co-writer/director peter jackson's expanded vision of j . r . r . tolkien's middle-earth .",
+     "effective but too-tepid biopic",
+     "if you sometimes like to go to the movies to have fun , wasabi is a good place to start .",
+     "emerges as something rare , an issue movie that's so honest and keenly observed that it doesn't feel like one .",
+     ...]
+    label s64 [1, 1, 1, 1, 1, ...]
+  >,
+  #Explorer.DataFrame<
+    Polars[1066 x 2]
+    text string ["compassionately explores the seemingly irreconcilable situation between conservative christian parents and their estranged gay and lesbian children .",
+     "the soundtrack alone is worth the price of admission .",
+     "rodriguez does a splendid job of racial profiling hollywood style--casting excellent latin actors of all ages--a trend long overdue .",
+     "beneath the film's obvious determination to shock at any cost lies considerable skill and determination , backed by sheer nerve .",
+     "bielinsky is a filmmaker of impressive talent .", ...]
+    label s64 [1, 1, 1, 1, 1, ...]
+  >
+]
 ```
 
 ### Load dataset from local resources
@@ -547,6 +564,25 @@ sample_rows |> Enum.with_index(1) |> Enum.each(fn {row, idx} ->
 end)
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+✓ Created stream in streaming mode
+  Stream type: true
+
+Fetching first 3 rows...
+✓ Fetched 3 rows
+  Row 1: [label, text]
+  Row 2: [label, text]
+  Row 3: [label, text]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
 #### Using custom cache directory
 
 Control where downloaded files are stored:
@@ -622,7 +658,13 @@ IO.puts("Prepared dataset with #{Explorer.DataFrame.n_rows(df_head)} rows for up
 <!-- livebook:{"output":true} -->
 
 ```
-nil
+Prepared dataset with 11 rows for upload
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```
 
 ### Upload dataset to huggingface hub
@@ -642,7 +684,13 @@ IO.puts("Upload example (commented out)")
 <!-- livebook:{"output":true} -->
 
 ```
-nil
+Upload example (commented out)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```
 
 ### Delete dataset file from huggingface hub
@@ -661,7 +709,13 @@ IO.puts("Delete example (commented out)")
 <!-- livebook:{"output":true} -->
 
 ```
-nil
+Delete example (commented out)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```
 
 ### Upload dataset to huggingface hub via lfs
@@ -680,16 +734,14 @@ IO.puts("LFS upload example (commented out)")
 <!-- livebook:{"output":true} -->
 
 ```
-nil
+LFS upload example (commented out)
 ```
 
-## Other loading methods
+<!-- livebook:{"output":true} -->
 
-Query dataset metadata without downloading the full dataset.
-
-### Get dataset infos
-
-Retrieve detailed information about a dataset including splits and features.
+```
+:ok
+```
 
 ```elixir
 {:ok, infos} = ElixirDatasets.get_dataset_infos("cornell-movie-review-data/rotten_tomatoes")
@@ -700,28 +752,33 @@ infos
 <!-- livebook:{"output":true} -->
 
 ```
-{:ok,
- [
-   %ElixirDatasets.DatasetInfo{
-     config_name: nil,
-     features: [
-       %{"dtype" => "string", "name" => "text"},
-       %{
-         "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
-         "name" => "label"
-       }
-     ],
-     splits: [
-       %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
-       %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
-       %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
-     ],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   }
- ]}
+Retrieved 1 dataset configuration(s)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  %ElixirDatasets.DatasetInfo{
+    config_name: nil,
+    features: [
+      %{"dtype" => "string", "name" => "text"},
+      %{
+        "dtype" => %{"class_label" => %{"names" => %{"0" => "neg", "1" => "pos"}}},
+        "name" => "label"
+      }
+    ],
+    splits: [
+      %{"name" => "train", "num_bytes" => 1074810, "num_examples" => 8530},
+      %{"name" => "validation", "num_bytes" => 134679, "num_examples" => 1066},
+      %{"name" => "test", "num_bytes" => 135972, "num_examples" => 1066}
+    ],
+    description: nil,
+    homepage: nil,
+    license: nil,
+    citation: nil
+  }
+]
 ```
 
 ### Get dataset split names
@@ -737,7 +794,13 @@ splits
 <!-- livebook:{"output":true} -->
 
 ```
-{:ok, ["train", "validation", "test"]}
+Available splits: train, validation, test
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+["train", "validation", "test"]
 ```
 
 ### Get dataset config names
@@ -753,7 +816,13 @@ configs
 <!-- livebook:{"output":true} -->
 
 ```
-{:ok, ["csv", "default"]}
+Available configs: csv, default
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+["csv", "default"]
 ```
 
 ### Write-to-file & read-from-file datasetInfo
@@ -773,25 +842,31 @@ loaded_info
 <!-- livebook:{"output":true} -->
 
 ```
-{:ok,
- [
-   %ElixirDatasets.DatasetInfo{
-     config_name: "csv",
-     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
-     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   },
-   %ElixirDatasets.DatasetInfo{
-     config_name: "default",
-     features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
-     splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
-     description: nil,
-     homepage: nil,
-     license: nil,
-     citation: nil
-   }
- ]}
+Saved dataset info to 'my-dir'
+Loaded 2 dataset info(s) from disk
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  %ElixirDatasets.DatasetInfo{
+    config_name: "csv",
+    features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+    splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+    description: nil,
+    homepage: nil,
+    license: nil,
+    citation: nil
+  },
+  %ElixirDatasets.DatasetInfo{
+    config_name: "default",
+    features: [%{"dtype" => "int64", "name" => "id"}, %{"dtype" => "string", "name" => "number"}],
+    splits: [%{"name" => "train", "num_bytes" => 160, "num_examples" => 10}],
+    description: nil,
+    homepage: nil,
+    license: nil,
+    citation: nil
+  }
+]
 ```
