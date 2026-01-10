@@ -136,4 +136,3 @@ defmodule ElixirDatasets.StreamingTest do
     end
   end
 end
-

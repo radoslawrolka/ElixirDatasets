@@ -171,4 +171,3 @@ defmodule ElixirDatasets.Info do
     end
   end
 end
-

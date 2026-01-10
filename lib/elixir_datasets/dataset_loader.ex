@@ -219,4 +219,3 @@ defmodule ElixirDatasets.Loader do
 
   defp merge_download_opts(repository, _load_opts), do: repository
 end
-

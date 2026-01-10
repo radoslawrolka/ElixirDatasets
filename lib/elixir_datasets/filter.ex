@@ -101,4 +101,3 @@ defmodule ElixirDatasets.Filter do
     end
   end
 end
-

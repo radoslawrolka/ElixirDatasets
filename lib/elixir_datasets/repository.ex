@@ -200,4 +200,3 @@ defmodule ElixirDatasets.Repository do
     end
   end
 end
-

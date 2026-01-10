@@ -61,4 +61,3 @@ defmodule ElixirDatasets.RepositoryTest do
     end
   end
 end
-

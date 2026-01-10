@@ -89,4 +89,3 @@ defmodule ElixirDatasets.InfoTest do
     end
   end
 end
-

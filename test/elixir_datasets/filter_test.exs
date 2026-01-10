@@ -115,4 +115,3 @@ defmodule ElixirDatasets.FilterTest do
     end
   end
 end
-

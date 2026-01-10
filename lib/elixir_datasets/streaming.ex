@@ -187,4 +187,3 @@ defmodule ElixirDatasets.Streaming do
 
   defp cleanup(_state), do: :ok
 end
-

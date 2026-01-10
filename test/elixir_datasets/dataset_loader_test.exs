@@ -73,7 +73,9 @@ defmodule ElixirDatasets.LoaderTest do
       assert {:ok, datasets} = Loader.load_dataset(repository)
       assert is_list(datasets)
 
-      repository_offline = {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir, offline: true]}
+      repository_offline =
+        {:hf, "aaaaa32r/elixirDatasets", [cache_dir: @cache_dir, offline: true]}
+
       assert {:ok, datasets} = Loader.load_dataset(repository_offline)
       assert is_list(datasets)
 
