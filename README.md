@@ -33,16 +33,13 @@ end
 ## 🚀 Quick Start
 
 ```elixir
-# Load a dataset from Hugging Face
 {:ok, [train_df]} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train"
 )
 
-# Load from local directory
 {:ok, datasets} = ElixirDatasets.load_dataset({:local, "./data"})
 
-# Stream large datasets without loading into memory
 {:ok, stream} = ElixirDatasets.load_dataset(
   {:hf, "stanfordnlp/imdb", subdir: "plain_text"},
   split: "train",
@@ -57,37 +54,32 @@ stream |> Enum.take(100) |> Enum.each(&process_row/1)
 ### Text Classification with Sentiment Analysis
 
 ```elixir
-# Load training data
 {:ok, [train_df]} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train"
 )
 
-# Explore the data with Explorer
 require Explorer.DataFrame, as: DF
 
 train_df
 |> DF.head(5)
 |> IO.inspect()
 
-# Get dataset metadata
 {:ok, splits} = ElixirDatasets.get_dataset_split_names(
   "cornell-movie-review-data/rotten_tomatoes"
 )
-IO.inspect(splits)  # ["train", "validation", "test"]
+IO.inspect(splits)  
 ```
 
 ### Streaming Large Datasets
 
 ```elixir
-# Stream data without loading everything into memory
 {:ok, stream} = ElixirDatasets.load_dataset(
   {:hf, "stanfordnlp/imdb", subdir: "plain_text"},
   split: "train",
   streaming: true
 )
 
-# Process data progressively
 stream
 |> Stream.filter(fn row -> String.length(row["text"]) > 100 end)
 |> Stream.take(1000)
@@ -97,13 +89,11 @@ stream
 ### Working Offline
 
 ```elixir
-# Download once
 {:ok, _} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train"
 )
 
-# Use cached version offline
 {:ok, [data]} = ElixirDatasets.load_dataset(
   {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train",
@@ -119,43 +109,7 @@ stream
 - `ELIXIR_DATASETS_OFFLINE` - Enable offline mode (`"1"` or `"true"`)
 - `HF_TOKEN` - Authentication token for private datasets
 
-### Common Options
-
-```elixir
-# Load specific split
-ElixirDatasets.load_dataset({:hf, "dataset"}, split: "train")
-
-# Stream large datasets
-ElixirDatasets.load_dataset({:hf, "dataset"}, streaming: true)
-
-ElixirDatasets.load_dataset({:hf, "dataset"}, num_proc: 4)
-
-ElixirDatasets.load_dataset({:hf, "dataset"}, offline: true)
-
-ElixirDatasets.load_dataset({:hf, "dataset"}, download_mode: :force_redownload)
-```
-
 See the [full documentation](https://hexdocs.pm/elixir_datasets) for all available options.
-
-## 🔗 Integration with Elixir ML Ecosystem
-
-Works seamlessly with Explorer, Nx, Axon, and Bumblebee:
-
-```elixir
-{:ok, [train_df]} = ElixirDatasets.load_dataset(
-  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
-  split: "train"
-)
-
-require Explorer.DataFrame, as: DF
-train_df |> DF.filter(label == 1) |> DF.head(10)
-
-texts = DF.pull(train_df, "text")
-labels = DF.pull(train_df, "label") |> Nx.tensor()
-
-{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "bert-base-uncased"})
-inputs = Bumblebee.apply_tokenizer(tokenizer, texts)
-```
 
 ## 📖 Documentation
 
@@ -182,16 +136,6 @@ mix coveralls
 
 mix test test/elixir_datasets_test.exs
 ```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 📄 License
 
