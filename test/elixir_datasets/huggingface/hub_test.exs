@@ -185,11 +185,6 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
       {:ok, cached_path} = ElixirDatasets.HuggingFace.Hub.cached_download(@url, @opts)
       File.rm!(cached_path)
 
-      IO.puts("\n  🔍 Testing verification_mode behavior:")
-      IO.puts("    Cache file deleted: #{cached_path}")
-
-      IO.puts("\n    1. With verification_mode: :basic_checks (offline)")
-
       result_basic =
         ElixirDatasets.HuggingFace.Hub.cached_download(
           @url,
@@ -198,15 +193,11 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
       case result_basic do
         {:error, msg} ->
-          IO.puts("       ✓ Failed as expected: #{msg}")
           assert msg =~ "cached file not found"
 
         {:ok, _} ->
-          IO.puts("       ✗ Should have failed!")
           flunk("Expected :basic_checks to fail with missing file")
       end
-
-      IO.puts("\n    2. With verification_mode: :no_checks (offline)")
 
       result_no_checks =
         ElixirDatasets.HuggingFace.Hub.cached_download(
@@ -216,20 +207,12 @@ defmodule ElixirDatasets.HuggingFace.HubTest do
 
       case result_no_checks do
         {:ok, path} ->
-          IO.puts("       ✓ Succeeded (returns path without checking)")
-          IO.puts("       ✓ Returned path: #{path}")
-          IO.puts("       ✓ File exists? #{File.exists?(path)}")
           assert path == cached_path
           refute File.exists?(path)
 
         {:error, msg} ->
-          IO.puts("       ✗ Should have succeeded!")
           flunk("Expected :no_checks to succeed, got error: #{msg}")
       end
-
-      IO.puts("\n    ✅ verification_mode works correctly!")
-      IO.puts("       :basic_checks = validates file exists")
-      IO.puts("       :no_checks = skips validation (faster but risky)")
 
       File.rm_rf!(@cache_dir)
     end

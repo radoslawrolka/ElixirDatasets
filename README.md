@@ -4,18 +4,16 @@
 [![Documentation](https://img.shields.io/badge/docs-hexdocs-blue.svg)](https://hexdocs.pm/elixir_datasets)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**ElixirDatasets** is a comprehensive library for accessing and managing datasets from Hugging Face Hub in Elixir. Inspired by the Python `datasets` library, it brings powerful dataset management capabilities to the Elixir ecosystem with seamless integration with Explorer DataFrames.
+**ElixirDatasets** is a comprehensive library for accessing and managing datasets from Hugging Face Hub in Elixir. Inspired by the [Python `datasets` library](https://github.com/huggingface/datasets), it brings powerful dataset management capabilities to the Elixir ecosystem with seamless integration with Explorer DataFrames.
 
 ## ✨ Features
 
 - 🚀 **Easy Access to Hugging Face Hub** - Load thousands of datasets with a single function call
 - 📊 **Explorer Integration** - Automatic conversion to Explorer DataFrames for data manipulation
-- ⚡ **High Performance** - Parallel processing support for loading multiple files
 - 💾 **Smart Caching** - Intelligent local caching to avoid redundant downloads
 - 🌊 **Streaming Support** - Process large datasets without loading everything into memory
 - 📤 **Upload Datasets** - Publish your own datasets to Hugging Face Hub
 - 🔒 **Private Repositories** - Full support for authentication and private datasets
-- 🔌 **Offline Mode** - Work with cached datasets without internet connection
 - 🎯 **Multiple Formats** - Support for CSV, Parquet, and JSONL files
 
 ## 📦 Installation
@@ -32,278 +30,56 @@ end
 
 ## 🚀 Quick Start
 
-### Load a Dataset from Hugging Face
-
 ```elixir
-{:ok, dataset} = ElixirDatasets.load_dataset({:hf, "imdb"})
-
-{:ok, train_data} = ElixirDatasets.load_dataset(
-  {:hf, "imdb"},
+{:ok, [train_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
   split: "train"
 )
 
-{:ok, dataset} = ElixirDatasets.load_dataset(
-  {:hf, "glue"},
-  name: "sst2",
-  split: "train"
-)
-```
+{:ok, datasets} = ElixirDatasets.load_dataset({:local, "./data"})
 
-### Stream Large Datasets
-
-```elixir
 {:ok, stream} = ElixirDatasets.load_dataset(
-  {:hf, "c4"},
+  {:hf, "stanfordnlp/imdb", subdir: "plain_text"},
   split: "train",
   streaming: true
 )
 
-stream
-|> Enum.take(1000)
-|> Enum.each(&process_row/1)
-```
-
-### Parallel Loading for Performance
-
-```elixir
-{:ok, dataset} = ElixirDatasets.load_dataset(
-  {:hf, "multi-file-dataset"},
-  num_proc: System.schedulers_online()
-)
-```
-
-### Upload Your Own Dataset
-
-```elixir
-df = Explorer.DataFrame.new(%{
-  id: [1, 2, 3],
-  text: ["Hello", "World", "!"],
-  label: [0, 1, 0]
-})
-
-{:ok, _response} = ElixirDatasets.upload_dataset(
-  df,
-  "username/my-dataset",
-  file_extension: "parquet",
-  commit_message: "Initial upload",
-  auth_token: System.get_env("HF_TOKEN")
-)
-```
-
-### Work with Local Files
-
-```elixir
-{:ok, dataset} = ElixirDatasets.load_dataset(
-  {:local, "./data"},
-  split: "train"
-)
+stream |> Enum.take(100) |> IO.inspect()
 ```
 
 ## 📚 Examples
 
-### Example 1: Text Classification with GLUE
-
-```elixir
-{:ok, train} = ElixirDatasets.load_dataset(
-  {:hf, "glue"},
-  name: "sst2",
-  split: "train"
-)
-
-IO.inspect(Explorer.DataFrame.head(train, 5))
-
-positive = Explorer.DataFrame.filter(train, label == 1)
-
-stats = Explorer.DataFrame.summarise(train,
-  total: count(label),
-  positive: sum(label)
-)
-```
-
-### Example 2: Streaming Large Dataset
-
-```elixir
-{:ok, stream} = ElixirDatasets.load_dataset(
-  {:hf, "wikipedia"},
-  name: "20220301.en",
-  split: "train",
-  streaming: true
-)
-
-stream
-|> Stream.chunk_every(100)
-|> Stream.each(fn batch ->
-  batch |> Enum.each(&analyze_text/1)
-end)
-|> Stream.run()
-```
-
-### Example 3: Offline Mode
-
-```elixir
-{:ok, _} = ElixirDatasets.load_dataset({:hf, "imdb"})
-
-System.put_env("ELIXIR_DATASETS_OFFLINE", "1")
-
-{:ok, dataset} = ElixirDatasets.load_dataset(
-  {:hf, "imdb"},
-  download_mode: :reuse_dataset_if_exists
-)
-```
+All examples can be found in the [examples](examples) directory.
+- `examples/usage_examples.livemd` - Comprehensive usage examples of the elixir_datasets api
+- `examples/integration_examples.livemd` - Examples demonstrating integration with other Elixir libraries like [Nx](https://github.com/elixir-nx/nx), [Axon](https://github.com/elixir-nx/axon), and [Bumblebee](https://github.com/elixir-nx/bumblebee)
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-- `ELIXIR_DATASETS_CACHE_DIR` - Custom cache directory (default: system cache)
+- `ELIXIR_DATASETS_CACHE_DIR` - Custom cache directory
 - `ELIXIR_DATASETS_OFFLINE` - Enable offline mode (`"1"` or `"true"`)
-- `HUGGING_FACE_HUB_TOKEN` - Authentication token for private datasets
-
-### Cache Management
-
-```elixir
-cache_dir = ElixirDatasets.cache_dir()
-
-{:ok, dataset} = ElixirDatasets.load_dataset(
-  {:hf, "dataset_name"},
-  download_mode: :force_redownload
-)
-
-{:ok, dataset} = ElixirDatasets.load_dataset(
-  {:hf, "dataset_name"},
-  verification_mode: :no_checks
-)
-```
-
-## 🆚 Comparison with Python `datasets`
-
-| Feature | ElixirDatasets | Python `datasets` |
-|---------|----------------|-------------------|
-| Load from Hugging Face Hub | ✅ | ✅ |
-| Streaming | ✅ | ✅ |
-| Caching | ✅ | ✅ |
-| Parallel Processing | ✅ | ✅ |
-| Upload to Hub | ✅ | ✅ |
-| Multiple Formats (CSV, Parquet, JSONL) | ✅ | ✅ |
-| Offline Mode | ✅ | ✅ |
-| Private Datasets | ✅ | ✅ |
-| DataFrame Integration | ✅ (Explorer) | ✅ (Pandas/Polars) |
-| Map/Filter Operations | ⚠️ (via Explorer) | ✅ |
-| Custom Dataset Scripts | ❌ | ✅ |
-| Audio/Image Processing | ❌ | ✅ |
-| Metrics | ❌ | ✅ |
-
-**Legend:** ✅ Fully Supported | ⚠️ Partial Support | ❌ Not Supported
-
-### What's Supported
-
-ElixirDatasets focuses on core dataset loading and management features:
-- ✅ Loading datasets from Hugging Face Hub
-- ✅ Streaming for large datasets
-- ✅ Parallel processing with `num_proc`
-- ✅ Smart caching and offline mode
-- ✅ Upload and manage datasets
-- ✅ CSV, Parquet, and JSONL formats
-- ✅ Integration with Explorer DataFrames
-
-### What's Different
-
-- **DataFrame Library**: Uses Explorer instead of Pandas
-- **Data Processing**: Leverage Explorer's powerful API for transformations
-- **Concurrency**: Built on Elixir's process model for true parallelism
-- **Simplicity**: Focused API without custom dataset scripts
-
-## 🔗 Integration with Elixir ML Ecosystem
-
-### Axon (Neural Networks)
-
-```elixir
-{:ok, train} = ElixirDatasets.load_dataset({:hf, "mnist"})
-
-train_tensors = train
-|> Explorer.DataFrame.to_rows()
-|> Enum.map(fn row ->
-  {Nx.tensor(row["image"]), Nx.tensor(row["label"])}
-end)
-
-model = Axon.input("input", shape: {nil, 784})
-|> Axon.dense(128, activation: :relu)
-|> Axon.dense(10, activation: :softmax)
-```
-
-### Bumblebee (Transformers)
-
-```elixir
-{:ok, dataset} = ElixirDatasets.load_dataset({:hf, "imdb"}, split: "train")
-
-{:ok, model_info} = Bumblebee.load_model({:hf, "bert-base-uncased"})
-{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "bert-base-uncased"})
-
-texts = Explorer.DataFrame.pull(dataset, "text")
-inputs = Bumblebee.apply_tokenizer(tokenizer, texts)
-```
-
-### Nx (Numerical Computing)
-
-```elixir
-{:ok, dataset} = ElixirDatasets.load_dataset({:hf, "california_housing"})
-
-features = dataset
-|> Explorer.DataFrame.select(["feature1", "feature2", "feature3"])
-|> Explorer.DataFrame.to_columns()
-|> Map.values()
-|> Enum.map(&Nx.tensor/1)
-|> Nx.stack()
-```
+- `HF_TOKEN` - Authentication token for private datasets
+- [🚧 In-progress] `HF_DEBUG` - Enable debug logging (`"1"` or `"true"`)
 
 ## 📖 Documentation
 
-Full documentation is available at [HexDocs](https://hexdocs.pm/elixir_datasets).
+Full documentation is available at [HexDocs](https://hexdocs.pm/elixir_datasets) and hosted on [GitHub Pages](https://radoslawrolka.github.io/ElixirDatasets/api-reference.html) for current status of under-development features. Documentation can be generated locally using:
 
-### Key Modules
-
-- `ElixirDatasets` - Main API for loading and managing datasets
-- `ElixirDatasets.DatasetInfo` - Dataset metadata management
-- `ElixirDatasets.Utils.Loader` - File loading utilities
-- `ElixirDatasets.Utils.Uploader` - Upload functionality
-- `ElixirDatasets.HuggingFace.Hub` - Hugging Face Hub integration
+```bash
+mix docs
+```
 
 ## 🧪 Testing
 
 ```bash
-mix test
-
-mix coveralls
-
-mix test test/elixir_datasets_test.exs
+MIX_ENV=test mix test
 ```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 Copyright (c) 2025 Radosław Rolka, Weronika Wojtas
-
-## 🙏 Acknowledgments
-
-- Inspired by [Hugging Face Datasets](https://github.com/huggingface/datasets)
-- Built with [Explorer](https://github.com/elixir-nx/explorer) for DataFrame operations
-- Uses [Req](https://github.com/wojtekmach/req) for HTTP requests
-
-## 📞 Support
-
-- 📚 [Documentation](https://hexdocs.pm/elixir_datasets)
-- 🐛 [Issue Tracker](https://github.com/yourusername/elixir_datasets/issues)
-- 💬 [Discussions](https://github.com/yourusername/elixir_datasets/discussions)
 
 ---
