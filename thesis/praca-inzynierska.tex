@@ -143,8 +143,8 @@ W odpowiedzi na te problemy coraz większe znaczenie zyskują publiczne repozyto
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/zbiory.png}
-  \caption[Zrzut strony HuggingFace Datasets]{Zrzut strony HuggingFace Datasets}
-  \label{fig:schemat-systemu}
+  \caption{Zrzut strony HuggingFace Datasets}
+  \label{fig:huggingface-datasets}
 \end{figure}
 
 \FloatBarrier
@@ -324,7 +324,7 @@ Poniżej przedstawione zostały wymagania niefunkcjonalne, które mają na celu 
 \begin{itemize}
     \item \textbf{Czytelny i spójny interfejs API} – Interfejs biblioteki powinien być intuicyjny i dobrze zaprojektowany, umożliwiając użytkownikowi szybkie rozpoczęcie pracy bez konieczności zapoznawania się z nadmiernie rozbudowaną dokumentacją. Nazewnictwo funkcji, struktur i modułów powinno być spójne i zgodne z konwencjami języka Elixir.
 
-    \item \textbf{Wydajność} – Biblioteka powinna umożliwiać efektywne operacje na dużych zbiorach danych, takich jak filtrowanie, czyszczenie czy transformacja. Szczególny nacisk powinien zostać położony na optymalizację operacji na dużych zbiorach dancyh oraz minimalizację zużycia pamięci i czasu przetwarzania.
+    \item \textbf{Wydajność} – Biblioteka powinna umożliwiać efektywne operacje na dużych zbiorach danych, takich jak filtrowanie, czyszczenie czy transformacja. Szczególny nacisk powinien zostać położony na optymalizację operacji na dużych zbiorach danych oraz minimalizację zużycia pamięci i czasu przetwarzania.
 
     \item \textbf{Skalowalność} – Projekt powinien być skalowalny zarówno pod względem wielkości obsługiwanych danych. Powinien umożliwiać bezproblemowe dodawanie nowych źródeł danych, funkcjonalności i formatów danych bez konieczności istotnej przebudowy istniejącej architektury.
 
@@ -401,7 +401,7 @@ Interfejs biblioteki ElixirDatasets to komponent, z którym bezpośrednio wchodz
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/schemat-systemu.png}
-  \caption[Schemat systemu]{Schemat systemu}
+  \caption{Schemat systemu}
   \label{fig:schemat-systemu}
 \end{figure}
 
@@ -428,21 +428,21 @@ Dokumentacja jest niezmiernie ważna dla utrzymania i rozwijania projektów prog
 \begin{figure}[!htbp]
   \centering
 \includegraphics[width=.9\textwidth]{zdjęcia/exdoc.png}
-\caption[Dokumentacja]{Dokumentacja}
+\caption{Dokumentacja}
 \label{fig:progressbar}
 \end{figure}
 
 \begin{figure}[!htbp]
   \centering
 \includegraphics[width=.9\textwidth]{zdjęcia/dok2.png}
-\caption[Dokumentacja]{Dokumentacja}
+\caption{Dokumentacja}
 \label{fig:progressbar}
 \end{figure}
 
 \begin{figure}[!htbp]
   \centering
 \includegraphics[width=.9\textwidth]{zdjęcia/dok3.png}
-\caption[Dokumentacja]{Dokumentacja w edytorze kodu}
+\caption{Dokumentacja w edytorze kodu}
 \label{fig:progressbar}
 \end{figure}
 
@@ -502,7 +502,7 @@ Poniższa sekcja koncentruje się na przedstawieniu najbardziej istotnych kompon
 
 Cacheowanie danych jest krytycznym aspektem naszego systemu, zwiększającym jego efektywność poprzez redukcję liczby koniecznych operacji wejścia/wyjścia, zewnętrznych zapytań API oraz pobrań danych, które już wcześniej zostały załadowane. Aby zminimalizować niepotrzebne operacje, szczególnie w przypadku wielokrotnych uruchomień kodu przez użytkownika, implementujemy mechanizm etag (entity tag) oraz OId (Object Identifier). Etag i OId to unikalne identyfikatory przypisane do każdej wersji zasobu, które umożliwiają jednoznaczne stwierdzenie, czy przechowywana wersja zasobu nadal jest aktualna.
 \newline \par
-Przykładem wykorzystania etagu oraz oidu może być kontrola stanu zbiorów danych na zdalnym repozytorium. Poniżej przedstawiono przykłady odpowiedzi serwera, ilustrującej zastosowanie etagu i oidu:
+Przykładem wykorzystania etagu oraz OId może być kontrola stanu zbiorów danych na zdalnym repozytorium. Poniżej przedstawiono przykłady odpowiedzi serwera, ilustrującej zastosowanie etagu i OId:
 
 \begin{lstlisting}[language=Python,float=!htbp,caption={[Podgląd odpowiedzi serwera z etagiem]Podgląd odpowiedzi serwera z etagiem},label=lst:odpowiedz-ze-stanem-etag]
 {
@@ -541,7 +541,7 @@ Aby ułatwić użytkownikom wizualizację postępu pobierania dużych zbiorów d
 \begin{figure}[!htbp]
   \centering
 \includegraphics[width=.9\textwidth]{zdjęcia/ProgressBar.png}
-\caption[Zas]{Przykład wizualizacji paska postępu}
+\caption{Przykład wizualizacji paska postępu}
 \label{fig:progressbar}
 \end{figure}
 
@@ -610,7 +610,7 @@ Ten rozdział poświęcony jest szczegółowemu przedstawieniu metodyki i techni
 
 Tworzona praca inżynierska ma charakter rozwojowy. Jej celem było stworzenie wyspecjalizowanej biblioteki w języku Elixir, koncentrującej się na efektywnym pozyskiwaniu, zarządzaniu i ładowaniu zbiorów danych powszechnie stosowanych w dziedzinie uczenia maszynowego.
 
-Projekt od początku zakładał stworzenie solidnego fundamentu do pracy z danymi, opierając się na architekturze języka Elixir. Wymagania dotyczące kluczowych obszarów funkcjonalnych, takich jak mechanizmy pobierania danych z zewnętrznych repozytoriów ($np.$ Hugging Face Hub) oraz metody ich efektywnego ładowania do pamięci, były znane i stanowiły trzon planu prac. Projekt ten koncentrował się na dostarczeniu narzędzia umożliwiającego szybki start pracy analitycznej, automatyzując etap pozyskiwania i przygotowania danych źródłowych.
+Projekt od początku zakładał stworzenie solidnego fundamentu do pracy z danymi, opierając się na architekturze języka Elixir. Wymagania dotyczące kluczowych obszarów funkcjonalnych, takich jak mechanizmy pobierania danych z zewnętrznych repozytoriów (np. Hugging Face Hub) oraz metody ich efektywnego ładowania do pamięci, były znane i stanowiły trzon planu prac. Projekt ten koncentrował się na dostarczeniu narzędzia umożliwiającego szybki start pracy analitycznej, automatyzując etap pozyskiwania i przygotowania danych źródłowych.
 
 Realizacja projektu przebiegała zgodnie z procesem przyrostowo-iteracyjnym. Prace rozpoczęto od fazy badawczo-prototypowej, której celem było potwierdzenie wykonalności kluczowych założeń architektonicznych i technicznych w środowisku Elixir. Następnie, implementacja właściwa została podzielona na logiczne przyrosty (moduły), obejmujące kolejno funkcjonalności związane z pobieraniem i zarządzaniem danymi oraz ich ładowaniem i wstępnym przeglądaniem. Każdy moduł był rozwijany i testowany w krótkich iteracjach, co pozwoliło na sukcesywne budowanie stabilnej biblioteki i minimalizację wystąpienia błędów. Takie podejście umożliwiło optymalne wykorzystanie zasobów i skupienie się na dostarczeniu stabilnego rdzenia systemu.
 
@@ -637,7 +637,7 @@ Projekt realizowany był przez zespół dwuosobowy, w którym każdy z członkó
     \item \textbf{Moduł sieciowy} – implementacja funkcji odpowiedzialnych za pobieranie danych z zewnętrznych źródeł poprzez protokół HTTP/HTTPS.
     \item \textbf{Moduł HuggingFace} – integracja z API platformy Hugging Face Hub, obsługa autoryzacji oraz zarządzanie dostępem do zbiorów danych.
     \item \textbf{System cacheowania} – implementacja mechanizmu cacheowania danych bazującego na etagach i OId, optymalizacja wydajności pobierania.
-    \item \textbf{Transformacja danych} – implementacja funkcji do wczytywania i przetwarzania danych z różnych formatów (TXT, CSV, JSON, Parquet).
+    \item \textbf{Transformacja danych} – implementacja funkcji do wczytywania i przetwarzania danych z różnych formatów.
     \item \textbf{Główny interfejs biblioteki} – tworzenie publicznego API biblioteki.
     \item \textbf{Ciągła integracja (CI/CD)} – konfiguracja GitHub Actions, automatyzacja testów i kontrola jakości kodu.
 \end{itemize}
@@ -836,14 +836,14 @@ Dane mogą być automatycznie konwertowane do struktury DataFrame z wykorzystani
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/hex.png}
-  \caption[Publikacja w Hex]{Publikacja biblioteki w hex}
-  \label{fig:schemat-systemu}
+  \caption{Publikacja biblioteki w hex}
+  \label{fig:hex-publication}
 \end{figure}
 
 \FloatBarrier
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Główne scenariusze uzytkowania}
+\section{Główne scenariusze użytkowania}
 \label{sec:glowne-scenariusze-uzytkowania}
 
 Poniższa sekcja przedstawia najważniejsze scenariusze użycia biblioteki ElixirDatasets z perspektywy programisty korzystającego z niej w środowisku języka Elixir. Opisane scenariusze ilustrują typowe sposoby pracy ze zbiorami danych pochodzącymi z repozytorium Hugging Face oraz z lokalnego systemu plików, a także prezentują mechanizmy optymalizacji wydajności, takie jak cache’owanie, przetwarzanie strumieniowe oraz równoległe ładowanie danych. Dla wybranych scenariuszy dołączono fragmenty kodu demonstrujące sposób wykorzystania interfejsu API biblioteki.
@@ -855,22 +855,22 @@ Podstawowym scenariuszem użycia biblioteki jest pobranie zbioru danych bezpośr
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie1.png}
-  \caption[Przykład z livebook]{Przykład z livebook - ładowanie z Hugging Face}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - ładowanie z Hugging Face}
+  \label{fig:loading-hf}
 \end{figure}
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie3.png}
-  \caption[Przykład z livebook]{Przykład z livebook - ładowanie z podanego folderu}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - ładowanie z podanego folderu}
+  \label{fig:loading-folder}
 \end{figure}
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie4.png}
-  \caption[Przykład z livebook]{Przykład z livebook - ładowanie z tokenem autoryzacyjnym}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - ładowanie z tokenem autoryzacyjnym}
+  \label{fig:loading-auth}
 \end{figure}
 
 \FloatBarrier
@@ -882,8 +882,8 @@ Możliwa jest też praca z danymi zapisanymi lokalnie. W tym przypadku użytkown
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/ladowanie2.png}
-  \caption[Przykład z livebook]{Przykład z livebook}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook}
+  \label{fig:loading-local}
 \end{figure}
 
 \FloatBarrier
@@ -895,15 +895,15 @@ W celu zwiększenia wydajności oraz ograniczenia liczby operacji sieciowych bib
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/offline.png}
-  \caption[Przykład z livebook]{Przykład z livebook - offline mode}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - offline mode}
+  \label{fig:offline-mode}
 \end{figure}
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/cache.png}
-  \caption[Przykład z livebook]{Przykład z livebook - używanie podanego folderu jako cache}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - używanie podanego folderu jako cache}
+  \label{fig:cache-folder}
 \end{figure}
 
 \FloatBarrier
@@ -915,8 +915,8 @@ W przypadku pracy z bardzo dużymi zbiorami danych użytkownik może skorzystać
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/streaming.png}
-  \caption[Przykład z livebook]{Przykład z livebook - wykorzystanie streamingu}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - wykorzystanie streamingu}
+  \label{fig:streaming}
 \end{figure}
 
 \FloatBarrier
@@ -928,8 +928,8 @@ Biblioteka umożliwia również wykorzystanie przetwarzania równoległego podcz
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/threads.png}
-  \caption[Przykład z livebook]{Przykład z livebook - ładowanie wielowątkowe}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - ładowanie wielowątkowe}
+  \label{fig:parallel-loading}
 \end{figure}
 
 \FloatBarrier
@@ -944,15 +944,15 @@ Dla większych zbiorów danych dostępne jest wsparcie dla przesyłania plików 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/upload1.png}
-  \caption[Przykład z livebook]{Przykład z livebook - publikowanie zbioru danych}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - publikowanie zbioru danych}
+  \label{fig:upload-hf-1}
 \end{figure}
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/upload2.png}
-  \caption[Przykład z livebook]{Przykład z livebook - publikowanie zbioru danych}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - publikowanie zbioru danych}
+  \label{fig:upload-hf-2}
 \end{figure}
 
 \FloatBarrier
@@ -966,8 +966,8 @@ Pozyskane metadane mogą być wykorzystywane do analizy struktury zbioru danych 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=.9\textwidth]{zdjęcia/info.png}
-  \caption[Przykład z livebook]{Przykład z livebook - używanie podanego folderu jako cache}
-  \label{fig:schemat-systemu}
+  \caption{Przykład z livebook - używanie podanego folderu jako cache}
+  \label{fig:metadata-info}
 \end{figure}
 
 \FloatBarrier
@@ -999,7 +999,7 @@ Dalsze prace mogłyby również dotyczyć rozszerzenia wsparcia dla danych multi
 \section{Subiektywna ocena projektu}
 \label{sec:subiektywna-ocena-projektu}
 
-Większość kluczowych funkcjonalności, dzięki czemu powstała biblioteka umożliwiająca sprawną i wydajną obsługę zbiorów danych z repozytorium Hugging Face w języku Elixir. Zaimplementowane rozwiązania spełniają założone wymagania funkcjonalne i pozwalają na wygodną pracę zarówno z małymi, jak i dużymi zbiorami danych.
+Zaimplementowano większość kluczowych funkcjonalności, dzięki czemu powstała biblioteka umożliwiająca sprawną i wydajną obsługę zbiorów danych z repozytorium Hugging Face w języku Elixir. Zaimplementowane rozwiązania spełniają założone wymagania funkcjonalne i pozwalają na wygodną pracę zarówno z małymi, jak i dużymi zbiorami danych.
 
 Przeprowadzone testy jednostkowe i integracyjne przyczyniły się do zapewnienia stabilności oraz wysokiej jakości implementacji. Zastosowane technologie i narzędzia programistyczne okazały się trafnym wyborem i dobrze sprawdziły się w kontekście realizowanego projektu.
 
