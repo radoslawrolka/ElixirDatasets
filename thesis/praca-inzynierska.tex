@@ -108,7 +108,7 @@ backend=biber]{biblatex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \author{Radosław Rolka, Weronika Wojtas}
 
-\titlePL{Biblioteka Datasets dla Elixira}
+\titlePL{Biblioteka Datasets dla Eliksira}
 \titleEN{Datasets library for Elixir}
 
 \fieldofstudy{Informatyka}
@@ -155,7 +155,7 @@ W odpowiedzi na te problemy coraz większe znaczenie zyskują publiczne repozyto
 
 Podczas studiów zainteresowaliśmy się językami programowania funkcyjnego, szczególnie Elixirem. Choć na początku jego podejście może wydawać się nietypowe, szybko dostrzegliśmy, jak prosty i elegancki jest ten język. Podczas pracy z Elixirem zauważyliśmy, że brakuje w nim biblioteki do zarządzania zbiorami danych, która w innych językach jest szeroko stosowana, szczególnie w sztucznej inteligencji.
 
-Postanowiliśmy, że to będzie temat naszej pracy inżynierskiej. Chcemy stworzyć bibliotekę w Elixirze, inspirowaną Hugging Face Datasets~\cite{huggingfaceDatasets}, która pozwoli programistom łatwiej pracować ze zbiorami danych i ułatwi dostęp do nich.
+Postanowiliśmy, że to będzie temat naszej pracy inżynierskiej. Chcemy stworzyć bibliotekę w Eliksirze, inspirowaną Hugging Face Datasets~\cite{huggingfaceDatasets}, która pozwoli programistom łatwiej pracować ze zbiorami danych i ułatwi dostęp do nich.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -199,7 +199,7 @@ Głównym celem biblioteki jest uproszczenie i automatyzacja zarządzania, przet
 Wymagania niefunkcjonalne odgrywają kluczową rolę w zapewnieniu, że stworzona biblioteka nie tylko spełni swoje zadania funkcjonalne, ale również będzie przyjazna dla użytkownika. Poniżej przedstawiono główne wymagania niefunkcjonalne dla projektu:
 \begin{itemize}
     \item Wydajność - Biblioteka powinna efektywnie zarządzać i przetwarzać duże zbiory danych z minimalnym opóźnieniem.
-    \item Kompatybilność - Interfejs powinien być kompatybilny z różnymi systemami operacyjnymi i integrować się z istniejącymi popularnymi narzędziami i bibliotekami w ekosystemie Elixira.
+    \item Kompatybilność - Interfejs powinien być kompatybilny z różnymi systemami operacyjnymi i integrować się z istniejącymi popularnymi narzędziami i bibliotekami w ekosystemie Eliksira.
     \item Dokumentacja - Kompletna i zrozumiała dokumentacja techniczna jest niezbędna, by użytkownicy mogli efektywnie wykorzystywać wszystkie funkcje biblioteki.
 \end{itemize}
 
@@ -209,7 +209,7 @@ Wymagania niefunkcjonalne odgrywają kluczową rolę w zapewnieniu, że stworzon
 
 Jednym z głównych narzędzi w tej dziedzinie rozwiązań jest biblioteka datasets od Hugging Face~\cite{huggingfaceDatasets}, która jest szeroko stosowana w społeczności uczenia maszynowego. Biblioteka datasets oferuje łatwy dostęp do szerokiej gamy zbiorów danych w różnych językach programowania. Oferuje ona również różnorodne narzędzia do przetwarzania i transformacji danych.
 \par
-W kontekście Elixira, który nadal jest dynamicznie rozwijającym się językiem, nie istnieje jeszcze takie narzędzie, które w pełni odpowiadałoby potrzebom użytkowników w zakresie zarządzania i przetwarzania danych dla uczenia maszynowego, co tworzy przestrzeń na rynku dla nowego rozwiązania, które może lepiej odpowiadać na unikalne potrzeby społeczności Elixira, zwiększając efektywność ich pracy dzięki specjalizowanym narzędziom dostosowanym do ich środowiska i metod pracy.
+W kontekście Eliksira, który nadal jest dynamicznie rozwijającym się językiem, nie istnieje jeszcze takie narzędzie, które w pełni odpowiadałoby potrzebom użytkowników w zakresie zarządzania i przetwarzania danych dla uczenia maszynowego, co tworzy przestrzeń na rynku dla nowego rozwiązania, które może lepiej odpowiadać na unikalne potrzeby społeczności Eliksira, zwiększając efektywność ich pracy dzięki specjalizowanym narzędziom dostosowanym do ich środowiska i metod pracy.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -220,7 +220,7 @@ Stos technologiczny został zaprojektowany z myślą o maksymalnym wykorzystaniu
 
 Zintegrowany z NX jest także Explorer~\cite{explorer}, który będziemy wykorzystywać w naszej pracy do efektywnego zarządzania i analizy danych. Explorer to biblioteka, która umożliwia pracę z dwoma głównymi typami struktur danych: seriami, oraz dataframe’ami. Te struktury pozwalają na wygodne i szybkie eksplorowanie danych, co jest szczególnie istotne podczas analizy informacji. Explorer, jako backend, korzysta z Polars, biblioteki napisanej w języku Rust co przekłada się na znaczną poprawę wydajności w obliczeniach z dużymi zbiorami.
 
-Do współpracy z modelami głębokiego uczenia maszynowego w naszym projekcie zastosujemy bibliotekę Bumblebee~\cite{bumblebee}, która pozwala na łatwą integrację z pretrenowanymi modelami sieci neuronowych. Bumblebee umożliwia dostęp do popularnych modeli, które zostały udostępnione przez platformy sztucznej inteligencji, takie jak Hugging Face Transformers~\cite{huggingfaceTransformers}. Ta biblioteka umożliwi łatwą implementację i wykorzystanie zaawansowanych modeli AI w naszej pracy, co pozwoli na efektywne wdrożenie algorytmów uczenia maszynowego i głębokiego uczenia w środowisku Elixira.
+Do współpracy z modelami głębokiego uczenia maszynowego w naszym projekcie zastosujemy bibliotekę Bumblebee~\cite{bumblebee}, która pozwala na łatwą integrację z pretrenowanymi modelami sieci neuronowych. Bumblebee umożliwia dostęp do popularnych modeli, które zostały udostępnione przez platformy sztucznej inteligencji, takie jak Hugging Face Transformers~\cite{huggingfaceTransformers}. Ta biblioteka umożliwi łatwą implementację i wykorzystanie zaawansowanych modeli AI w naszej pracy, co pozwoli na efektywne wdrożenie algorytmów uczenia maszynowego i głębokiego uczenia w środowisku Eliksira.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analiza ryzyka}
@@ -239,7 +239,7 @@ W procesie projektowania i rozwijania nowej biblioteki istnieje wiele potencjaln
 \label{sec:podsumowanie}
 
 
-Projekt ma na celu stworzenie biblioteki w języku Elixir, która będzie odpowiadała funkcjonalności biblioteki Hugging Face Datasets~\cite{huggingfaceDatasets}, umożliwiając łatwe pobieranie, przetwarzanie i zarządzanie zbiorami danych używanymi w uczeniu maszynowym. Biblioteka ta oferować będzie funkcje takie jak pobieranie gotowych zbiorów danych z różnych źródeł, możliwość dodawania własnych zbiorów danych, filtrowanie i przeglądanie dostępnych zbiorów, a także przetwarzanie danych (czyszczenie, normalizacja, tokenizacja). Użytkownicy będą mogli tworzyć podzbiory danych oraz integrować bibliotekę z innymi narzędziami w Elixirze, takimi jak Nx~\cite{nx}, Explorer~\cite{explorer} i Bumblebee~\cite{bumblebee}. Projekt zakłada również dostarczenie pełnej dokumentacji oraz przykładów użycia. 
+Projekt ma na celu stworzenie biblioteki w języku Elixir, która będzie odpowiadała funkcjonalności biblioteki Hugging Face Datasets~\cite{huggingfaceDatasets}, umożliwiając łatwe pobieranie, przetwarzanie i zarządzanie zbiorami danych używanymi w uczeniu maszynowym. Biblioteka ta oferować będzie funkcje takie jak pobieranie gotowych zbiorów danych z różnych źródeł, możliwość dodawania własnych zbiorów danych, filtrowanie i przeglądanie dostępnych zbiorów, a także przetwarzanie danych (czyszczenie, normalizacja, tokenizacja). Użytkownicy będą mogli tworzyć podzbiory danych oraz integrować bibliotekę z innymi narzędziami w Eliksirze, takimi jak Nx~\cite{nx}, Explorer~\cite{explorer} i Bumblebee~\cite{bumblebee}. Projekt zakłada również dostarczenie pełnej dokumentacji oraz przykładów użycia. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -274,7 +274,7 @@ Tworzona biblioteka do zarządzania zbiorami danych w języku Elixir zakłada ś
 \begin{itemize}
     \item \textbf{Źródła zbiorów danych} – Biblioteka umożliwia pobieranie popularnych zbiorów danych wykorzystywanych w uczeniu maszynowym z różnych publicznych repozytoriów, takich jak Hugging Face Datasets~\cite{huggingfaceDatasets}. W związku z tym wymagana jest integracja z usługami HTTP i obsługą różnorodnych formatów danych.
 
-    \item \textbf{Nx}~\cite{nx} – Biblioteka opiera się na integracji z narzędziem Nx, które zapewnia funkcje numeryczne i przetwarzanie tensorów. Współpraca z Nx pozwala na bezproblemowe przygotowanie danych do trenowania modeli uczenia maszynowego w Elixirze.
+    \item \textbf{Nx}~\cite{nx} – Biblioteka opiera się na integracji z narzędziem Nx, które zapewnia funkcje numeryczne i przetwarzanie tensorów. Współpraca z Nx pozwala na bezproblemowe przygotowanie danych do trenowania modeli uczenia maszynowego w Eliksirze.
 
     \item \textbf{Explorer}~\cite{explorer} – Do eksploracji, filtrowania i transformacji danych tabularycznych wykorzystywana jest biblioteka Explorer , która umożliwia przetwarzanie danych w sposób zbliżony do narzędzi takich jak Pandas~\cite{reback2020pandas} w Pythonie. Dzięki temu użytkownik może łatwo analizować i przygotowywać dane w ramach jednego ekosystemu.
 
@@ -332,7 +332,7 @@ Poniżej przedstawione zostały wymagania niefunkcjonalne, które mają na celu 
 
     \item \textbf{Odporność na błędy} – Biblioteka powinna zawierać mechanizmy wykrywania i obsługi błędów, umożliwiające użytkownikowi uzyskanie jasnych komunikatów w przypadku problemów z danymi, połączeniem lub działaniem funkcji.
 
-    \item \textbf{Kompatybilność z ekosystemem Elixira} – Projekt musi zapewniać pełną kompatybilność z innymi bibliotekami wykorzystywanymi w uczeniu maszynowym w języku Elixir, w szczególności Nx~\cite{nx}, Explorer~\cite{explorer} i Bumblebee~\cite{bumblebee}. Powinien też działać na różnych platformach systemowych wspierających środowisko Elixira.
+    \item \textbf{Kompatybilność z ekosystemem Eliksira} – Projekt musi zapewniać pełną kompatybilność z innymi bibliotekami wykorzystywanymi w uczeniu maszynowym w języku Elixir, w szczególności Nx~\cite{nx}, Explorer~\cite{explorer} i Bumblebee~\cite{bumblebee}. Powinien też działać na różnych platformach systemowych wspierających środowisko Eliksira.
 
     \item \textbf{Dokumentacja} – Biblioteka powinna być opatrzona pełną dokumentacją techniczną, zawierającą opisy funkcji, struktur danych, przykłady użycia oraz wskazówki dotyczące integracji z innymi narzędziami. Dokumentacja powinna być dostępna zarówno w kodzie (np. jako modułowe \texttt{@doc}), jak i w formie zewnętrznej (np. README, przewodniki).
 
@@ -392,7 +392,7 @@ Niniejszy rozdział poświęcony jest praktycznym aspektom implementacji bibliot
 
 System opracowany w ramach tej pracy inżynierskiej został skonstruowany tak, aby zapewnić użytkownikowi łatwy dostęp do popularnych zestawów danych wykorzystywanych w uczeniu maszynowym oraz umożliwić dodawanie i zarządzanie własnymi zbiorami danych. Aby osiągnąć te cele, architektura systemu została podzielona na trzy główne moduły. 
 \newline\par
-Moduł networkingowy jest odpowiedzialny za wszystkie operacje wymagające komunikacji z zewnętrznymi serwerami za pomocą protokołu HTTP. Jego głównymi zadaniami są: pobieranie danych z zewnętrznych źródeł, przesyłanie żądań o dostęp do zbiorów danych i odbieranie odpowiedzi. 
+Moduł sieciowy jest odpowiedzialny za wszystkie operacje wymagające komunikacji z zewnętrznymi serwerami za pomocą protokołu HTTP. Jego głównymi zadaniami są: pobieranie danych z zewnętrznych źródeł, przesyłanie żądań o dostęp do zbiorów danych i odbieranie odpowiedzi. 
 \newline\par
 Moduł HuggingFace odpowiada za integrację z API Hugging Face, co pozwala na wyszukiwanie, pobieranie i zarządzanie zbiorami danych dostępnymi na platformie oraz autoryzację do materiałów z ograniczonym dostępem. 
 \newline\par
@@ -411,19 +411,19 @@ Interfejs biblioteki ElixirDatasets to komponent, z którym bezpośrednio wchodz
 \section{Stos technologiczny}
 \label{sec:stos-technologiczny}
 
-Niniejszy rozdział opisuje technologie wybrane do budowy i wsparcia rozwoju naszej biblioteki w Elixirze. Przedstawione zostaną zarówno główne składniki stosu technologicznego, jak i przyczyny ich wyboru, co umożliwi zrozumienie, dlaczego stanowią one optymalne rozwiązanie.
+Niniejszy rozdział opisuje technologie wybrane do budowy i wsparcia rozwoju naszej biblioteki w Eliksirze. Przedstawione zostaną zarówno główne składniki stosu technologicznego, jak i przyczyny ich wyboru, co umożliwi zrozumienie, dlaczego stanowią one optymalne rozwiązanie.
 
 \subsection{Elixir i biblioteka standardowa}
 Język programowania Elixir został wybrany jako główny język programowania ze względu na jego skalowalność, wydajność oraz wyjątkowe wsparcie dla programowania współbieżnego. Biblioteka standardowa Eliksira dostarcza szeroką gamę modułów i funkcji, które pomagają w efektywnym budowaniu aplikacji, w tym w obsłudze sieciowej, przetwarzaniu danych i konstrukcjach współbieżnych.
 
 \subsection{Explorer}
-Współpraca z danymi wymaga używania narzędzi, które umożliwiają łatwą manipulację i transformację zbiorów danych. Biblioteka Explorer służy do łatwego zarządzania danymi w Elixirze, oferując funkcje podobne do tych z pakietu pandas w Pythonie. Umożliwia ona efektywne przetwarzanie dużych zbiorów danych.
+Współpraca z danymi wymaga używania narzędzi, które umożliwiają łatwą manipulację i transformację zbiorów danych. Biblioteka Explorer służy do łatwego zarządzania danymi w Eliksirze, oferując funkcje podobne do tych z pakietu pandas w Pythonie. Umożliwia ona efektywne przetwarzanie dużych zbiorów danych.
 
 \subsection{Mix}
-Mix jest narzędziem służącym do zarządzania projektami w Elixirze, które umożliwia kompilację kodu, jego testowanie oraz zarządzanie zależnościami. Mix jest integralną częścią ekosystemu Elixir i stanowi fundament pod względem konstrukcji i administracji projektami.
+Mix jest narzędziem służącym do zarządzania projektami w Eliksirze, które umożliwia kompilację kodu, jego testowanie oraz zarządzanie zależnościami. Mix jest integralną częścią ekosystemu Elixir i stanowi fundament pod względem konstrukcji i administracji projektami.
 
 \subsection{ExDoc}
-Dokumentacja jest niezmiernie ważna dla utrzymania i rozwijania projektów programistycznych, zwłaszcza tych otwartych, gdzie inni programiści mogą wnosić wkład. ExDoc to narzędzie do generowania dokumentacji w Elixirze, które pozwala na tworzenie przejrzystej i łatwo przeszukiwalnej dokumentacji dla projektów.
+Dokumentacja jest niezmiernie ważna dla utrzymania i rozwijania projektów programistycznych, zwłaszcza tych otwartych, gdzie inni programiści mogą wnosić wkład. ExDoc to narzędzie do generowania dokumentacji w Eliksirze, które pozwala na tworzenie przejrzystej i łatwo przeszukiwalnej dokumentacji dla projektów.
 
 \begin{figure}[!htbp]
   \centering
@@ -477,10 +477,10 @@ Dodatkowo, rozszerzona funkcja `cached\_download` pozwala na pobieranie plików 
 \newline \par
 Użytkownik może również korzystać z opcjonalnych ustawień, takich jak tryb offline, który zapewnia dostęp do zasobów nawet w przypadku braku połączenia z Internetem, pod warunkiem że dane zostały wcześniej pobrane i zapisane w cache'u.
 
-\subsection{Moduł networkingowy}
-\label{sec:modul-networkingowy}
+\subsection{Moduł sieciowy}
+\label{sec:modul-sieciowy}
 
-Moduł networkingowy w projekcie ElixirDatasets pełni fundamentalną rolę w umożliwianiu komunikacji sieciowej, stosując się do wiodących standardów praktyk internetowych. Jest odpowiedzialny za mechaniczne aspekty pobierania danych, obsługę protokołów HTTP/HTTPS oraz zarządzanie połączeniami sieciowymi. Moduł ten, zaimplementowany w `ElixirDatasets.Utils.HTTP`, służy jako centralny punkt dla wszystkich operacji sieciowych wykonanych przez bibliotekę.
+Moduł sieciowy w projekcie ElixirDatasets pełni fundamentalną rolę w umożliwianiu komunikacji sieciowej, stosując się do wiodących standardów praktyk internetowych. Jest odpowiedzialny za mechaniczne aspekty pobierania danych, obsługę protokołów HTTP/HTTPS oraz zarządzanie połączeniami sieciowymi. Moduł ten, zaimplementowany w `ElixirDatasets.Utils.HTTP`, służy jako centralny punkt dla wszystkich operacji sieciowych wykonanych przez bibliotekę.
 \newline
 Fundamentalne funkcje modułu networkingowego obejmują:
 \begin{itemize}
@@ -572,12 +572,12 @@ W projektowaniu oprogramowania, zapewnienie jakości odgrywa kluczową rolę w s
 \subsection{Testy jednostkowe}
 \label{sec:testy-jednostkowe}
 
-Testy jednostkowe koncentrują się na pojedynczych, izolowanych fragmentach kodu, takich jak funkcje lub metody, sprawdzając, czy zachowują się one zgodnie z oczekiwaniami na podstawie zdefiniowanych przypadków testowych. W projektowanej bibliotece w języku Elixir, testy te są realizowane z wykorzystaniem frameworka ExUnit, który oferuje wsparcie dla asercji, testowania równoległego, a także umożliwia łatwą integrację z narzędziami do pomiaru pokrycia kodu testami, takimi jak ExCoveralls, którego pokrycie testami zostało ustawione na 90\%. Efektywne wykorzystanie testów jednostkowych pozwala na szybką identyfikację i izolację błędów oraz zapewnia stabilność kodu poprzez ciągłą weryfikację jego poprawności w miarę jego rozwoju.
+Testy jednostkowe koncentrują się na pojedynczych, izolowanych fragmentach kodu, takich jak funkcje lub metody, sprawdzając, czy zachowują się one zgodnie z oczekiwaniami na podstawie zdefiniowanych przypadków testowych. W projektowanej bibliotece w języku Elixir, testy te są realizowane z wykorzystaniem frameworka ExUnit, który oferuje wsparcie dla asercji, testowania równoległego, a także umożliwia łatwą integrację z narzędziami do pomiaru pokrycia kodu testami, takimi jak ExCoveralls, którego pokrycie testami zostało ustawione na 60\%. Efektywne wykorzystanie testów jednostkowych pozwala na szybką identyfikację i izolację błędów oraz zapewnia stabilność kodu poprzez ciągłą weryfikację jego poprawności w miarę jego rozwoju.
 
 \subsection{Analiza statyczna kodu}
 \label{sec:analiza-statyczna-kodu}
 
-W napisanej bibliotece zostały wykorzystane narzędzia analizy statycznej kodu, które przeprowadzało rygorystyczne sprawdzanie typów oraz wykrywanie nieosiągalnych fragmentów kodu. Z uwagi na dynamiczną naturę Elixira, narzędzie to stanowi kluczowy element zapewniający dodatkowe bezpieczeństwo typów, które nie jest domyślnie ścisłe w tym języku. Ponadto, w procesie tworzenia biblioteki wykorzystano narzędzia zapewniające przestrzeganie ujednoliconego stylu kodowania, co znacząco przyczyniło się do poprawy czytelności kodu. Te narzędzia automatycznie egzekwowały zasady dotyczące formatowania i struktury kodu, co ułatwiło współpracę w zespole i zwiększyło efektywność w utrzymaniu oraz rozwijaniu projektu. Implementacja analizy statycznej pozwala na wcześniejsze zidentyfikowanie problemów oraz ułatwia utrzymanie wysokiej jakości kodu.
+W napisanej bibliotece zostały wykorzystane narzędzia analizy statycznej kodu, które przeprowadzało rygorystyczne sprawdzanie typów oraz wykrywanie nieosiągalnych fragmentów kodu. Z uwagi na dynamiczną naturę Eliksira, narzędzie to stanowi kluczowy element zapewniający dodatkowe bezpieczeństwo typów, które nie jest domyślnie ścisłe w tym języku. Ponadto, w procesie tworzenia biblioteki wykorzystano narzędzia zapewniające przestrzeganie ujednoliconego stylu kodowania, co znacząco przyczyniło się do poprawy czytelności kodu. Te narzędzia automatycznie egzekwowały zasady dotyczące formatowania i struktury kodu, co ułatwiło współpracę w zespole i zwiększyło efektywność w utrzymaniu oraz rozwijaniu projektu. Implementacja analizy statycznej pozwala na wcześniejsze zidentyfikowanie problemów oraz ułatwia utrzymanie wysokiej jakości kodu.
 
 \subsection{Ciągła integracja (CI)}
 \label{sec:ciagla-integracja}
@@ -592,7 +592,7 @@ Code review, czyli przegląd kodu prez innego członka zespołu, jest niezastąp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Podsumowanie}
 \label{sec:podsumowanie}
-Biblioteka została zaprojektowana zgodnie z zasadami modularności, co klarownie definiuje rolę i odpowiedzialności poszczególnych segmentów kodu. Narzędzia oraz technologie użyte do jej rozwoju są powszechnie akceptowane i standardowe w społeczności deweloperów Elixira. Dla zapewnienia niezawodności systemu stosowane są różnorodne formy testowania, a także regularne recenzje kodu wewnątrz zespołu. Jakość kodu jest dodatkowo monitorowana przez narzędzia do statycznej analizy, co potwierdza wysokie standardy jego utrzymania.
+Biblioteka została zaprojektowana zgodnie z zasadami modularności, co klarownie definiuje rolę i odpowiedzialności poszczególnych segmentów kodu. Narzędzia oraz technologie użyte do jej rozwoju są powszechnie akceptowane i standardowe w społeczności deweloperów Eliksira. Dla zapewnienia niezawodności systemu stosowane są różnorodne formy testowania, a także regularne recenzje kodu wewnątrz zespołu. Jakość kodu jest dodatkowo monitorowana przez narzędzia do statycznej analizy, co potwierdza wysokie standardy jego utrzymania.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -634,7 +634,7 @@ Projekt realizowany był przez zespół dwuosobowy, w którym każdy z członkó
 \noindent\textbf{Radosław Rolka} odpowiadał za następujące obszary projektu:
 \begin{itemize}
     \item \textbf{Architektura systemu} – projektowanie ogólnej struktury biblioteki oraz definiowanie interakcji między poszczególnymi modułami.
-    \item \textbf{Moduł networkingowy} – implementacja funkcji odpowiedzialnych za pobieranie danych z zewnętrznych źródeł poprzez protokół HTTP/HTTPS.
+    \item \textbf{Moduł sieciowy} – implementacja funkcji odpowiedzialnych za pobieranie danych z zewnętrznych źródeł poprzez protokół HTTP/HTTPS.
     \item \textbf{Moduł HuggingFace} – integracja z API platformy Hugging Face Hub, obsługa autoryzacji oraz zarządzanie dostępem do zbiorów danych.
     \item \textbf{System cacheowania} – implementacja mechanizmu cacheowania danych bazującego na etagach i OId, optymalizacja wydajności pobierania.
     \item \textbf{Transformacja danych} – implementacja funkcji do wczytywania i przetwarzania danych z różnych formatów (TXT, CSV, JSON, Parquet).
@@ -651,7 +651,7 @@ Projekt realizowany był przez zespół dwuosobowy, w którym każdy z członkó
     \item \textbf{Rozszerzone funkcjonalności ładowania zbiorów danych} – dodanie dodatkowych opcji ładowania, takich jak filtrowanie zbiorów danych na podstawie nazwy, pobieranie wybranych podzbiorów danych oraz weryfikacja integralności i kompletności pobranych zbiorów
     \item \textbf{Testy jednostkowe} – pisanie kompleksowych testów jednostkowych dla wszystkich modułów biblioteki z użyciem frameworka ExUnit.
     \item \textbf{Dokumentacja} – tworzenie dokumentacji technicznej i przykładów użycia kodu w formie LiveBook.
-    \item \textbf{Pokrycie testami} – monitorowanie i utrzymanie wysokiego poziomu pokrycia kodu testami (target: 80\%) z wykorzystaniem ExCoveralls.
+    \item \textbf{Pokrycie testami} – monitorowanie i utrzymanie wysokiego poziomu pokrycia kodu testami (target: 60\%) z wykorzystaniem ExCoveralls.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -702,7 +702,7 @@ zarządzanie zadaniami poprzez GitHub Issues. \\ \hline
 Główne środowiska programistyczne ($IDE$) wykorzystywane do tworzenia kodu w języku Elixir. \\ \hline
 
 Dokumentacja i testowanie & Livebook &
-Narzędzie do tworzenia interaktywnych notatników w Elixirze, wykorzystane do
+Narzędzie do tworzenia interaktywnych notatników w Eliksirze, wykorzystane do
 prezentacji i tworzenia przykładów zastosowania biblioteki. \\ \hline
 
 Dokumentacja końcowa & Overleaf &
@@ -788,7 +788,7 @@ Faza implementacyjna była realizowana iteracyjnie, skupiając się na budowie i
 
 \begin{itemize}
     \item \textbf{Implementacja modułu pobierania i zarządzania} - prace rozpoczęto od budowy fundamentu biblioteki, koncentrując się na interakcji ze światem zewnętrznym. Pierwszy etap polegał na integracji ze źródłami danych. Opracowano mechanizmy komunikacji z zewnętrznymi repozytoriami. Równolegle wdrożono funkcje zarządzania plikami, tworząc mechanizmy do obsługi pobranych zbiorów danych na dysku, w tym weryfikacji integralności plików oraz podstawowego zarządzania ścieżkami dostępu.
-    \item \textbf{Implementacja modułu ładowania i parsowania} - po zapewnieniu możliwości dostępu do danych, skupiono się na ich efektywnym wczytywaniu. Opracowano parsery danych, wdrażając wydajne funkcje do parsowania popularnych formatów. Fazę tę zakończyło stworzenie przykładów użycia i funkcjonalności w środowisku Livebook oraz na serwerze Elixira, które miały posłużyć do weryfikacji i demonstracji kluczowych funkcji biblioteki.
+    \item \textbf{Implementacja modułu ładowania i parsowania} - po zapewnieniu możliwości dostępu do danych, skupiono się na ich efektywnym wczytywaniu. Opracowano parsery danych, wdrażając wydajne funkcje do parsowania popularnych formatów. Fazę tę zakończyło stworzenie przykładów użycia i funkcjonalności w środowisku Livebook oraz na serwerze Eliksira, które miały posłużyć do weryfikacji i demonstracji kluczowych funkcji biblioteki.
 \end{itemize}
 
 \subsection{Faza Testowania, Optymalizacji i Dokumentacji}
@@ -999,7 +999,7 @@ Dalsze prace mogłyby również dotyczyć rozszerzenia wsparcia dla danych multi
 \section{Subiektywna ocena projektu}
 \label{sec:subiektywna-ocena-projektu}
 
-większość kluczowych funkcjonalności, dzięki czemu powstała biblioteka umożliwiająca sprawną i wydajną obsługę zbiorów danych z repozytorium Hugging Face w języku Elixir. Zaimplementowane rozwiązania spełniają założone wymagania funkcjonalne i pozwalają na wygodną pracę zarówno z małymi, jak i dużymi zbiorami danych.
+Większość kluczowych funkcjonalności, dzięki czemu powstała biblioteka umożliwiająca sprawną i wydajną obsługę zbiorów danych z repozytorium Hugging Face w języku Elixir. Zaimplementowane rozwiązania spełniają założone wymagania funkcjonalne i pozwalają na wygodną pracę zarówno z małymi, jak i dużymi zbiorami danych.
 
 Przeprowadzone testy jednostkowe i integracyjne przyczyniły się do zapewnienia stabilności oraz wysokiej jakości implementacji. Zastosowane technologie i narzędzia programistyczne okazały się trafnym wyborem i dobrze sprawdziły się w kontekście realizowanego projektu.
 

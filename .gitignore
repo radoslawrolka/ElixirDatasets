@@ -33,3 +33,5 @@ elixir_datasets-*.tar
 
 # Ignore the generated files from the Elixir Language Server
 .elixir_ls/
+
+.DS_Store
