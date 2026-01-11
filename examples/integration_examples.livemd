@@ -1,0 +1,213 @@
+# Integration Examples
+
+```elixir
+Mix.install([
+  {:elixir_datasets, path: Path.join(__DIR__, "..")},
+  {:nx, "~> 0.7"},
+  {:axon, "~> 0.6"},
+  {:bumblebee, "~> 0.5"},
+  {:kino, "~> 0.12"}
+])
+```
+
+## Setup
+
+```elixir
+auth_token = System.get_env("HF_TOKEN")
+:ok
+```
+
+## Integration with Nx
+
+### Convert DataFrame to Nx Tensors
+
+Load a dataset and convert it to Nx tensors for numerical computing:
+
+```elixir
+{:ok, [train_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train"
+)
+
+labels = 
+  train_df
+  |> Explorer.DataFrame.pull("label")
+  |> Explorer.Series.to_list()
+  |> Nx.tensor()
+
+IO.puts("Labels tensor shape: #{inspect(Nx.shape(labels))}")
+IO.puts("Labels tensor type: #{inspect(Nx.type(labels))}")
+IO.inspect(labels[0..9], label: "First 10 labels")
+```
+
+### Prepare Data for Training
+
+```elixir
+{:ok, [train_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train"
+)
+
+{:ok, [val_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "validation"
+)
+
+train_labels = train_df |> Explorer.DataFrame.pull("label") |> Explorer.Series.to_list() |> Nx.tensor()
+val_labels = val_df |> Explorer.DataFrame.pull("label") |> Explorer.Series.to_list() |> Nx.tensor()
+
+IO.puts("Training samples: #{Nx.size(train_labels)}")
+IO.puts("Validation samples: #{Nx.size(val_labels)}")
+
+positive_count = train_labels |> Nx.sum() |> Nx.to_number()
+total_count = Nx.size(train_labels)
+IO.puts("Positive class ratio: #{Float.round(positive_count / total_count, 3)}")
+```
+
+## Integration with Bumblebee
+
+### Fill-Mask with DistilBERT (Quick Demo)
+
+Demonstrate Bumblebee integration with ElixirDatasets:
+
+```elixir
+{:ok, model_info} = Bumblebee.load_model({:hf, "distilbert/distilbert-base-uncased"})
+{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "distilbert/distilbert-base-uncased"})
+
+serving = Bumblebee.Text.fill_mask(model_info, tokenizer)
+
+IO.puts("✓ Model loaded successfully!")
+```
+
+Use the model with data from ElixirDatasets:
+
+```elixir
+{:ok, [test_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "validation"
+)
+
+sample_text = 
+  test_df
+  |> Explorer.DataFrame.slice(0, 1)
+  |> Explorer.DataFrame.pull("text")
+  |> Explorer.Series.first()
+
+IO.puts("\n=== Dataset Sample ===")
+IO.puts("Dataset: rotten_tomatoes")
+IO.puts("Sample: #{String.slice(sample_text, 0, 80)}...")
+
+masked_text = "This movie is [MASK]."
+
+IO.puts("\nRunning inference (first run compiles ~1-2 min)...")
+
+result = Nx.Serving.run(serving, masked_text)
+top = result.predictions |> List.first()
+
+IO.puts("\n=== Fill-Mask Result ===")
+IO.puts("Input: #{masked_text}")
+IO.puts("Predicted: '#{top.token}' (score: #{Float.round(top.score, 3)})")
+```
+
+## Integration with Axon
+
+### Build a Simple Neural Network
+
+Create a text classification model using Axon with data from ElixirDatasets:
+
+```elixir
+{:ok, [train_df]} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train"
+)
+
+model = 
+  Axon.input("input", shape: {nil, 100})
+  |> Axon.dense(64, activation: :relu)
+  |> Axon.dropout(rate: 0.5)
+  |> Axon.dense(32, activation: :relu)
+  |> Axon.dense(2, activation: :softmax)
+
+Axon.Display.as_graph(model, Nx.template({1, 100}, :f32))
+```
+
+### Streaming Data for Training
+
+Use streaming to efficiently process large datasets:
+
+```elixir
+{:ok, stream} = ElixirDatasets.load_dataset(
+  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+  split: "train",
+  streaming: true
+)
+
+batch_size = 32
+
+batched_stream = 
+  stream
+  |> Stream.chunk_every(batch_size)
+  |> Stream.take(5)  
+
+IO.puts("Processing batches of #{batch_size} samples:\n")
+for {batch, idx} <- Enum.with_index(batched_stream, 1) do
+  labels = batch |> Enum.map(& &1["label"]) |> Nx.tensor()
+  IO.puts("Batch #{idx}: #{length(batch)} samples, labels shape: #{inspect(Nx.shape(labels))}")
+end
+```
+
+## Advanced: Custom Data Pipeline
+
+### Combine ElixirDatasets with Nx and Axon for End-to-End Training
+
+```elixir
+defmodule DataPipeline do
+  @doc """
+  Creates a data pipeline that loads, preprocesses, and batches data
+  """
+  def create_pipeline(dataset_name, split, batch_size) do
+    {:ok, stream} = ElixirDatasets.load_dataset(
+      {:hf, dataset_name},
+      split: split,
+      streaming: true
+    )
+    
+    stream
+    |> Stream.chunk_every(batch_size)
+    |> Stream.map(&prepare_batch/1)
+  end
+  
+  defp prepare_batch(batch) do
+    labels = 
+      batch
+      |> Enum.map(& &1["label"])
+      |> Nx.tensor()
+    
+    texts = Enum.map(batch, & &1["text"])
+    
+    {texts, labels}
+  end
+end
+
+pipeline = DataPipeline.create_pipeline(
+  "cornell-movie-review-data/rotten_tomatoes",
+  "train",
+  16
+)
+
+{texts, labels} = Enum.at(pipeline, 0)
+IO.puts("Batch size: #{length(texts)}")
+IO.puts("Labels shape: #{inspect(Nx.shape(labels))}")
+IO.puts("Sample text: #{List.first(texts) |> String.slice(0..100)}...")
+```
+
+## Summary
+
+This notebook demonstrates how to integrate ElixirDatasets with:
+
+* **Nx**: Convert DataFrames to tensors for numerical computing
+* **Bumblebee**: Use pre-trained models with loaded datasets
+* **Axon**: Build and train neural networks with dataset streams
+* **Custom Pipelines**: Create efficient data processing workflows
+
+These integrations enable you to build complete machine learning pipelines in Elixir!
