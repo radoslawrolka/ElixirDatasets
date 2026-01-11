@@ -3,14 +3,10 @@
 # Usage examples
 
 ```elixir
-##### Target version
 # Install dependencies
-# Mix.install([
-#   {:elixir_datasets, "0.0.1"}
-# ])
-##### Local dev-testing version
 Mix.install([
-  {:elixir_datasets, path: "#{__DIR__}/.."}
+   {:elixir_datasets, "0.1.0"}
+#  {:elixir_datasets, path: "#{__DIR__}/.."} # Local dev-testing version
 ])
 
 # get auth_token explicitly for downloading from HuggingFace 
@@ -49,6 +45,7 @@ datasets
 <!-- livebook:{"output":true} -->
 
 ```
+|===============================================================| 100% (1.51 MB)
 Loaded 1 dataset(s)
 ```
 
@@ -57,7 +54,7 @@ Loaded 1 dataset(s)
 ```
 [
   #Explorer.DataFrame<
-    Polars[974 x 5]
+    Polars[983 x 5]
     act string ["Ethereum Developer", "Linux Terminal", "English Translator and Improver",
      "Job Interviewer", "JavaScript Console", ...]
     prompt string ["Imagine you are an experienced Ethereum developer tasked with creating a smart contract for a blockchain messenger. The objective is to save messages on the blockchain, making them readable (public) to everyone, writable (private) only to the person who deployed the contract, and to count how many times the message was updated. Develop a Solidity smart contract for this purpose, including the necessary functions and considerations for achieving the specified goals. Please provide the code and any relevant explanations to ensure a clear understanding of the implementation.",
@@ -88,6 +85,9 @@ datasets
 <!-- livebook:{"output":true} -->
 
 ```
+|==============================================================| 100% (20.47 MB)
+|==============================================================| 100% (20.97 MB)
+|==============================================================| 100% (41.99 MB)
 Loaded 3 dataset(s) from 'plain_text' configuration
 ```
 
@@ -144,6 +144,9 @@ datasets
 <!-- livebook:{"output":true} -->
 
 ```
+|==============================================================| 100% (92.20 KB)
+|=============================================================| 100% (698.84 KB)
+|==============================================================| 100% (90.00 KB)
 Loaded 3 dataset(s) with authentication
 ```
 
@@ -278,6 +281,9 @@ IO.puts("Loaded #{length(sst2_data)} dataset(s) from 'sst2' configuration")
 <!-- livebook:{"output":true} -->
 
 ```
+|=============================================================| 100% (147.79 KB)
+|===============================================================| 100% (3.11 MB)
+|==============================================================| 100% (72.81 KB)
 Loaded 3 dataset(s) from 'sst2' configuration
 ```
 
@@ -435,6 +441,9 @@ IO.puts("Loaded #{length(data)} splits")
 <!-- livebook:{"output":true} -->
 
 ```
+|=============================================================| 100% (308.44 KB)
+|=============================================================| 100% (649.28 KB)
+|==============================================================| 100% (75.67 KB)
 Loaded 3 splits
 ```
 

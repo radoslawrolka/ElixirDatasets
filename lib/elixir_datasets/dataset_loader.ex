@@ -66,17 +66,16 @@ defmodule ElixirDatasets.Loader do
 
   ## Examples
 
-      ElixirDatasets.Loader.load_dataset({:hf, "dataset_name"}, split: "train")
+      iex> ElixirDatasets.Loader.load_dataset({:hf, "dataset_name"}, split: "train")
 
-      ElixirDatasets.Loader.load_dataset({:hf, "glue"}, name: "sst2")
+      iex> ElixirDatasets.Loader.load_dataset({:hf, "glue"}, name: "sst2")
 
-      {:ok, stream} = ElixirDatasets.Loader.load_dataset(
-        {:hf, "large_dataset"},
-        split: "train",
-        streaming: true
-      )
-
-      stream |> Stream.take(100) |> Enum.each(&process_row/1)
+      iex> {:ok, stream} = ElixirDatasets.Loader.load_dataset(
+      ...>  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+      ...>  split: "train",
+      ...>  streaming: true
+      ...> )
+      ...> stream |> Stream.take(100) |> IO.inspect()
 
   """
   @spec load_dataset(Repository.t_repository(), keyword()) ::
@@ -114,10 +113,10 @@ defmodule ElixirDatasets.Loader do
 
   ## Examples
 
-      datasets = ElixirDatasets.Loader.load_dataset!({:hf, "dataset_name"}, split: "train")
+      iex> datasets = ElixirDatasets.Loader.load_dataset!({:hf, "cornell-movie-review-data/rotten_tomatoes"}, split: "train")
 
-      stream = ElixirDatasets.Loader.load_dataset!({:hf, "dataset"}, streaming: true)
-      stream |> Enum.take(10)
+      iex> stream = ElixirDatasets.Loader.load_dataset!({:hf, "cornell-movie-review-data/rotten_tomatoes"}, streaming: true)
+      iex> stream |> Enum.take(10)
 
   """
   @spec load_dataset!(Repository.t_repository(), keyword()) ::
@@ -212,7 +211,15 @@ defmodule ElixirDatasets.Loader do
   end
 
   defp merge_download_opts({:hf, repository_id, repo_opts}, load_opts) do
-    download_opts = [:download_mode, :verification_mode]
+    download_opts = [
+      :download_mode,
+      :verification_mode,
+      :cache_dir,
+      :auth_token,
+      :offline,
+      :revision
+    ]
+
     merged_opts = Keyword.merge(repo_opts, Keyword.take(load_opts, download_opts))
     {:hf, repository_id, merged_opts}
   end

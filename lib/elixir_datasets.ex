@@ -23,17 +23,17 @@ defmodule ElixirDatasets do
   ## Examples
 
       # Load a dataset from Hugging Face
-      {:ok, datasets} = ElixirDatasets.load_dataset({:hf, "imdb"})
+      iex> {:ok, datasets} = ElixirDatasets.load_dataset({:hf, "imdb"})
 
       # Load with specific split
-      {:ok, train_data} = ElixirDatasets.load_dataset({:hf, "imdb"}, split: "train")
+      iex> {:ok, train_data} = ElixirDatasets.load_dataset({:hf, "imdb"}, split: "train")
 
       # Stream large datasets
-      {:ok, stream} = ElixirDatasets.load_dataset({:hf, "c4"}, streaming: true)
-      stream |> Enum.take(100)
+      iex> {:ok, stream} = ElixirDatasets.load_dataset({:hf, "c4"}, streaming: true)
+      iex> stream |> Enum.take(100)
 
       # Get dataset information
-      {:ok, info} = ElixirDatasets.get_dataset_info("imdb")
+      iex> {:ok, info} = ElixirDatasets.get_dataset_info("imdb")
 
   """
   @compile if Mix.env() == :test, do: :export_all
@@ -250,19 +250,18 @@ defmodule ElixirDatasets do
 
   ## Examples
 
-      ElixirDatasets.load_dataset({:hf, "dataset_name"}, split: "train")
+      iex> ElixirDatasets.load_dataset({:hf, "cornell-movie-review-data/rotten_tomatoes"}, split: "train")
 
-      ElixirDatasets.load_dataset({:hf, "glue"}, name: "sst2")
+      iex> ElixirDatasets.load_dataset({:hf, "glue"}, name: "sst2")
 
-      ElixirDatasets.load_dataset({:hf, "glue"}, name: "sst2", split: "train")
+      iex> ElixirDatasets.load_dataset({:hf, "glue"}, name: "sst2", split: "train")
+      iex> {:ok, stream} = ElixirDatasets.load_dataset(
+      ...>  {:hf, "cornell-movie-review-data/rotten_tomatoes"},
+      ...>  split: "train",
+      ...>  streaming: true
+      ...> )
 
-      {:ok, stream} = ElixirDatasets.load_dataset(
-        {:hf, "large_dataset"},
-        split: "train",
-        streaming: true
-      )
-
-      stream |> Stream.take(100) |> Enum.each(&process_row/1)
+      ...> stream |> Stream.take(3) |> IO.inspect()
 
   """
   @spec load_dataset(t_repository(), keyword()) ::
@@ -286,10 +285,10 @@ defmodule ElixirDatasets do
 
   ## Examples
 
-      datasets = ElixirDatasets.load_dataset!({:hf, "dataset_name"}, split: "train")
+      iex> datasets = ElixirDatasets.load_dataset!({:hf, "cornell-movie-review-data/rotten_tomatoes"}, split: "train")
 
-      stream = ElixirDatasets.load_dataset!({:hf, "dataset"}, streaming: true)
-      stream |> Enum.take(10)
+      iex> stream = ElixirDatasets.load_dataset!({:hf, "cornell-movie-review-data/rotten_tomatoes"}, streaming: true)
+      iex> stream |> Enum.take(10)
 
   """
   @spec load_dataset!(t_repository(), keyword()) ::

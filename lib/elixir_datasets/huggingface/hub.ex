@@ -76,7 +76,7 @@ defmodule ElixirDatasets.HuggingFace.Hub do
   """
   @spec cached_download(String.t(), keyword()) :: {:ok, String.t()} | {:error, String.t()}
   def cached_download(url, opts \\ []) do
-    cache_dir = opts[:cache_dir] || ElixirDatasets.cache_dir()
+    cache_dir = opts[:cache_dir] || ElixirDatasets.cache_dir() |> Path.expand()
     offline = Keyword.get(opts, :offline, elixir_datasets_offline?())
     auth_token = opts[:auth_token]
     download_mode = opts[:download_mode] || :reuse_dataset_if_exists

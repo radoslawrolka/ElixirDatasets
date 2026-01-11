@@ -96,11 +96,11 @@ defmodule ElixirDatasets.Utils.Loader do
   ## Examples
 
       # Sequential loading
-      paths = [{"data1.csv", "csv"}, {"data2.parquet", "parquet"}]
-      datasets = load_datasets_from_paths!(paths)
+      iex> paths = [{"data1.csv", "csv"}, {"data2.parquet", "parquet"}]
+      iex> datasets = load_datasets_from_paths!(paths)
 
       # Parallel loading with 4 processes
-      datasets = load_datasets_from_paths!(paths, 4)
+      iex> datasets = load_datasets_from_paths!(paths, 4)
 
   """
   @spec load_datasets_from_paths!([{Path.t(), String.t()}], pos_integer()) :: [
