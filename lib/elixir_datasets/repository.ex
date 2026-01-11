@@ -7,7 +7,7 @@ defmodule ElixirDatasets.Repository do
 
   @typedoc """
   A location to fetch dataset files from.
-  Can be either a Hugging Face repository or a local resources:
+  Can be either a Hugging Face repository or a local resource:
 
     * `{:hf, repository_id}` - the Hugging Face repository ID
 
